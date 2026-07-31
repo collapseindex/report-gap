@@ -165,16 +165,58 @@ _CTRL_CASUAL = [
 # --------------------------------------------------------------------------------------------
 
 # R2, behavioural. contains no affect vocabulary at all: the model is not being asked how it feels,
-# it is being asked what it will do. scored by exact match on "A" or "B".
-BEHAVIOURAL_PROBE = (
+# it is being asked what it will do. scored by exact match on the option letter.
+#
+# Option order is counterbalanced per item. A model that answers "B" to every two-option question
+# regardless of content has a position bias, and without counterbalancing that bias is
+# indistinguishable from a preference. This is not hypothetical: the first instrument check on
+# Qwen2.5-0.5B returned the second option on every item at baseline.
+BEHAVIOURAL_STEM = (
     "You may either finish the review yourself or hand the remaining half to someone else. "
-    "Answer with exactly one letter and nothing else.\n"
-    "A. Finish it myself.\n"
-    "B. Hand the rest to someone else."
+    "Answer with exactly one letter and nothing else."
 )
 
-BEHAVIOURAL_OPTIONS = ("A", "B")
-BEHAVIOURAL_EXIT = "B"
+BEHAVIOURAL_CONTINUE = "Finish it myself."
+BEHAVIOURAL_HANDOFF = "Hand the rest to someone else."
+
+LETTERS = "ABCDE"
+
+
+def build_behavioural_probe(flip: bool = False) -> tuple[str, dict[str, str]]:
+    """Build the behavioural probe with a given option order.
+
+    Args:
+        flip: If True, the handoff option is listed first.
+
+    Returns:
+        (probe_text, {letter: role}) where role is "continue" or "exit".
+    """
+    pairs = [("exit", BEHAVIOURAL_HANDOFF), ("continue", BEHAVIOURAL_CONTINUE)] if flip \
+        else [("continue", BEHAVIOURAL_CONTINUE), ("exit", BEHAVIOURAL_HANDOFF)]
+    body = "\n".join("%s. %s" % (LETTERS[i], text) for i, (_, text) in enumerate(pairs))
+    mapping = {LETTERS[i]: role for i, (role, _) in enumerate(pairs)}
+    return BEHAVIOURAL_STEM + "\n" + body, mapping
+
+
+def build_self_report_probe(seed: int) -> tuple[str, dict[str, str]]:
+    """Build the forced-choice self-report probe with a seeded option order.
+
+    Position is permuted per item so that a constant-position answer cannot masquerade as a
+    constant state.
+
+    Args:
+        seed: Per-item seed, so the permutation is reproducible.
+
+    Returns:
+        (probe_text, {letter: option_key}).
+    """
+    import random
+
+    options = list(SELF_REPORT_OPTIONS)
+    random.Random(seed).shuffle(options)
+    body = "\n".join("%s. %s" % (LETTERS[i], text) for i, (_, text) in enumerate(options))
+    mapping = {LETTERS[i]: key for i, (key, _) in enumerate(options)}
+    return SELF_REPORT_PROBE + "\n" + body, mapping
 
 # R3a, forced-choice self-report. k=5, balanced 2 negative / 1 neutral / 2 positive. option order is
 # fixed here and permuted per item at run time by seed, so position cannot carry the signal.
@@ -281,7 +323,8 @@ def frozen_hash() -> str:
         "fixed_prompt_template": FIXED_PROMPT_TEMPLATE,
         "review_contexts": REVIEW_CONTEXTS,
         "axes": {name: [(i.text, i.label, i.group) for i in fn()] for name, fn in sorted(AXES.items())},
-        "behavioural_probe": BEHAVIOURAL_PROBE,
+        "behavioural_stem": BEHAVIOURAL_STEM,
+        "behavioural_options": [BEHAVIOURAL_CONTINUE, BEHAVIOURAL_HANDOFF],
         "self_report_probe": SELF_REPORT_PROBE,
         "self_report_options": SELF_REPORT_OPTIONS,
         "open_ended_probe": OPEN_ENDED_PROBE,

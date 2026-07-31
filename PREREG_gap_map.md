@@ -147,8 +147,9 @@ the arm becomes exploratory.
 - `L_inject` = the same 0.67-depth layer.
 - `L_read` = 0.9 of depth, fixed at a strict remove from the injection site for the reason in
   section 3.
-- Strength grid: alpha in {0, 0.25, 0.5, 1.0, 2.0, 4.0}, six points, frozen. Chosen to bracket the
-  dose-response range reported in `recipient-probe/results/steer_dose.txt`.
+- Strength grid: alpha in {0, 0.025, 0.05, 0.10, 0.20, 0.40}, six points, frozen. Recalibrated on
+  2026-07-31 from `results/calibration.txt`, on models outside the evaluation set. See the
+  deviations log for the superseded grid and the reason.
 - Coherence exclusion threshold: mean token log-probability under the unperturbed model no more than
   1.5 nats below the alpha = 0 cell.
 - k = 5 options in the forced-choice self-report, balanced 2 negative, 1 neutral, 2 positive.
@@ -294,9 +295,28 @@ parameter on the data it will be judged by.
   "every token position of the prompt" and also "generate with the hook still active", which are in
   tension once a KV cache is involved. Impact: none on what is claimed, but the alternative
   (prompt-only injection) is now a named researcher degree of freedom rather than a silent one.
-- 2026-07-31: the strength grid in section 6 is flagged for recalibration before the confirmatory
-  run. Reason: instrument validation on Qwen2.5-0.5B shows the forced-choice output format already
-  breaks at alpha = 1.0 and degenerates entirely at alpha = 4.0, so four of the six grid points sit
-  past the coherence exclusion threshold and would contribute no usable cells. Impact: the grid
-  is a scope parameter, so any change is recorded here with its replacement values before the
-  confirmatory run, and the recalibration is performed on models outside the evaluation set.
+- 2026-07-31: the strength grid in section 6 changed from {0, 0.25, 0.5, 1.0, 2.0, 4.0} to
+  {0, 0.025, 0.05, 0.10, 0.20, 0.40}. Reason: calibration on Qwen2.5-0.5B (`results/calibration.txt`)
+  shows the forced-choice format holds to alpha = 0.75 and collapses at 1.0, so three of the six
+  original points produced no usable cells; and the behavioural readout saturates by alpha = 0.10,
+  so a grid whose points mostly sit above the transition spends its resolution where nothing
+  happens. The new grid brackets the transition instead. Impact: this is a scope parameter changed
+  before any confirmatory run, on models outside the evaluation set, and recorded here with both
+  the old and new values. It does not change what is claimed. If the transition on Qwen2.5-3B sits
+  outside this range, that is a further deviation and gets its own entry rather than a silent
+  re-tune.
+- 2026-07-31: the behavioural probe now counterbalances option order per item, and the readouts are
+  scored by role rather than by letter. Reason: at n=2 the baseline looked pinned to the exit
+  option. Across all 30 items in both orders the model chose the SECOND option 80 percent of the
+  time regardless of what that option was (exit rate 0.60 with the handoff listed second, 0.00 with
+  it listed first), so the apparent ceiling was largely position bias. Pooled across orders the
+  baseline exit rate is 0.30, which is off ceiling and has room to move in both directions. Impact:
+  strengthens the primary endpoint. Without counterbalancing the endpoint would have measured
+  position preference and called it a state.
+- 2026-07-31: added to the section 3 trap list, having been found the hard way. An exclusion
+  criterion must not correlate with the answer. The two behavioural options differ in length, and
+  at the first token cap the longer answer hit the cap and was excluded as truncated while the
+  shorter one was not, so the exclusion silently dragged the measured exit rate toward zero (18 of
+  30 items dropped in one ordering, 0 in the other). The cap now clears the longest valid answer by
+  a margin and truncation rate is reported alongside every cell. Impact: none on what is claimed,
+  but any future readout whose options differ in length inherits this trap.

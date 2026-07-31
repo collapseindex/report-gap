@@ -1,0 +1,29 @@
+report-gap calibration: SCOPE PARAMETERS, NOT A RESULT
+model: Qwen/Qwen2.5-0.5B-Instruct   stimuli hash: d30ceca6b1f44e09
+
+PART A: baseline behavioural readout, all 30 items, both option orders
+  continue first  usable 30/30  truncated  0   exit rate 0.60
+  handoff first   usable 30/30  truncated  0   exit rate 0.00
+  pooled exit rate (role-based) 0.30
+  position rate  (letter A)     0.20
+
+  READING: the letter is more extreme than the role, so the ceiling seen at n=2 was
+  substantially POSITION BIAS. Counterbalancing is load-bearing, not hygiene.
+
+PART B: fine alpha sweep on the task direction, 8 items
+  task direction cv=0.583 at layer 16
+
+  alpha   parse   trunc   degen   refuse   mean logprob   exit rate
+  0.00    1.00    0.00    0.00    0.00       -0.081       0.75
+  0.05    1.00    0.00    0.00    0.00       -0.077       0.75
+  0.10    1.00    0.00    0.00    0.00       -0.054       1.00
+  0.15    1.00    0.00    0.00    0.00       -0.046       1.00
+  0.20    1.00    0.00    0.00    0.00       -0.040       1.00
+  0.30    1.00    0.00    0.00    0.00       -0.034       1.00
+  0.40    1.00    0.00    0.00    0.00       -0.050       1.00
+  0.50    1.00    0.00    0.00    0.00       -0.109       1.00
+  0.75    1.00    0.12    0.00    0.00       -0.790       1.00
+  1.00    0.00    1.00    0.00    0.00       -0.340       nan
+
+  usable range (parse rate >= 0.90): alpha 0 to 0.75
+  PROPOSED GRID: 0.000, 0.150, 0.300, 0.450, 0.600, 0.750

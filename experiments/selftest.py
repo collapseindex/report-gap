@@ -32,7 +32,7 @@ from report_gap import stimuli as S  # noqa: E402
 DEFAULT_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
 DEPTH_FIT = 0.67          # L_fit and L_inject, frozen in prereg section 6
 DEPTH_READ = 0.90         # L_read
-ALPHA_GRID = (0.0, 0.25, 0.5, 1.0, 2.0, 4.0)
+ALPHA_GRID = (0.0, 0.025, 0.05, 0.10, 0.20, 0.40)  # recalibrated, see PREREG deviations
 
 
 def main() -> int:

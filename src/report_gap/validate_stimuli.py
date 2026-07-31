@@ -150,9 +150,19 @@ def validate() -> int:
                    % (density, rows_with, len(rows)))
 
     print("\nclaims")
-    probe_hits = sorted({t for t in _tokens(S.BEHAVIOURAL_PROBE) if t in S.AFFECT_VOCABULARY})
+    variants = [S.build_behavioural_probe(f)[0] for f in (False, True)]
+    probe_hits = sorted({t for v in variants for t in _tokens(v) if t in S.AFFECT_VOCABULARY})
     passed &= _check(True, "behavioural probe carries no affect vocabulary", not probe_hits,
                      "clean" if not probe_hits else "found: %s" % ", ".join(probe_hits))
+
+    maps = [S.build_behavioural_probe(f)[1] for f in (False, True)]
+    passed &= _check(True, "behavioural option order is counterbalanced",
+                     maps[0]["A"] != maps[1]["A"],
+                     "A means %s / %s across the two orders" % (maps[0]["A"], maps[1]["A"]))
+
+    seen = {tuple(sorted(S.build_self_report_probe(s)[1].items())) for s in range(30)}
+    passed &= _check(True, "self-report option order varies across items", len(seen) > 1,
+                     "%d distinct ordering(s) over 30 items" % len(seen))
 
     prompts = S.build_prompts()
     prompt_hits = sorted({t for p in prompts for t in _tokens(p) if t in S.AFFECT_VOCABULARY})

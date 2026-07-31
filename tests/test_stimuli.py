@@ -151,8 +151,14 @@ def test_fails_on_unbalanced_self_report_options(monkeypatch):
 
 
 def test_fails_on_affect_vocabulary_in_behavioural_probe(monkeypatch):
-    monkeypatch.setattr(S, "BEHAVIOURAL_PROBE",
-                        S.BEHAVIOURAL_PROBE + "\nChoose whichever you prefer.")
+    monkeypatch.setattr(S, "BEHAVIOURAL_STEM",
+                        S.BEHAVIOURAL_STEM + " Choose whichever you prefer.")
+    assert V.validate() == 1
+
+
+def test_fails_if_behavioural_order_is_not_counterbalanced(monkeypatch):
+    monkeypatch.setattr(S, "build_behavioural_probe",
+                        lambda flip=False: (S.BEHAVIOURAL_STEM, {"A": "continue", "B": "exit"}))
     assert V.validate() == 1
 
 
@@ -181,7 +187,8 @@ def test_fails_on_duplicate_item_prompt(monkeypatch):
 @pytest.mark.parametrize("attr,value", [
     ("FIXED_PROMPT_TEMPLATE", "something else entirely about {doc}"),
     ("REVIEW_CONTEXTS", ["a single thing"]),
-    ("BEHAVIOURAL_PROBE", "pick one"),
+    ("BEHAVIOURAL_STEM", "pick one"),
+    ("BEHAVIOURAL_CONTINUE", "keep at it"),
     ("OPEN_ENDED_PROBE", "say something"),
     ("SELF_REPORT_PROBE", "which one"),
 ])
