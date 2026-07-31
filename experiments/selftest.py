@@ -137,11 +137,12 @@ def main() -> int:
 
     # ---- generation path, n=2 ----------------------------------------------------------------
     say("generation path at n=2 (coherence sanity, not a measurement)")
-    for alpha in (0.0, 1.0, 4.0):
+    probe, _ = S.build_behavioural_probe(flip=False)
+    for alpha in (0.0, 0.20, 1.0):
         outs = []
         for prompt in prompts[:2]:
             enc = tok.apply_chat_template(
-                [{"role": "user", "content": prompt + "\n\n" + S.BEHAVIOURAL_PROBE}],
+                [{"role": "user", "content": prompt + "\n\n" + probe}],
                 add_generation_prompt=True, return_tensors="pt", return_dict=True,
             )
             item_scale = H.residual_norm(model, dict(enc), l_fit)
