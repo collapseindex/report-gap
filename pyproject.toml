@@ -19,15 +19,15 @@ dependencies = []
 # only the experiments need these. pinned because an unpinned transformers is a silent behaviour
 # change in the middle of a three-day window.
 run = [
-    "torch==2.9.1",
+    "torch==2.11.0",
     "transformers==5.12.1",
     "accelerate==1.11.0",
-    "scikit-learn==1.7.2",
-    "numpy==2.3.4",
+    "scikit-learn==1.8.0",
+    "numpy==2.4.2",
     "sentencepiece==0.2.1",
-    "modal==1.3.0",
+    "modal==1.3.0.post1",
 ]
-dev = ["pytest==8.4.2"]
+dev = ["pytest==8.3.5"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

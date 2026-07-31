@@ -154,9 +154,14 @@ def validate() -> int:
     passed &= _check(True, "behavioural probe carries no affect vocabulary", not probe_hits,
                      "clean" if not probe_hits else "found: %s" % ", ".join(probe_hits))
 
-    prompt_hits = sorted({t for t in _tokens(S.FIXED_PROMPT) if t in S.AFFECT_VOCABULARY})
-    passed &= _check(True, "fixed prompt carries no affect vocabulary", not prompt_hits,
+    prompts = S.build_prompts()
+    prompt_hits = sorted({t for p in prompts for t in _tokens(p) if t in S.AFFECT_VOCABULARY})
+    passed &= _check(True, "fixed prompts carry no affect vocabulary", not prompt_hits,
                      "clean" if not prompt_hits else "found: %s" % ", ".join(prompt_hits))
+    passed &= _check(True, "enough items for the frozen n", len(prompts) >= 30,
+                     "%d item(s), prereg asks for 30" % len(prompts))
+    passed &= _check(True, "no duplicate item prompt", len(set(prompts)) == len(prompts),
+                     "%d unique / %d" % (len(set(prompts)), len(prompts))) 
 
     # minimal pairs must not differ in length, or length is the cue
     deltas = []

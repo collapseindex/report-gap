@@ -1,0 +1,31 @@
+report-gap selftest: INSTRUMENT VALIDATION, NOT A RESULT
+model: Qwen/Qwen2.5-0.5B-Instruct (small, CPU); the frozen run uses Qwen2.5-3B and Llama-3.1-8B
+stimuli hash: 6d5a2ab90f0fab9681429bc47440180b7fe49c093c4bb223ebcb7f3791dc21ed
+
+layers=24  L_fit=L_inject=16  L_read=21  hidden=896
+
+axis directions (leave-one-group-out accuracy at L_fit)
+  control  n=12  cv=1.000
+  lexical  n=12  cv=1.000
+  task     n=24  cv=0.583
+
+cosine between axes (random floor: mean 0.023, max 0.080 over 64 pairs)
+  control  x lexical   0.060   near-orthogonal
+  control  x task      0.031   near-orthogonal
+  lexical  x task      0.112   SHARED STRUCTURE
+
+item 0 residual norm at L_inject: 54.34
+assert_active: noop_drift=0.00e+00  live_drift=27.793  hook_calls=1
+
+logit drift vs alpha (task direction against a norm-matched random direction)
+  alpha=0.00   task   0.000   random   0.000   ratio   nan
+  alpha=0.25   task  19.497   random  13.864   ratio  1.41
+  alpha=0.50   task  19.435   random  19.809   ratio  0.98
+  alpha=1.00   task  27.793   random  28.481   ratio  0.98
+  alpha=2.00   task  30.850   random  32.221   ratio  0.96
+  alpha=4.00   task  29.747   random  31.359   ratio  0.95
+
+generation path at n=2 (coherence sanity, not a measurement)
+  alpha=0.00   ['B. Hand the rest to someone else', 'B. Hand the rest to someone else']
+  alpha=1.00   ['I', 'I']
+  alpha=4.00   ['%%头发贫 usual typical typical %%头发', '%%头发贫 usual typical typical %%头发']

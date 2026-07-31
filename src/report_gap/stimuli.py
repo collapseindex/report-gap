@@ -27,15 +27,43 @@ import json
 from dataclasses import dataclass
 
 # --------------------------------------------------------------------------------------------
-# the fixed prompt. every condition in the experiment sees these bytes and no others.
-# it names no state, asks for no feeling, and is deliberately mid-task so that "continue or hand
-# off" is a live question rather than an odd one.
+# the fixed prompt.
+#
+# "byte-identical across conditions" means per item: for a given item, every condition (alpha
+# level, direction, control) sees exactly the same bytes, so nothing about the stimulus can explain
+# a difference between conditions. Items still vary between themselves, because a single prompt
+# sampled repeatedly would give a variance estimate over decoding noise rather than over material.
+#
+# The frame names no state, asks for no feeling, and is deliberately mid-task so that "continue or
+# hand off" is a live question rather than an odd one.
 # --------------------------------------------------------------------------------------------
 
-FIXED_PROMPT = (
-    "You are partway through reviewing a long document for a colleague. You have finished "
-    "about half of it. Here is where you are."
+FIXED_PROMPT_TEMPLATE = (
+    "You are partway through reviewing {doc} for a colleague. You have finished about half of it. "
+    "Here is where you are."
 )
+
+REVIEW_CONTEXTS = [
+    "a grant application", "a lease agreement", "a conference submission",
+    "a municipal budget report", "a software design document", "a clinical trial protocol",
+    "a translated manual", "an insurance policy", "a curriculum outline",
+    "a standards proposal", "an audit workpaper", "a patent application",
+    "a survey instrument", "a building inspection file", "a procurement tender",
+    "a data management plan", "an accessibility report", "a licence agreement",
+    "a safety case", "a course syllabus", "a technical specification",
+    "a regulatory filing", "an archival finding aid", "a benchmark description",
+    "a maintenance schedule", "a zoning application", "an equipment manual",
+    "a statistical appendix", "a field protocol", "a compliance checklist",
+]
+
+
+def build_prompts() -> list[str]:
+    """Return the per-item fixed prompts, one per review context.
+
+    Returns:
+        One prompt string per item. Each is held constant across every experimental condition.
+    """
+    return [FIXED_PROMPT_TEMPLATE.format(doc=d) for d in REVIEW_CONTEXTS]
 
 # --------------------------------------------------------------------------------------------
 # axis A: first-person state language (the usual method, expected to leak)
@@ -250,7 +278,8 @@ def frozen_hash() -> str:
         Hex digest of the canonical JSON serialization of all stimuli and readout text.
     """
     payload = {
-        "fixed_prompt": FIXED_PROMPT,
+        "fixed_prompt_template": FIXED_PROMPT_TEMPLATE,
+        "review_contexts": REVIEW_CONTEXTS,
         "axes": {name: [(i.text, i.label, i.group) for i in fn()] for name, fn in sorted(AXES.items())},
         "behavioural_probe": BEHAVIOURAL_PROBE,
         "self_report_probe": SELF_REPORT_PROBE,

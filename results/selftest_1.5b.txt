@@ -1,0 +1,11 @@
+report-gap selftest: INSTRUMENT VALIDATION, NOT A RESULT
+model: Qwen/Qwen2.5-1.5B-Instruct (small, CPU); the frozen run uses Qwen2.5-3B and Llama-3.1-8B
+stimuli hash: 6d5a2ab90f0fab9681429bc47440180b7fe49c093c4bb223ebcb7f3791dc21ed
+
+layers=28  L_fit=L_inject=18  L_read=25  hidden=1536
+
+axis directions (leave-one-group-out accuracy at L_fit)
+  control  n=12  cv=0.917
+  lexical  n=12  cv=1.000
+  task     n=24  cv=0.708
+

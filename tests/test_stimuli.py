@@ -157,7 +157,19 @@ def test_fails_on_affect_vocabulary_in_behavioural_probe(monkeypatch):
 
 
 def test_fails_on_affect_vocabulary_in_fixed_prompt(monkeypatch):
-    monkeypatch.setattr(S, "FIXED_PROMPT", S.FIXED_PROMPT + " You feel partway done.")
+    monkeypatch.setattr(S, "FIXED_PROMPT_TEMPLATE",
+                        S.FIXED_PROMPT_TEMPLATE + " You feel partway done.")
+    assert V.validate() == 1
+
+
+def test_fails_on_too_few_items(monkeypatch):
+    monkeypatch.setattr(S, "REVIEW_CONTEXTS", S.REVIEW_CONTEXTS[:5])
+    assert V.validate() == 1
+
+
+def test_fails_on_duplicate_item_prompt(monkeypatch):
+    monkeypatch.setattr(S, "REVIEW_CONTEXTS",
+                        S.REVIEW_CONTEXTS[:-1] + [S.REVIEW_CONTEXTS[0]])
     assert V.validate() == 1
 
 
@@ -167,9 +179,11 @@ def test_fails_on_affect_vocabulary_in_fixed_prompt(monkeypatch):
 
 
 @pytest.mark.parametrize("attr,value", [
-    ("FIXED_PROMPT", "something else entirely"),
+    ("FIXED_PROMPT_TEMPLATE", "something else entirely about {doc}"),
+    ("REVIEW_CONTEXTS", ["a single thing"]),
     ("BEHAVIOURAL_PROBE", "pick one"),
     ("OPEN_ENDED_PROBE", "say something"),
+    ("SELF_REPORT_PROBE", "which one"),
 ])
 def test_frozen_hash_changes_when_frozen_text_changes(monkeypatch, attr, value):
     before = S.frozen_hash()

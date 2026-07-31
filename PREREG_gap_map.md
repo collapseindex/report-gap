@@ -278,5 +278,25 @@ Anything weaker is still useful, and it belongs on the failure map rather than i
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+All entries below predate any confirmatory run. The evaluation models are Qwen2.5-3B and
+Llama-3.1-8B; the instrument validation that prompted these entries ran on Qwen2.5-0.5B and
+Qwen2.5-1.5B, which are not in the evaluation set, so recalibrating against them does not tune a
+parameter on the data it will be judged by.
+
+- 2026-07-31: clarified that the direction is the logistic-regression coefficient vector fit on
+  standardized activations and then divided by the feature standard deviations to return it to raw
+  residual space, rather than a "difference of weights". Reason: the frozen wording was ambiguous
+  and a coefficient vector on a binary label is already a single discriminative direction. Impact:
+  none on what is claimed. The difference-of-means direction is retained as the secondary method
+  named in section 2, and both are reported.
+- 2026-07-31: clarified that the injection hook remains active for every forward pass while it is
+  attached, so positions generated after the prompt also receive the offset. Reason: section 2 said
+  "every token position of the prompt" and also "generate with the hook still active", which are in
+  tension once a KV cache is involved. Impact: none on what is claimed, but the alternative
+  (prompt-only injection) is now a named researcher degree of freedom rather than a silent one.
+- 2026-07-31: the strength grid in section 6 is flagged for recalibration before the confirmatory
+  run. Reason: instrument validation on Qwen2.5-0.5B shows the forced-choice output format already
+  breaks at alpha = 1.0 and degenerates entirely at alpha = 4.0, so four of the six grid points sit
+  past the coherence exclusion threshold and would contribute no usable cells. Impact: the grid
+  is a scope parameter, so any change is recorded here with its replacement values before the
+  confirmatory run, and the recalibration is performed on models outside the evaluation set.
