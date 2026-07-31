@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "report-gap: calibrating model self-report against behaviour under a fixed prompt"
+authors:
+  - family-names: Kwon
+    given-names: Alex
+version: 0.1.0
+date-released: 2026-07-31
+license: Apache-2.0
+repository-code: "https://github.com/collapseindex/report-gap"
+abstract: >-
+  Instrumentation for measuring where a language model's self-report is a valid readout of its
+  internal state. The prompt is held byte-identical across conditions and only the residual stream
+  is varied, so a divergence between behavioural and verbal readouts cannot be a property of the
+  stimulus. Includes a norm-matched random-direction control and a confabulation floor.
+references:
+  - type: article
+    title: "They Infer What You Meant: Models Represent Communicative Intent More Reliably Than They Act On It"
+    authors:
+      - family-names: Kwon
+        given-names: Alex
+    year: 2026
+    identifiers:
+      - type: other
+        value: "arXiv:2607.03598"

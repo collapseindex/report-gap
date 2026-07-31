@@ -278,4 +278,5 @@ Anything weaker is still useful, and it belongs on the failure map rather than i
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-- 2026-07-31: none yet. This line exists so the log has a home before it has content.
+No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
+happens, rather than being added afterwards alongside the thing it excuses.
