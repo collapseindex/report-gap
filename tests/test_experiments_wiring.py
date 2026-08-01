@@ -52,7 +52,8 @@ def test_experiment_only_names_attributes_that_exist(path):
 # can be silent about which it is.
 CONFIRMATORY = {"modal_readout.py", "analyze_readout.py",
                 "modal_floor.py", "analyze_floor.py",
-                "modal_base_pair.py", "analyze_pair.py"}
+                "modal_base_pair.py", "analyze_pair.py",
+                "modal_depth.py", "analyze_depth.py"}
 
 
 @pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)
