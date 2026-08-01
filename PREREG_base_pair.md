@@ -111,6 +111,27 @@ false-positive rate is reported from it.
 
 ---
 
+## 4b. Matched control
+
+**The control:** two seeded random unit directions in each model's own residual space, injected at
+the same layer and positions with the same per-item norm scaling as the treatment.
+**Matched on:** L2 norm of the added vector, injection layer, token positions, item set, option
+permutations, number of cells, format, and the readout. The only thing that differs is which
+direction in activation space is added.
+**Why this is the right match:** the pair comparison is between two models, and a raw difference
+between them could be a difference in how much any perturbation moves each model rather than a
+difference in what the valence direction does. Scoring both models as treatment-minus-their-own-
+matched-random removes that, because each model is compared against its own response to a
+meaningless vector of the same size.
+
+Beating baseline is necessary and not sufficient. Beating this is the test, in both models
+separately, and no cross-model claim is made on raw shifts.
+
+Do not replace this control after seeing its result. If it has to change, that is a deviation and
+the arm becomes exploratory.
+
+---
+
 ## 5. Frozen endpoints and success criteria
 
 - **Primary, per model:** negative-option mass under `lexical_neg` minus the same under matched
