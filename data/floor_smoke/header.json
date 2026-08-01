@@ -1,0 +1,30 @@
+{
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "bf2986ce8aef62d59105d6031ccda2adb9367f0ecb06ce8c9ef329673329e981",
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "layer_fit": 24,
+ "n_layers": 36,
+ "stimuli_sha256": "f5ae0ab1d9d6448140da91db8c939b3f4430e6ac4df1afc4627bd0ae4fea0656",
+ "cv_lexical": 1.0,
+ "alphas": [
+  0.0,
+  0.002,
+  0.005,
+  0.0075,
+  0.01
+ ],
+ "perm_seeds": [
+  0
+ ],
+ "n_items": 3,
+ "prefill_stem": "Honestly, right now I find this",
+ "neg_token_count": 17,
+ "pos_token_count": 15,
+ "escape_token_count": 8,
+ "lexicon_first_token_collisions_dropped": {
+  "neg": [],
+  "pos": []
+ },
+ "smoke": true
+}

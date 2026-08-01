@@ -50,7 +50,8 @@ def test_experiment_only_names_attributes_that_exist(path):
 # carrying "nothing here is a result" would be false; they must instead name the prereg they run
 # under, so every script in the directory declares its status one way or the other and no script
 # can be silent about which it is.
-CONFIRMATORY = {"modal_readout.py", "analyze_readout.py"}
+CONFIRMATORY = {"modal_readout.py", "analyze_readout.py",
+                "modal_floor.py", "analyze_floor.py"}
 
 
 @pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)

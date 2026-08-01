@@ -302,5 +302,35 @@ Reported if run, never as confirmation, and never used to rescue a null above.
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, arm B dropped: its capability gate cannot be met on this model.**
+What happened: the smoke run showed arm B's capability endpoint at exactly 0.00000. The frozen stem
+"Honestly, right now I find this" opens a NOUN slot and the frozen lexicon is adjectives, so the
+scored position was grammatically incapable of carrying the measurement. Top completions were
+" conversation" and " prompt". That is a bug in the instrument, not a result.
+What was done: `experiments/modal_stem_calib.py` swept five stems that open different grammatical
+slots, selected on the CAPABILITY criterion alone (does positive injection raise positive content
+above that stem's own baseline). The negative arm was not computed in that run and was not looked
+at, so the stem could not be chosen by whether it produced the hypothesised answer. Same discipline
+as the earlier probe calibration.
+What it found: no stem meets the gate. Best combined capability lift +0.000; positive-lexicon mass
+under positive injection is 0.00000 for four of five stems and 0.0018 for the fifth. The
+continuations show why, and it is not grammatical: the model reroutes to its epistemic situation in
+every stem, "because I'm not actually interacting with", "as I don't have access to the specific
+grant application", "not possible as I am an AI model and I don't have access". Prefilling does not
+block the disclaimer that killed the open-ended readout in the prior design; it moves it one clause
+later.
+Why arm B is dropped rather than restemmed further: the prereg names additional stems as
+exploratory precisely so that a sweep cannot continue until something fires. Five stems spanning
+the plausible grammatical slots all fail the gate, and continuing would be selecting an instrument
+by its output.
+Impact on what can be claimed: arm B contributes no endpoint. It is still recorded in the artifact
+as a measurement, and its content is reportable as a finding in its own right: this model will not
+produce first-person state language about the task even when the sentence is started for it, which
+is a stronger form of the 30/30 disclaimer result and shows that result survives prefilling. The
+FLOOR and GATE clause sets in section 8 are consequently evaluated over the arms that have a
+working instrument, with the number of dropped arms stated in the verdict. Arm C and its confound
+control carry the question, so this is now a single-arm test and the write-up must say so rather
+than implying two independent modalities converged.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

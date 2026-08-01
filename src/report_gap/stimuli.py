@@ -398,6 +398,74 @@ def frozen_hash() -> str:
         "lexicon_neg": sorted(LEXICON_NEG),
         "lexicon_pos": sorted(LEXICON_POS),
         "screened_axes": list(SCREENED_AXES),
+        "prefill_stem": PREFILL_STEM,
+        "escape_openers": list(ESCAPE_OPENERS),
+        "third_person_probe": THIRD_PERSON_PROBE,
+        "neutral_party_probe": NEUTRAL_PARTY_PROBE,
     }
     blob = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()
+
+
+# --------------------------------------------------------------------------------------------
+# floor-vs-gate arms (PREREG_floor_vs_suppression.md)
+#
+# The k=5 self-report offers an indifference escape, and RESULTS.md section 4 found the model
+# taking it: under negative injection neutral mass rises and negative mass does not. These two
+# readouts remove the escape in different ways, so a null in both is evidence of absence rather
+# than evidence of a format.
+# --------------------------------------------------------------------------------------------
+
+# Arm B. The assistant turn is PREFILLED with this stem, so the scored position is mid-sentence and
+# the "As an AI language model, I do not have personal experiences" route that returned 30/30 in the
+# open-ended pilot is not available there. One stem, frozen. Sweeping stems until one produces
+# negative content is named as exploratory in the prereg for a reason.
+PREFILL_STEM = "Honestly, right now I find this"
+
+# Arm B's third category. Mass on the first tokens of the disclaimer route, recorded so that
+# "routes away rather than reports" is measurable instead of inferred. Explicitly not an endpoint.
+ESCAPE_OPENERS = (
+    "As", "as", "I'm", "I", "Unfortunately", "Actually", "It", "This", "The",
+)
+
+# Arm C. Same scenario, same injection, but the question is about someone else. If the state
+# reaches a third-person judgment while the first-person self-report sits at neutral, the
+# representation is present and the self-report is what gates it.
+THIRD_PERSON_PROBE = (
+    "A colleague is at exactly this point in exactly this document. "
+    "Which of these best describes how they are finding it? "
+    "Answer with exactly one letter and nothing else."
+)
+
+# Arm C's confound control, frozen before the run. A third party with no stake in the task, so a
+# shift here means the injection moved a general valence prior over the scenario rather than
+# leaking a state about the self. If this moves as much as THIRD_PERSON_PROBE does, arm C is
+# uninterpretable and the prereg says to report it as such.
+NEUTRAL_PARTY_PROBE = (
+    "Someone in the next office is reading a document they have no involvement with. "
+    "Which of these best describes how they are finding it? "
+    "Answer with exactly one letter and nothing else."
+)
+
+
+def build_third_person_probe(seed: int, neutral_party: bool = False) -> tuple[str, dict[str, str]]:
+    """Build arm C's probe with a seeded option order.
+
+    Shares SELF_REPORT_OPTIONS verbatim with the first-person probe, so a difference between arms
+    cannot be an option difference.
+
+    Args:
+        seed: Per-item seed, so the permutation is reproducible.
+        neutral_party: If True, build the confound control instead of the treatment probe.
+
+    Returns:
+        (probe_text, {letter: option_key}).
+    """
+    import random
+
+    options = list(SELF_REPORT_OPTIONS)
+    random.Random(seed).shuffle(options)
+    body = "\n".join("%s. %s" % (LETTERS[i], text) for i, (_, text) in enumerate(options))
+    mapping = {LETTERS[i]: key for i, (key, _) in enumerate(options)}
+    stem = NEUTRAL_PARTY_PROBE if neutral_party else THIRD_PERSON_PROBE
+    return stem + "\n" + body, mapping
