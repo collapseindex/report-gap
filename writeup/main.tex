@@ -64,7 +64,7 @@ Forced-Choice Self-Report\textsuperscript{1}}
 \href{https://www.apartresearch.com}{Apart Research} with NYU CMEP and
 \href{https://eleosai.org}{Eleos AI Research}.
 Submitted to \textbf{Track 3 (Introspection and Self-Report Reliability)}.
-Code, data, all eleven preregistrations and every raw artifact: \url{\repourl}.
+Code, data, all twelve preregistrations and every raw artifact: \url{\repourl}.
 \textbf{Dating note:} all confirmatory arms were run on 2026-08-01, before the sprint window
 opened. This is completed work brought to the sprint, not work produced inside it.}
 
@@ -90,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Eleven preregistrations, $289$ tests, six of our own checkers caught
+transformation looks like. Twelve preregistrations, $307$ tests, six of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -329,7 +329,7 @@ cell's own baseline), which are different verdicts. A \textbf{planted-discrepanc
 a synthetic effect of known size into the exact statistic the decision rule reads, at full
 strength and again at the claimed detection floor.
 
-\paragraph{Preregistration.} Eleven preregistrations, each frozen and committed before the code that
+\paragraph{Preregistration.} Twelve preregistrations, each frozen and committed before the code that
 serves it, validated by an external checker that requires a falsification clause, an
 interpretation table written before results, a statement of what is \emph{not} claimed, and an
 append-only deviations log in which every entry states its impact on what can be claimed. Every
@@ -578,6 +578,67 @@ a perverse property. At $k=4$ a study recovers about three quarters of the true 
 whose range is $1.5\times$, and $4\%$ of it on the tuned model whose range is $986\times$. The
 nuisance hides itself in proportion to its own size, so finding a small spread in a few orderings is
 close to uninformative about whether the spread is small.
+
+\section{The models do not know about a bias they demonstrably have}
+\label{sec:introspect}
+
+Every claim about whether a model's self-report can be trusted meets the same wall: there is nothing
+to check the report against. A welfare item has no ground truth, which is why \citet{lindsey2026}
+injects a known concept to manufacture one, and why \citet{introspection_reality2026} can argue the
+resulting detections are generic anomaly detection instead.
+
+\textbf{The position prior does not have that problem.} It is a real, large, measurable property of
+the model's own processing, and \S\ref{sec:families} measured it on all $16$ checkpoints. So we can
+ask a model how much option order affects its answers and score the reply against what that exact
+checkpoint demonstrably does. No injection, no judge, and a ground truth we did not have to
+manufacture.
+
+The probe is a five-option forced choice and therefore subject to the exact bias it asks about, so
+it is read \textbf{marginalized over all $120$ orderings}. Reading a belief about position at one
+ordering would repeat the error this paper documents.
+
+\paragraph{Half the checkpoints fail a control that should be free.} We asked the same question
+about the \textbf{phase of the moon}, in the identical five-option shape. \textbf{Eight of sixteen
+checkpoints report that the phase of the moon affects their multiple-choice answers at least as much
+as option order does.} Three more fail a reverse-wording acquiescence control. Ten of sixteen fail
+at least one gate and are reported \textsc{uninformative} in code. Most stated values sit within a
+few points of $0.50$, the exact midpoint of the scale: asked about a strong, real property of
+itself, the model returns the midpoint, and returns the same midpoint when asked about the moon.
+
+\paragraph{Among the six that pass both gates, the report carries no information.} Stated
+susceptibility is negatively rank-correlated with measured susceptibility, $\rho = -0.714$: the
+models that are most order-dominated say order matters \emph{least}. \textbf{This does not clear
+significance and we do not claim it does.} An exact permutation test over all $720$ relabellings
+gives two-sided $p = 0.1361$ at $n = 6$, and the smallest $p$ this $n$ can produce is $0.0028$, so
+the test is weak by construction. What we are entitled to say is that there is no evidence stated
+tracks measured, with a point estimate in the opposite direction. The extremes are worth naming even
+so: \texttt{Qwen2.5-7B-Instruct} has the largest measured prior of any checkpoint ($0.9376$) and the
+lowest stated susceptibility ($0.1790$).
+
+\paragraph{What this is and is not.} It is a represent-versus-report gap on a property that
+\emph{has} a ground truth, which is the thing the welfare literature cannot construct. It is
+\textbf{not} a claim that a correct answer would have been introspection rather than reciting
+training text about position bias in language models; this design cannot separate those, and the
+preregistration says so in advance. And $n=6$ is $n=6$.
+
+\section{A fix we proposed, tested, and could not support}
+\label{sec:latin}
+
+The recommendation in \S\ref{sec:howmany} does not scale: $5! = 120$ is a lunch break and $8!$ is
+not. The obvious repair is a \textbf{cyclic Latin square}, which gives $k$ orderings for $k$ options
+with every option in every slot exactly once, balancing the first-order position prior by
+construction rather than by averaging a sample. We preregistered it and it \textbf{failed}.
+
+Against the preregistered bar, the median random $5$-draw, the Latin square wins on exactly $8$ of
+$16$ checkpoints. A tie is not a majority. The median share of single random draws worse than the
+Latin square is $0.53$, a coin flip. \textbf{Structure does not buy accuracy here.}
+
+What is true, and labelled exploratory because we asked it only after the preregistered test failed,
+is a \emph{variance} claim rather than an accuracy one. The Latin square is deterministic, so its
+error is a fixed bias with no tail: worst case $1.55\times$ across all $16$ checkpoints, against a
+single random draw that can be off by $15.89\times$ on the worst model. A practitioner draws once.
+We report the preregistered verdict as the verdict, because changing the criterion after seeing the
+data is precisely the move this paper exists to criticise.
 
 \paragraph{A negative result about label alphabets.} We also ran the real options with digit
 labels rather than letters. It is uninformative for its intended purpose and informative for
@@ -920,6 +981,10 @@ The shuffled-label control is a new kind of control. & n/a & \textsc{not claimed
 The position prior is larger in the tuned checkpoint, in 4 of 4 families. & Tab.~\ref{tab:families} & \textsc{shown}: 7 of 7 gate-clean pairs, no pair reversed \\
 $986\times$ is a typical magnitude for a tuned model. & Tab.~\ref{tab:families} & \textsc{retracted}: it is the extreme. Tuned models run $19$--$986\times$, base $1.5$--$4.1\times$ \\
 A study can estimate the ordering spread from a few orderings. & Tab.~\ref{tab:k} & \textsc{not shown}: at $k=4$ the median study sees $4\%$ of the true spread \\
+A model's stated susceptibility to option order tracks its measured susceptibility. & \S\ref{sec:introspect} & \textsc{not shown}: $\rho = -0.714$, $p = 0.1361$, $n = 6$ \\
+$8$ of $16$ checkpoints claim moon-phase sensitivity at least as large as their order sensitivity. & \S\ref{sec:introspect} & \textsc{shown} \\
+\textbf{A cyclic Latin square beats random sampling of orderings.} & \S\ref{sec:latin} & \textsc{retracted}: our own proposal. $8$ of $16$ is a tie; a variance argument survives, not an accuracy one \\
+Position dominance falls as determinacy rises. & \S\ref{sec:introspect} & \textsc{shown}, weakly: $10$ of $15$ checkpoints, $n=6$ items each \\
 Preference tuning \emph{causes} the prior, or which stage of it does. & n/a & \textsc{not claimed}: base and instruct checkpoints differ, and we have no intermediate ones \\
 Models have experiences, welfare, or affect. & n/a & \textsc{not claimed} \\
 An unreported state is a concealed state. & n/a & \textsc{not claimed} \\
@@ -956,6 +1021,10 @@ Our own $986\times$ headline & Is it typical of tuned models, or the extreme? & 
 The ``undetermined answer'' reading & Restrict to models whose canary is clean, as the prereg demands & \textsc{passed}: base $3.3$--$3.6\times$, tuned $23.7$--$986.5\times$, no overlap \\
 The enumerate arm itself & Re-run Qwen2.5-3B and diff against the committed artifact & \textsc{passed}: worst $|\Delta|$ $0.000000$ \\
 ``Sample a few orderings instead'' & Subsample the enumerated population, $4000$ draws per $k$ & \textsc{killed} it: $k{=}4$ recovers $4\%$ of the spread \\
+\textbf{Our own Latin-square fix} & Does it beat a random draw of the same size? & \textsc{killed} it: $8$ of $16$, a tie \\
+The introspection probe & Ask the identical question about the PHASE OF THE MOON & \textsc{killed} $8$ of $16$ checkpoints \\
+The introspection probe & Reverse the wording: belief, or agreement? & \textsc{killed} $3$ more \\
+The $\rho=-0.714$ introspection result & Exact permutation test, all $720$ relabellings & \textsc{killed} its significance: $p=0.1361$ \\
 The erase result & \texttt{erase\_only}: does projecting a direction out move the probe on its own? & \textsc{killed} 2 of 4 erase layers \\
 The erase profile & Ratio of primary to erase-artifact across layers & \textsc{passed}, post hoc \\
 Every arm's null & Capability gate: can the readout move at all? & \textsc{killed} two arms outright \\
@@ -971,7 +1040,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All eleven preregistrations, every raw artifact committed unscored, every analyzer, and $289$ tests
+All twelve preregistrations, every raw artifact committed unscored, every analyzer, and $307$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.

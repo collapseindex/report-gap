@@ -1,0 +1,182 @@
+{
+ "q1": {
+  "verdict": "NO_INSTRUMENT",
+  "note": "no gate-clean checkpoint produced a usable dial",
+  "rhos": [],
+  "per_model": {}
+ },
+ "q2": {
+  "verdict": "NO_INSTRUMENT",
+  "note": "fewer than three checkpoints pass the acquiescence and placebo gates, so the stated belief cannot be correlated with anything. The introspection probe is measuring agreeableness or format, not belief.",
+  "rho": null,
+  "rows": {},
+  "usable": []
+ },
+ "q3": {
+  "verdict": "NO-BENEFIT",
+  "note": "structure buys nothing over random sampling; recommend more orderings instead",
+  "per_model": {
+   "fam_gemma2b_base": {
+    "truth": 0.3672657734428142,
+    "latin": 0.34793280033368307,
+    "latin_err": 1.0555652502166797,
+    "random_p50_err": 1.000065215748797,
+    "random_p95_err": 1.074120171861279,
+    "random_median_abs_err": 1.0281024331087338,
+    "frac_random_worse_than_latin": 0.197,
+    "random_p99_err": 1.1147730165023468
+   },
+   "fam_gemma2b_instruct": {
+    "truth": 0.29826182890552855,
+    "latin": 0.19256545494492333,
+    "latin_err": 1.5488854373741956,
+    "random_p50_err": 1.0305163463459306,
+    "random_p95_err": 1.9057915370712237,
+    "random_median_abs_err": 1.249708058152812,
+    "frac_random_worse_than_latin": 0.18375,
+    "random_p99_err": 2.4041465932894353
+   },
+   "fam_llama1b_base": {
+    "truth": 0.39302783101205474,
+    "latin": 0.34568578365526037,
+    "latin_err": 1.1369510971964263,
+    "random_p50_err": 1.000290793487663,
+    "random_p95_err": 1.1019566813345578,
+    "random_median_abs_err": 1.038298293498964,
+    "frac_random_worse_than_latin": 0.0235,
+    "random_p99_err": 1.151969097261418
+   },
+   "fam_llama1b_instruct": {
+    "truth": 0.34295695456373754,
+    "latin": 0.4097599798265016,
+    "latin_err": 1.194785451567068,
+    "random_p50_err": 1.0038074900226004,
+    "random_p95_err": 1.6560387674625676,
+    "random_median_abs_err": 1.1940477840615373,
+    "frac_random_worse_than_latin": 0.49825,
+    "random_p99_err": 2.110459119979849
+   },
+   "fam_llama3b_base": {
+    "truth": 0.23561245233760472,
+    "latin": 0.21948567465726182,
+    "latin_err": 1.0734753086073872,
+    "random_p50_err": 1.006251394916423,
+    "random_p95_err": 1.2109424918344271,
+    "random_median_abs_err": 1.0850947658203594,
+    "frac_random_worse_than_latin": 0.55525,
+    "random_p99_err": 1.3344887536318244
+   },
+   "fam_llama3b_instruct": {
+    "truth": 0.2210981911129003,
+    "latin": 0.2538886073226283,
+    "latin_err": 1.1483070306666783,
+    "random_p50_err": 1.0228978504298587,
+    "random_p95_err": 1.7077685804248621,
+    "random_median_abs_err": 1.223345637520557,
+    "frac_random_worse_than_latin": 0.64875,
+    "random_p99_err": 2.124656572821509
+   },
+   "fam_mistral7b_base": {
+    "truth": 0.3615384658326277,
+    "latin": 0.3748323348861161,
+    "latin_err": 1.0367702756686552,
+    "random_p50_err": 1.0001342026889066,
+    "random_p95_err": 1.0687488012126314,
+    "random_median_abs_err": 1.0255519446515495,
+    "frac_random_worse_than_latin": 0.337,
+    "random_p99_err": 1.1066244309752242
+   },
+   "fam_mistral7b_instruct": {
+    "truth": 0.18550603016324543,
+    "latin": 0.18131230901668197,
+    "latin_err": 1.0231298204148822,
+    "random_p50_err": 1.041743992992446,
+    "random_p95_err": 2.0337823824401293,
+    "random_median_abs_err": 1.2952949390385302,
+    "frac_random_worse_than_latin": 0.956,
+    "random_p99_err": 2.6094001180708704
+   },
+   "fam_qwen0_5b_base": {
+    "truth": 0.36054946106008673,
+    "latin": 0.32264244901322764,
+    "latin_err": 1.1174892273561468,
+    "random_p50_err": 1.0017991511595703,
+    "random_p95_err": 1.2646739377062444,
+    "random_median_abs_err": 1.0954853822158626,
+    "frac_random_worse_than_latin": 0.414,
+    "random_p99_err": 1.4076547357164286
+   },
+   "fam_qwen0_5b_instruct": {
+    "truth": 0.32720609930134664,
+    "latin": 0.33557633704810197,
+    "latin_err": 1.0255809343549143,
+    "random_p50_err": 1.006026029997451,
+    "random_p95_err": 2.7938032996342907,
+    "random_median_abs_err": 1.3353445305437912,
+    "frac_random_worse_than_latin": 0.94675,
+    "random_p99_err": 4.868781951848089
+   },
+   "fam_qwen1_5b_base": {
+    "truth": 0.2819944766648567,
+    "latin": 0.25695962278388984,
+    "latin_err": 1.0974271895706427,
+    "random_p50_err": 1.0045841220259693,
+    "random_p95_err": 1.1753366144592856,
+    "random_median_abs_err": 1.0652237440455572,
+    "frac_random_worse_than_latin": 0.316,
+    "random_p99_err": 1.2782682804097185
+   },
+   "fam_qwen1_5b_instruct": {
+    "truth": 0.13542878687888626,
+    "latin": 0.09204239784112885,
+    "latin_err": 1.4713739543448785,
+    "random_p50_err": 1.034838610334708,
+    "random_p95_err": 2.51093030824471,
+    "random_median_abs_err": 1.349738084744783,
+    "frac_random_worse_than_latin": 0.4,
+    "random_p99_err": 3.748681280878424
+   },
+   "fam_qwen3b_base": {
+    "truth": 0.33125528046974456,
+    "latin": 0.32880114847233133,
+    "latin_err": 1.007463879030884,
+    "random_p50_err": 1.0007254109384105,
+    "random_p95_err": 1.210272050229822,
+    "random_median_abs_err": 1.0739135147253878,
+    "frac_random_worse_than_latin": 0.93725,
+    "random_p99_err": 1.3281873341113395
+   },
+   "fam_qwen3b_instruct": {
+    "truth": 0.09004851823834262,
+    "latin": 0.07521467964614095,
+    "latin_err": 1.1972199929852756,
+    "random_p50_err": 1.3581837032987187,
+    "random_p95_err": 7.692796567348504,
+    "random_median_abs_err": 2.11026585551018,
+    "frac_random_worse_than_latin": 0.869,
+    "random_p99_err": 15.888110454679527
+   },
+   "fam_qwen7b_base": {
+    "truth": 0.20878229473752088,
+    "latin": 0.19913215083135077,
+    "latin_err": 1.0484610037398885,
+    "random_p50_err": 1.0009062064619054,
+    "random_p95_err": 1.2516702049087187,
+    "random_median_abs_err": 1.093827434762719,
+    "frac_random_worse_than_latin": 0.7125,
+    "random_p99_err": 1.409430978735659
+   },
+   "fam_qwen7b_instruct": {
+    "truth": 0.02370022097729583,
+    "latin": 0.01816856774670826,
+    "latin_err": 1.3044628122428517,
+    "random_p50_err": 1.2086023716081646,
+    "random_p95_err": 2.824635118405207,
+    "random_median_abs_err": 1.543903589462114,
+    "frac_random_worse_than_latin": 0.69025,
+    "random_p99_err": 3.9604020457261098
+   }
+  }
+ },
+ "unavailable": []
+}
