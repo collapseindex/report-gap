@@ -158,6 +158,7 @@ Intervals and corrections are those of the source preregs. Nothing is re-derived
 | A verdict flips | **NOT REPLICATED** on that arm, reported as a failure to replicate our own result in the abstract. The original is not preferred over the replication on grounds of having been first. |
 | Everything flips | The pipeline is seed-sensitive in a way no result survives. Report that and stop; nothing in the project is safe. |
 | A replication run cannot read its band file | Setup error, not a result. Fix and rerun; no endpoint is read from a partial artifact. |
+| No effect anywhere: every arm returns nulls the originals did not have | The paper does not advance. Either the seed change broke something structural or the original effects were draw artifacts, and both readings are reported before either is preferred. A replication that finds nothing is a result about the original, not a failed run to be repeated until it agrees. |
 | Frozen hash differs from the originals | The stimuli changed between runs, so this is not a replication of the same design. Halt and reconcile. |
 
 ---
