@@ -59,6 +59,7 @@ CONFIRMATORY = {"modal_readout.py", "analyze_readout.py",
                 "modal_enumerate.py", "analyze_enumerate.py",
                 "modal_families.py", "analyze_families.py",
                 "modal_instrument.py", "analyze_instrument.py",
+                "modal_readjudicate.py", "analyze_readjudicate.py",
                 "modal_binary.py", "analyze_binary.py"}
 
 
