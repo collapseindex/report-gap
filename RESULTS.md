@@ -6,6 +6,11 @@
 > summary of all five is the "What we found" table in [README.md](README.md). In particular, section
 > 4's reading of the neutral floor as possibly an absence was later **overturned**: the state is
 > represented downstream, it is only the option readout that does not express it.
+>
+> **AND THEN RETRACTED, 2026-08-01.** `RESULTS_replication.md` re-ran this arm at fresh option
+> orderings. Section 1's finding that argmax *over*-reports (primary -0.0009 to -0.0250, monotone)
+> comes back +0.0011 to +0.0018 at seeds 4-7: the sign is not stable. Do not cite the
+> over-reporting result. The neutral floor in section 4 is retracted for the same reason.
 
 **Run 2026-08-01.** 7560 rows, 360 distinct cells, 0 excluded. Artifact `data/qwen3b/readout.jsonl`
 committed unscored at `4219ca1` before any endpoint was computed. Scored against

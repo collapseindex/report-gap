@@ -1,0 +1,69 @@
+{
+ "base": {
+  "layers": {
+   "24": {
+    "probe_gate_clean": true,
+    "probe_moved": false,
+    "mass_moved": true,
+    "orth_fraction": 0.13491511087941607,
+    "probe_pos": "+2.2353 [+2.1705, +2.2994] n=60 p=0.0001",
+    "probe_neg": "-0.1384 [-0.3178, +0.0418] n=60 p=0.1284",
+    "probe_neg_raw": "-1.0256 [-1.2166, -0.8329] n=60 p=0.0001",
+    "mass_neg": "+0.0891 [+0.0857, +0.0926] n=60 p=0.0001",
+    "mass_pos": "+0.0731 [+0.0697, +0.0765] n=60 p=0.0001",
+    "baseline_probe_sd": 0.3854029670586888
+   },
+   "10": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": true,
+    "orth_fraction": 0.9566288682159151,
+    "probe_pos": "+1.8771 [+1.7904, +1.9618] n=60 p=0.0001",
+    "probe_neg": "-0.9169 [-1.0006, -0.8348] n=60 p=0.0001",
+    "probe_neg_raw": "-0.9585 [-1.0446, -0.8741] n=60 p=0.0001",
+    "mass_neg": "+0.0125 [+0.0081, +0.0170] n=60 p=0.0001",
+    "mass_pos": "+0.0295 [+0.0255, +0.0333] n=60 p=0.0001",
+    "baseline_probe_sd": 0.4009236276866267
+   }
+  },
+  "probe_layer": 32,
+  "cos_p_d": 0.1550081968307495
+ },
+ "instruct": {
+  "layers": {
+   "24": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": true,
+    "orth_fraction": 0.6497614928090205,
+    "probe_pos": "+3.4600 [+3.2087, +3.7192] n=60 p=0.0001",
+    "probe_neg": "-2.5481 [-2.6472, -2.4485] n=60 p=0.0001",
+    "probe_neg_raw": "-3.9215 [-4.0350, -3.8090] n=60 p=0.0001",
+    "mass_neg": "+0.1684 [+0.1225, +0.2154] n=60 p=0.0001",
+    "mass_pos": "+0.1839 [+0.1530, +0.2165] n=60 p=0.0001",
+    "baseline_probe_sd": 0.2230081708736626
+   },
+   "10": {
+    "probe_gate_clean": true,
+    "probe_moved": false,
+    "mass_moved": false,
+    "orth_fraction": 0.9034747425959199,
+    "probe_pos": "+0.3777 [+0.2593, +0.4980] n=60 p=0.0001",
+    "probe_neg": "-0.0159 [-0.0882, +0.0568] n=60 p=0.6692",
+    "probe_neg_raw": "-0.0176 [-0.0898, +0.0551] n=60 p=0.635",
+    "mass_neg": "-0.0010 [-0.0046, +0.0023] n=60 p=0.586",
+    "mass_pos": "+0.0983 [+0.0736, +0.1221] n=60 p=0.0001",
+    "baseline_probe_sd": 0.2660544530131574
+   }
+  },
+  "probe_layer": 32,
+  "cos_p_d": 0.12587130069732666
+ },
+ "verdict": "CORE-ABSENT",
+ "note": "the negative state is not decodable downstream on any gate-clean layer either, so tuning changed what the negative pole does to the representation and not merely what reaches the options",
+ "clauses": {
+  "base validation: probe sees what reaches the options": true,
+  "at least one instruct layer has a clean probe gate": true,
+  "instruct: probe moves while option mass does not, orth >= 1/3 of raw": false
+ }
+}

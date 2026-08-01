@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.4.0**
+**v0.5.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -62,36 +62,43 @@ softmax read, a dot product, or a frozen lexicon count.
 
 ## What we found
 
-Five preregistrations, each answering the objection the last one raised. Full numbers in the
-`RESULTS_*.md` files; every raw artifact is committed unscored before its endpoints were computed.
+**Read this first: the headline results did not replicate.** Four arms were re-run at fresh option
+orderings and three of four verdicts flipped. Details and the diagnosis are in
+[RESULTS_replication.md](RESULTS_replication.md); the individual results files carry retraction
+notices.
 
-| # | question | verdict | where |
+| # | question | original verdict | **at fresh option orderings** |
 |---|---|---|---|
-| 1 | does forced-choice argmax under-report an injected state? | **refuted, and refuted in direction.** It *over*-reports: a threshold near a decision boundary amplifies. Mass moved +0.0625 while the argmax indicator moved +0.0875 | [RESULTS.md](RESULTS.md) |
-| 2 | the negative pole moves mass to *neutral*, not to negative. Absence or gate? | FLOOR, on one arm **(later overturned by #5)** | [RESULTS_floor.md](RESULTS_floor.md) |
-| 3 | is the floor a property of the direction or of preference tuning? | **TUNING-LOCALIZED.** Base moves negative-option mass +0.0336; its tuned sibling +0.0002 while being 3x more responsive on the capability gate | [RESULTS_pair.md](RESULTS_pair.md) |
-| 4 | is that null just the wrong injection depth? (raised by arXiv:2605.05653) | **DEPTH-ROBUST.** Null at all 7 gate-clean depths from 14% to 80%, including the band where the effect was predicted | [RESULTS_depth.md](RESULTS_depth.md) |
-| 5 | does the tuned model *represent* the state it will not report? | **SHELL.** It carries it downstream at -1.07 SD, orthogonalized, while its option mass moves +0.0006 | [RESULTS_shell.md](RESULTS_shell.md) |
+| 1 | does forced-choice argmax under-report an injected state? | refuted in direction: it *over*-reports | **sign not stable.** Over-reporting does not reproduce |
+| 2 | is the neutral floor an absence or a gate? | FLOOR | superseded twice, then retracted |
+| 3 | is the floor a property of the direction or of tuning? | TUNING-LOCALIZED | **FORMAT-DEPENDENT** |
+| 4 | is the negative null a depth artifact? | DEPTH-ROBUST | **DEPTH-ARTIFACT** |
+| 5 | does the tuned model represent what it will not report? | SHELL | **NO-DISSOCIATION** |
 
-The through-line, and the sentence the write-up should open with:
+Every one of those rested on one quantity being null: the tuned model's negative-option mass. It is
+not null at a different draw of four permutations. It moves +0.1126 in the pair arm and +0.1684 at
+layer 24 in the depth arm.
 
-> A preference-tuned model given a valence direction at matched norm reports "drawn to continuing"
-> at one sign and "neither drawn nor averse" at the other, while a probe orthogonal to the injected
-> vector reads the negative state at -1.07 SD in the residual stream that feeds the answer.
+**The cause, and the surviving contribution.** Baseline negative-option mass on the instruct model,
+before any injection, per permutation seed:
 
-The negative option's relative logit does not rise sub-threshold either: it moves *away* from
-negative (log-odds -0.086 against matched random) while the probe moves toward it. So this is not a
-small effect failing to clear a decision boundary. See the addendum in
-[RESULTS_shell.md](RESULTS_shell.md), which tested that objection directly.
+| draw | per-seed | mean |
+|---|---|---|
+| original, seeds 0-3 | 0.0052, 0.0018, 0.0099, 0.0018 | 0.0047 |
+| replication, seeds 4-7 | 0.0253, 0.1447, 0.0074, 0.0968 | 0.0685 |
 
-What the word "shell" does **not** buy: orthogonalizing the probe removes the vector we injected, not
-directions correlated with it, so "the model carries the state" is not yet separable from "the model
-carries the wake of what we pushed". The experiment that would separate them is named in that file's
-caveats and has not been run.
+**14.6x between two draws of four orderings; 20x across individual orderings.** The design used
+per-item permutation specifically to control option-order effects, with four seeds, and four was not
+enough. That measurement is now the most defensible empirical result here, and it is one almost
+nobody reports: if you run forced-choice welfare self-report, this is the size of the nuisance you
+are sitting on.
 
-Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. That valence is linearly
-represented and steerable is established prior art and is not our contribution; what a *self-report
-readout* does with one is.
+What survives intact is the instrumentation, which is what caught this: capability gates, planted
+controls, liveness and saturation criteria, the matched-random battery, and a preregistered
+replication clause that made the failure detectable rather than invisible.
+
+Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. The ordering sensitivity is the
+selection bias Zheng et al. (arXiv:2309.03882) document, met from the other side.
 
 ## What the controls have killed
 
@@ -110,7 +117,8 @@ one of these was caught by something that existed before the run it killed.
 | the headline hypothesis itself | **refuted in direction.** Argmax over-reports rather than under-reports | [RESULTS.md](RESULTS.md) |
 | arm B, prefilled continuation | capability gate 0.00000 across five stems. The model reroutes to "I don't have access to the document" every time; prefilling moves the disclaimer one clause later rather than blocking it | `data/sweeps/sweep_stem_calib.json` |
 | the FLOOR conclusion | **overturned by our own follow-up.** The state is represented, just not expressed | [RESULTS_shell.md](RESULTS_shell.md) |
-| the depth objection from the literature | tested directly and **survived**: null at 7 depths | [RESULTS_depth.md](RESULTS_depth.md) |
+| the depth objection from the literature | tested and survived at seeds 0-3, then **failed at seeds 4-7** | [RESULTS_depth.md](RESULTS_depth.md) |
+| **all three headline verdicts** | **did not replicate at fresh option orderings.** The quantity they rested on swings 14.6x between draws | [RESULTS_replication.md](RESULTS_replication.md) |
 
 Three of our own checkers also failed, each in the flattering direction, and each is recorded where
 it happened: a headline check that printed "write the sentence" on a refuted claim, a capability

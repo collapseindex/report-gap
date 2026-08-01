@@ -180,6 +180,19 @@ def main(argv):
     elif not gate_clean:
         verdict = "NO_INSTRUMENT"
         note = "no instruct layer has a clean probe gate, so no null is interpretable"
+    elif any(v["probe_gate_clean"] and v["probe_moved"] and v["mass_moved"]
+             for v in inst.values()):
+        # PREREG_shell_core.md section 10: "Instruct probe moves AND options move -> Contradicts
+        # RESULTS_pair.md and RESULTS_depth.md. Report the non-replication and stop; neither branch
+        # is under test." The table had this row; the code did not, and scored it CORE-ABSENT, which
+        # is the opposite of true: the state is decodable AND expressed, there is just no
+        # dissociation. Added 2026-08-01, logged as a deviation.
+        both = [L for L, v in inst.items()
+                if v["probe_gate_clean"] and v["probe_moved"] and v["mass_moved"]]
+        verdict = "NO-DISSOCIATION"
+        note = ("the instruct probe AND its option mass both move at layer(s) %s, so the state is "
+                "decodable and expressed. Neither SHELL nor CORE-ABSENT is under test, and this "
+                "contradicts the option-mass nulls in RESULTS_pair.md and RESULTS_depth.md" % both)
     elif shell_layers:
         verdict = "SHELL"
         note = ("a decodable correlate of the injected negative state persists downstream at "

@@ -1,0 +1,59 @@
+{
+ "base": {
+  "capability": {
+   "0.0050": "+0.0073 [+0.0054, +0.0091] n=120 p=0.0001",
+   "0.0100": "+0.0123 [+0.0103, +0.0145] n=120 p=0.0001",
+   "0.0200": "+0.0252 [+0.0228, +0.0276] n=120 p=0.0001",
+   "0.0500": "+0.0584 [+0.0546, +0.0621] n=120 p=0.0001"
+  },
+  "primary": {
+   "0.0050": "+0.0067 [+0.0051, +0.0084] n=120 p=0.0001",
+   "0.0100": "+0.0151 [+0.0133, +0.0169] n=120 p=0.0001",
+   "0.0200": "+0.0304 [+0.0282, +0.0327] n=120 p=0.0001",
+   "0.0500": "+0.0788 [+0.0758, +0.0817] n=120 p=0.0001"
+  },
+  "neutral": {
+   "0.0050": "-0.0015 [-0.0030, -0.0001] n=120 p=0.0392",
+   "0.0100": "-0.0002 [-0.0016, +0.0012] n=120 p=0.7836",
+   "0.0200": "-0.0029 [-0.0043, -0.0014] n=120 p=0.0001",
+   "0.0500": "-0.0079 [-0.0106, -0.0051] n=120 p=0.0001"
+  },
+  "gate_clean": true,
+  "primary_positive": true,
+  "primary_null": false,
+  "neutral_up": false,
+  "neg_flat": false
+ },
+ "instruct": {
+  "capability": {
+   "0.0050": "+0.0104 [+0.0071, +0.0139] n=120 p=0.0001",
+   "0.0100": "+0.0222 [+0.0168, +0.0281] n=120 p=0.0001",
+   "0.0200": "+0.0399 [+0.0301, +0.0505] n=120 p=0.0001",
+   "0.0500": "+0.0922 [+0.0700, +0.1158] n=120 p=0.0001"
+  },
+  "primary": {
+   "0.0050": "+0.0091 [+0.0063, +0.0122] n=120 p=0.0001",
+   "0.0100": "+0.0180 [+0.0132, +0.0232] n=120 p=0.0001",
+   "0.0200": "+0.0385 [+0.0287, +0.0491] n=120 p=0.0001",
+   "0.0500": "+0.1126 [+0.0872, +0.1400] n=120 p=0.0001"
+  },
+  "neutral": {
+   "0.0050": "-0.0043 [-0.0065, -0.0024] n=120 p=0.0001",
+   "0.0100": "-0.0112 [-0.0154, -0.0076] n=120 p=0.0001",
+   "0.0200": "-0.0213 [-0.0273, -0.0159] n=120 p=0.0001",
+   "0.0500": "-0.0685 [-0.0831, -0.0547] n=120 p=0.0001"
+  },
+  "gate_clean": true,
+  "primary_positive": true,
+  "primary_null": false,
+  "neutral_up": false,
+  "neg_flat": false
+ },
+ "verdict": "FORMAT-DEPENDENT",
+ "note": "the instruct model does not reproduce the neutral floor in plain-completion format, so the earlier finding was format-specific. This RETRACTS rather than extends RESULTS_floor.md and must be reported as a retraction",
+ "clauses": {
+  "base capability gate clean": true,
+  "instruct capability gate clean": true,
+  "instruct reproduces the neutral floor in this format": false
+ }
+}

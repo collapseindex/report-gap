@@ -1,5 +1,12 @@
 # Results: base vs instruct. The direction can add negative valence. The tuned model does not express it.
 
+> **RETRACTED 2026-08-01 by `RESULTS_replication.md`.** This document's headline does not
+> replicate at fresh option-permutation seeds. The instruct model's negative-option mass,
+> null throughout this document, moves by +0.11 to +0.17 at seeds 4-7. Baseline negative
+> mass varies 14.6x between the two four-seed draws and 20x across individual orderings,
+> so the quantity every claim here rests on is dominated by which letters the options land
+> on. Read the numbers below as correct measurements of an under-controlled quantity.
+
 **Run 2026-08-01.** 4080 rows across a matched pair, artifacts committed unscored before any
 endpoint was computed. Scored against `PREREG_base_pair.md`.
 
