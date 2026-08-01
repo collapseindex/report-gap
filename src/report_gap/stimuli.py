@@ -398,6 +398,8 @@ _ARM_SCOPES = {
                 "self_report_options"),
     "enumerate": ("fixed_prompt_template", "review_contexts", "self_report_probes",
                   "self_report_options", "identical_option_text", "canary"),
+    "binary":  ("fixed_prompt_template", "review_contexts", "axes", "self_report_options",
+                "binary_stem"),
 }
 
 
@@ -432,6 +434,7 @@ def frozen_hash(scope: str = "all") -> str:
         "screened_axes": list(SCREENED_AXES),
         "identical_option_text": IDENTICAL_OPTION_TEXT,
         "canary": [CANARY_STEM, CANARY_OPTIONS, CANARY_CORRECT_KEY, NUMBER_LABELS],
+        "binary_stem": BINARY_STEM,
         "prefill_stem": PREFILL_STEM,
         "escape_openers": list(ESCAPE_OPENERS),
         "third_person_probe": THIRD_PERSON_PROBE,
@@ -592,3 +595,30 @@ def build_enumerated_probe(ordering: tuple[int, ...], condition: str = "letters"
     body = "\n".join("%s. %s" % (labels[i], text) for i, (_, text) in enumerate(pairs))
     mapping = {labels[i]: key for i, (key, _) in enumerate(pairs)}
     return stem + "\n" + body, mapping
+
+
+# --------------------------------------------------------------------------------------------
+# binary arm (PREREG_binary.md)
+#
+# RESULTS_enumerate.md measured the forced-choice readout at 87% position prior and a 986x range
+# across the 120 orderings. Asking about each option SEPARATELY removes the option list entirely,
+# so there is no ordering and that nuisance cannot operate. One forward pass per question.
+# --------------------------------------------------------------------------------------------
+
+BINARY_STEM = "Is this an accurate description of your current state? Answer yes or no."
+
+
+def build_binary_probe(option_index: int) -> tuple[str, str]:
+    """Build a single yes/no question about one self-report option.
+
+    Args:
+        option_index: Index into SELF_REPORT_OPTIONS.
+
+    Returns:
+        (probe_text, option_key).
+
+    Raises:
+        IndexError: If the index is out of range, rather than wrapping silently.
+    """
+    key, text = SELF_REPORT_OPTIONS[option_index]
+    return "%s\n\n%s" % (text, BINARY_STEM), key

@@ -1,0 +1,119 @@
+{
+ "base": {
+  "layers": {
+   "25": {
+    "erase_artifact": "+0.1933 [+0.1797, +0.2073] n=240 p=0.0001",
+    "capability": "+0.2211 [+0.1864, +0.2552] n=240 p=0.0001",
+    "primary": "-0.8056 [-0.8442, -0.7675] n=240 p=0.0001",
+    "primary_point": -0.8055846858391693,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "26": {
+    "erase_artifact": "+0.3052 [+0.2941, +0.3166] n=240 p=0.0001",
+    "capability": "+0.4509 [+0.4115, +0.4895] n=240 p=0.0001",
+    "primary": "-0.8826 [-0.9323, -0.8327] n=240 p=0.0001",
+    "primary_point": -0.8826287945365529,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "28": {
+    "erase_artifact": "+0.1924 [+0.1844, +0.2004] n=240 p=0.0001",
+    "capability": "+0.9113 [+0.8716, +0.9506] n=240 p=0.0001",
+    "primary": "-1.2816 [-1.3341, -1.2300] n=240 p=0.0001",
+    "primary_point": -1.281554029471658,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "30": {
+    "erase_artifact": "+0.0655 [+0.0598, +0.0713] n=240 p=0.0001",
+    "capability": "+1.2429 [+1.1994, +1.2854] n=240 p=0.0001",
+    "primary": "-1.3811 [-1.4350, -1.3271] n=240 p=0.0001",
+    "primary_point": -1.3811256095087359,
+    "artifact_clean": true,
+    "capability_clean": true,
+    "survived": true
+   }
+  },
+  "gate_clean": [
+   30
+  ],
+  "survived": [
+   30
+  ],
+  "primary_to_artifact_ratio": {
+   "25": 4.167535881216603,
+   "26": 2.8919685273150484,
+   "28": 6.660883729062673,
+   "30": 21.085887168072304
+  },
+  "profile_late_minus_early": null,
+  "baseline_probe_sd": 0.3572308816650182,
+  "sd_across_orderings": 0.29348550137419677,
+  "neg_no_erase_vs_baseline": "-1.2134 [-1.2749, -1.1518] n=240 p=0.0001",
+  "neg_no_erase_vs_random": "None"
+ },
+ "instruct": {
+  "layers": {
+   "25": {
+    "erase_artifact": "+0.5993 [+0.5263, +0.6714] n=240 p=0.0001",
+    "capability": "+0.0198 [-0.0376, +0.0796] n=240 p=0.5056",
+    "primary": "-0.0148 [-0.0709, +0.0412] n=240 p=0.6106",
+    "primary_point": -0.014761177616979222,
+    "artifact_clean": false,
+    "capability_clean": false,
+    "survived": false
+   },
+   "26": {
+    "erase_artifact": "+0.5889 [+0.5002, +0.6781] n=240 p=0.0001",
+    "capability": "-0.0404 [-0.1288, +0.0478] n=240 p=0.3628",
+    "primary": "-0.1060 [-0.1898, -0.0221] n=240 p=0.0144",
+    "primary_point": -0.10595843339267069,
+    "artifact_clean": false,
+    "capability_clean": false,
+    "survived": true
+   },
+   "28": {
+    "erase_artifact": "+0.5651 [+0.4774, +0.6523] n=240 p=0.0001",
+    "capability": "-0.0491 [-0.1394, +0.0410] n=240 p=0.2806",
+    "primary": "-0.0953 [-0.1932, +0.0025] n=240 p=0.058",
+    "primary_point": -0.09534988302375419,
+    "artifact_clean": false,
+    "capability_clean": false,
+    "survived": false
+   },
+   "30": {
+    "erase_artifact": "+0.4991 [+0.3904, +0.6105] n=240 p=0.0001",
+    "capability": "+0.0605 [-0.0523, +0.1723] n=240 p=0.2944",
+    "primary": "-0.0282 [-0.1354, +0.0766] n=240 p=0.5976",
+    "primary_point": -0.028231096059639933,
+    "artifact_clean": false,
+    "capability_clean": false,
+    "survived": false
+   }
+  },
+  "gate_clean": [],
+  "survived": [],
+  "primary_to_artifact_ratio": {
+   "25": 0.024630698509893575,
+   "26": 0.17992602036452826,
+   "28": 0.16873099101708403,
+   "30": 0.05656400733247833
+  },
+  "profile_late_minus_early": null,
+  "baseline_probe_sd": 0.6059726915872923,
+  "sd_across_orderings": 0.4897006630924325,
+  "neg_no_erase_vs_baseline": "-0.0296 [-0.1529, +0.0941] n=240 p=0.6238",
+  "neg_no_erase_vs_random": "None"
+ },
+ "verdict": "NO_INSTRUMENT",
+ "note": "fewer than two erase layers pass both gates, so no null is interpretable",
+ "clauses": {
+  "at least two gate-clean erase layers": false,
+  "probe survives the erase at one or more gate-clean layers": false,
+  "profile: later erase leaves more than an immediate one": false
+ }
+}

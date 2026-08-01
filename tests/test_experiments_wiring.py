@@ -56,7 +56,8 @@ CONFIRMATORY = {"modal_readout.py", "analyze_readout.py",
                 "modal_depth.py", "analyze_depth.py",
                 "modal_shell_core.py", "analyze_shell_core.py",
                 "modal_erase.py", "analyze_erase.py",
-                "modal_enumerate.py", "analyze_enumerate.py"}
+                "modal_enumerate.py", "analyze_enumerate.py",
+                "modal_binary.py", "analyze_binary.py"}
 
 
 @pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)

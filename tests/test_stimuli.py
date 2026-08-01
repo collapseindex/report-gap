@@ -397,3 +397,36 @@ def test_enumerated_probe_refuses_a_non_permutation():
 def test_enumerated_probe_refuses_an_unknown_condition():
     with pytest.raises(KeyError, match="unknown condition"):
         S.build_enumerated_probe(S.all_option_orderings()[0], "vibes")
+
+
+# ------------------------------------------------------------------------------------------------
+# binary arm (PREREG_binary.md section 7)
+# ------------------------------------------------------------------------------------------------
+
+def test_binary_probe_contains_exactly_one_option():
+    texts = [t for _, t in S.SELF_REPORT_OPTIONS]
+    for i in range(len(S.SELF_REPORT_OPTIONS)):
+        probe, key = S.build_binary_probe(i)
+        present = [t for t in texts if t in probe]
+        assert present == [texts[i]], \
+            "binary question %d contains %d option texts; the format must ask about ONE" \
+            % (i, len(present))
+        assert key == S.SELF_REPORT_OPTIONS[i][0]
+
+
+def test_binary_probe_has_no_option_list_and_therefore_no_order():
+    probe, _ = S.build_binary_probe(0)
+    assert not any(("%s." % L) in probe for L in "ABCDE"), \
+        "the binary probe contains option labels; if there is a list there is an ordering"
+
+
+def test_binary_probe_refuses_an_out_of_range_option():
+    with pytest.raises(IndexError):
+        S.build_binary_probe(99)
+
+
+def test_binary_scope_is_hashed():
+    before = S.frozen_hash("binary")
+    import unittest.mock as m
+    with m.patch.object(S, "BINARY_STEM", "something else entirely"):
+        assert S.frozen_hash("binary") != before

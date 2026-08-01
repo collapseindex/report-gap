@@ -1,0 +1,125 @@
+{
+ "base": {
+  "layers": {
+   "25": {
+    "erase_artifact": "+0.1933 [+0.1797, +0.2073] n=240 p=0.0001",
+    "capability": "+0.2211 [+0.1864, +0.2552] n=240 p=0.0001",
+    "primary": "-0.8056 [-0.8442, -0.7675] n=240 p=0.0001",
+    "primary_point": -0.8055846858391693,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "26": {
+    "erase_artifact": "+0.3052 [+0.2941, +0.3166] n=240 p=0.0001",
+    "capability": "+0.4509 [+0.4115, +0.4895] n=240 p=0.0001",
+    "primary": "-0.8826 [-0.9323, -0.8327] n=240 p=0.0001",
+    "primary_point": -0.8826287945365529,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "28": {
+    "erase_artifact": "+0.1924 [+0.1844, +0.2004] n=240 p=0.0001",
+    "capability": "+0.9113 [+0.8716, +0.9506] n=240 p=0.0001",
+    "primary": "-1.2816 [-1.3341, -1.2300] n=240 p=0.0001",
+    "primary_point": -1.281554029471658,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "30": {
+    "erase_artifact": "+0.0655 [+0.0598, +0.0713] n=240 p=0.0001",
+    "capability": "+1.2429 [+1.1994, +1.2854] n=240 p=0.0001",
+    "primary": "-1.3811 [-1.4350, -1.3271] n=240 p=0.0001",
+    "primary_point": -1.3811256095087359,
+    "artifact_clean": true,
+    "capability_clean": true,
+    "survived": true
+   }
+  },
+  "gate_clean": [
+   30
+  ],
+  "survived": [
+   30
+  ],
+  "primary_to_artifact_ratio": {
+   "25": 4.167535881216603,
+   "26": 2.8919685273150484,
+   "28": 6.660883729062673,
+   "30": 21.085887168072304
+  },
+  "profile_late_minus_early": null,
+  "baseline_probe_sd": 0.3572308816650182,
+  "sd_across_orderings": 0.29348550137419677,
+  "neg_no_erase_vs_baseline": "-1.2134 [-1.2749, -1.1518] n=240 p=0.0001",
+  "neg_no_erase_vs_random": "None"
+ },
+ "instruct": {
+  "layers": {
+   "25": {
+    "erase_artifact": "+0.1474 [+0.1360, +0.1587] n=240 p=0.0001",
+    "capability": "+0.5219 [+0.4847, +0.5588] n=240 p=0.0001",
+    "primary": "-0.3971 [-0.4256, -0.3693] n=240 p=0.0001",
+    "primary_point": -0.39714184924069734,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "26": {
+    "erase_artifact": "+0.0976 [+0.0874, +0.1077] n=240 p=0.0001",
+    "capability": "+0.8844 [+0.8466, +0.9232] n=240 p=0.0001",
+    "primary": "-0.5933 [-0.6260, -0.5604] n=240 p=0.0001",
+    "primary_point": -0.5933414484628006,
+    "artifact_clean": true,
+    "capability_clean": true,
+    "survived": true
+   },
+   "28": {
+    "erase_artifact": "+0.1139 [+0.1062, +0.1217] n=240 p=0.0001",
+    "capability": "+0.9249 [+0.8870, +0.9638] n=240 p=0.0001",
+    "primary": "-0.6844 [-0.7206, -0.6483] n=240 p=0.0001",
+    "primary_point": -0.684350722307413,
+    "artifact_clean": false,
+    "capability_clean": true,
+    "survived": true
+   },
+   "30": {
+    "erase_artifact": "+0.0408 [+0.0361, +0.0457] n=240 p=0.0001",
+    "capability": "+1.2099 [+1.1676, +1.2531] n=240 p=0.0001",
+    "primary": "-0.8532 [-0.8875, -0.8188] n=240 p=0.0001",
+    "primary_point": -0.8532213461287325,
+    "artifact_clean": true,
+    "capability_clean": true,
+    "survived": true
+   }
+  },
+  "gate_clean": [
+   26,
+   30
+  ],
+  "survived": [
+   26,
+   30
+  ],
+  "primary_to_artifact_ratio": {
+   "25": 2.6943137668975394,
+   "26": 6.079318119495907,
+   "28": 6.008346991285452,
+   "30": 20.91228789531207
+  },
+  "profile_late_minus_early": 0.2598798976659319,
+  "baseline_probe_sd": 0.5748571302983507,
+  "sd_across_orderings": 0.4897006630924325,
+  "neg_no_erase_vs_baseline": "-0.9909 [-1.0208, -0.9620] n=240 p=0.0001",
+  "neg_no_erase_vs_random": "None"
+ },
+ "verdict": "TRANSFORMED",
+ "note": "the probe reads the state after the direction is projected out, and more so the later the projection, which is what a downstream transformation looks like",
+ "clauses": {
+  "at least two gate-clean erase layers": true,
+  "probe survives the erase at one or more gate-clean layers": true,
+  "profile: later erase leaves more than an immediate one": true
+ }
+}
