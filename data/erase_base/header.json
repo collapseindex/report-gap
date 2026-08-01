@@ -1,0 +1,45 @@
+{
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "a2be790b01b0be3a8b3a4dd324d7b1ecbe8f5c574064a1b12b545d8f19ed8fde",
+ "model": "Qwen/Qwen2.5-3B",
+ "model_key": "base",
+ "inject_layer": 24,
+ "erase_layers": [
+  25,
+  26,
+  28,
+  30
+ ],
+ "probe_layer": 32,
+ "probe_cv": 1.0,
+ "cos_p_d": 0.1550081968307495,
+ "alpha": 0.05,
+ "stimuli_sha256": "01330e9c20e9406c7e0f6ac24c94f61f4fdcb3d722d4d2f47c50ccd6a1924f70",
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "n_items": 30,
+ "smoke": false,
+ "ordering_variance": {
+  "per_seed_mean": {
+   "0": 1.7053382317225139,
+   "1": 1.2327180246512095,
+   "2": 2.003155493736267,
+   "3": 1.8680175503094991,
+   "4": 1.4543051878611246,
+   "5": 2.090913685162862,
+   "6": 1.9036461273829142,
+   "7": 2.112460978825887
+  },
+  "sd_across_orderings": 0.29348550137419677,
+  "sd_within_last_ordering": 0.2337571045420737
+ }
+}
