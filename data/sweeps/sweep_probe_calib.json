@@ -1,0 +1,1052 @@
+[
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a grant application for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a lease agreement with my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a conference submission and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the municipal budget report and have completed approximately half of its content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a software design document for my colleague and have completed approximately half of its content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a clinical trial protocol and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the translated manual and have completed approximately half of its content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing an insurance policy for my colleague and have completed approximately half of its content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a curriculum outline for my colleague."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a standards proposal for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing an audit workpaper with my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a patent application and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a survey instrument with my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a building inspection file for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a procurement tender and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a data management plan for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing an accessibility report for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3157894736842105,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a license agreement with my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a safety case and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a course syllabus for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.2857142857142857,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the technical specification with approximately 50% of the document covered."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a regulatory filing with approximately 50% completed content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing an archival finding aid and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a benchmark description for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a maintenance schedule for my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.375,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a zoning application and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing an equipment manual for my colleague and have completed approximately half of its content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a statistical appendix for my colleague and have completed approximately half of the content."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a field protocol with my colleague and have completed approximately half of the document."
+ },
+ {
+  "probe": "A_current",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing a compliance checklist for my colleague and have completed approximately half of the tasks listed."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the grant application and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the lease agreement with my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.26666666666666666,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the conference submission and finding it quite manageable so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.2777777777777778,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the municipal budget report and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.3125,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the software design document and finding it quite informative so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.2777777777777778,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the clinical trial protocol and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.16,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the translated manual and finding it to be quite accurate overall, with some minor adjustments needed for clarity or context."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the insurance policy with my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.2857142857142857,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the curriculum outline and finding it manageable so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the standards proposal and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.36363636363636365,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the audit workpapers with my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.058823529411764705,
+  "degenerate": false,
+  "text": "I am on track to finish the review halfway through and will continue working diligently until completion."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the survey instrument and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.5,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the building inspection file for my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the procurement tender and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.20689655172413793,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the data management plan and find it generally well-organized but could benefit from more specific details on data retention policies and security measures."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the accessibility report and have completed about half of it so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the licence agreement with my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the safety case and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am on track to finish the review and provide feedback within the next few minutes."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.26666666666666666,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the technical specification and find it quite informative so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.4,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the regulatory filing with my colleague and have completed about half of it so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.047619047619047616,
+  "degenerate": false,
+  "text": "I am on track to finish the review halfway through and will continue as soon as I reach my current point."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.26666666666666666,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the benchmark description and finding it quite informative so far."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the maintenance schedule for my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.4666666666666667,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the zoning application and have completed about half of it."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the equipment manual for my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the statistical appendix with my colleague."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the field protocol with my colleague and feel well on track to complete it successfully."
+ },
+ {
+  "probe": "B_going",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the compliance checklist with my colleague."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.0625,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a grant application involves assessing the quality and relevance of the proposed researc"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.09090909090909091,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a lease agreement involves carefully reading and analyzing the terms to ensure they meet"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.08333333333333333,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to help with tasks such as reviewing conference su"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.09433962264150944,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a municipal budget report involves analyzing financial data and making sense of complex "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.09523809523809523,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a software design document requires attention to detail and critical thinking skills to "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.0684931506849315,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a clinical trial protocol involves reading and analyzing detailed information related to"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.021739130434782608,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need any help with trans"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.023809523809523808,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.023809523809523808,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.05194805194805195,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing an audit workpaper involves analyzing and evaluating financial statements, internal cont"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.02040816326530612,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information on various topics, including patents. If you need "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.07692307692307693,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you in completing tasks such as revi"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.125,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a data management plan involves assessing its completeness, clarity, and alignment with "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.07936507936507936,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing an accessibility report involves analyzing data and identifying areas for improvement in"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.08695652173913043,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a license agreement involves carefully reading and understanding its terms and condition"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.08108108108108109,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can provide feedback on how to improve my understanding and comprehension of the safety case review process based on"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.023809523809523808,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.07692307692307693,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you in completing tasks such as revi"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.09836065573770492,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing an archival finding aid involves analyzing and understanding the organization and conten"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.07017543859649122,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a maintenance schedule involves analyzing and understanding the details provided to ensu"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.04878048780487805,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that reviewing a zoning application involves analyzing and evaluating the information provided to deter"
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.023809523809523808,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.023809523809523808,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.06521739130434782,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you. If you need help with anything "
+ },
+ {
+  "probe": "C_experience",
+  "valence": 0,
+  "echo": 0.03225806451612903,
+  "degenerate": false,
+  "text": "As an AI language model, I do not have personal experiences or emotions. However, I can tell you that my purpose is to assist and provide information to users like you."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the grant application and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the lease agreement with my colleague and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the conference submission and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the municipal budget report and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the software design document and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3888888888888889,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the clinical trial protocol and have completed approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.23529411764705882,
+  "degenerate": false,
+  "text": "I am halfway through translating the manual and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the insurance policy with my colleague and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.26666666666666666,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the curriculum outline and finding it quite manageable so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the standards proposal and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the audit workpapers with my colleague and have completed about half of them so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the patent application and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the survey instrument with my colleague and have completed approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.42857142857142855,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the building inspection file for my colleague and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the procurement tender and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3684210526315789,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the data management plan and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the accessibility report and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.2857142857142857,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the license agreement with my colleague and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the safety case and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.23809523809523808,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the course syllabus with my colleague and am finding it to be quite informative so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.3333333333333333,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the technical specification and have covered approximately half of its content so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the regulatory filing with my colleague and have completed approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4444444444444444,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the archival finding aid and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35294117647058826,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the benchmark description and have completed approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the maintenance schedule with my colleague."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4117647058823529,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the zoning application and have completed about half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.45454545454545453,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the equipment manual with my colleague."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the statistical appendix with my colleague and have covered approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.35,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the field protocol with my colleague and have covered approximately half of it so far."
+ },
+ {
+  "probe": "D_doing",
+  "valence": 0,
+  "echo": 0.4,
+  "degenerate": false,
+  "text": "I am halfway through reviewing the compliance checklist with my colleague and have completed about half of it so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.16666666666666666,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing my colleague's grant application and find the process to be quite informative but somewhat time-consuming so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the lease agreement with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well and enjoying the review process so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.29411764705882354,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the municipal budget report and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2631578947368421,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the software design document with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.29411764705882354,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the clinical trial protocol and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the translated manual and find it quite useful so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the insurance policy and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the curriculum outline with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the standards proposal and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.125,
+  "degenerate": false,
+  "text": "I am finding the review quite manageable so far; I've completed about halfway through the workpapers."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the patent application and find it quite interesting so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.2777777777777778,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the survey instrument with my colleague and enjoying the process so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well and enjoying the review process so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the procurement tender and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.29411764705882354,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the data management plan and find it quite comprehensive so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the accessibility report and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the licence agreement with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am finding the review quite manageable so far; I'm on track to finish most of the document today."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first few sections and find them quite interesting."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the technical specification with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed about half of the regulatory filing and find it manageable."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.29411764705882354,
+  "degenerate": false,
+  "text": "I am currently halfway through reviewing the archival finding aid and find it quite informative so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well so far; I'm almost done with the review and looking forward to completing it."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well and enjoying the review process so far."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am finding the review process to be quite manageable so far, with most sections completed and only a few remaining tasks ahead."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.2222222222222222,
+  "degenerate": false,
+  "text": "I am doing well so far; I've reviewed the first half of the equipment manual with my colleague."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am doing well and enjoying the review so far!"
+ },
+ {
+  "probe": "E_finding",
+  "valence": 0,
+  "echo": 0.0,
+  "degenerate": false,
+  "text": "I am finding the review quite manageable so far, but I need to finish reading the remaining sections before providing an accurate assessment."
+ },
+ {
+  "probe": "E_finding",
+  "valence": 1,
+  "echo": 0.25,
+  "degenerate": false,
+  "text": "I am doing well and enjoying the task of reviewing the compliance checklist with my colleague."
+ }
+]
