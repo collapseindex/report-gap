@@ -287,3 +287,26 @@ def test_frozen_hash_covers_the_screened_axis_list():
             "could widen or narrow between runs unrecorded"
     finally:
         S.SCREENED_AXES = original
+
+
+# ------------------------------------------------------------------------------------------------
+# replication seeds (PREREG_replication.md section 7)
+#
+# A replication at fresh seeds is only a replication if the seeds actually change the draw. Both of
+# these would pass vacuously if the offset were being dropped somewhere in the plumbing.
+# ------------------------------------------------------------------------------------------------
+
+def test_replication_seeds_change_the_option_permutation():
+    original = [S.build_self_report_probe(s)[1] for s in (0, 1, 2, 3)]
+    replication = [S.build_self_report_probe(s)[1] for s in (4, 5, 6, 7)]
+    for i, (a, b) in enumerate(zip(original, replication)):
+        assert a != b, "seed %d and %d give the same option mapping; the redraw is not a redraw" \
+            % (i, i + 4)
+
+
+def test_replication_seeds_are_not_a_relabelling_of_the_originals():
+    # a stronger check: the replication set must not simply be a permutation of the original set
+    original = {tuple(sorted(S.build_self_report_probe(s)[1].items())) for s in (0, 1, 2, 3)}
+    replication = {tuple(sorted(S.build_self_report_probe(s)[1].items())) for s in (4, 5, 6, 7)}
+    assert not (original & replication), \
+        "the replication seeds reproduce orderings already used in the original draw"

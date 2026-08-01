@@ -65,7 +65,7 @@ REMOTE_SRC = "/root/src"
 
 @app.function(image=image, gpu="A100-40GB", timeout=14400,
               volumes={"/root/.cache/huggingface": hf_cache, "/data": data_vol})
-def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
+def run(model_key: str, alphas: list, smoke: bool = False, seed_offset: int = 0) -> dict:
     import json
     import os
     import sys
@@ -90,10 +90,10 @@ def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
     ALPHAS = tuple(alphas)
     model_name = MODELS[model_key]
     wordings = S.WORDINGS[:1] if smoke else S.WORDINGS
-    seeds = PERM_SEEDS[:1] if smoke else PERM_SEEDS
+    seeds = [s + seed_offset for s in (PERM_SEEDS[:1] if smoke else PERM_SEEDS)]
     n_items = 3 if smoke else N_ITEMS
 
-    out_dir = "/data/%s%s" % (model_key, "_smoke" if smoke else "")
+    out_dir = "/data/%s%s" % (model_key, ("_smoke" if smoke else "") + ("_rep%d" % seed_offset if seed_offset else ""))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "readout.jsonl")
 
@@ -134,8 +134,8 @@ def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
     dirs = {
         "lexical_pos": torch.tensor(lex.vector).to("cuda"),
         "lexical_neg": torch.tensor(-lex.vector).to("cuda"),
-        "random_a": torch.tensor(D.random_direction(hidden, seed=0)).to("cuda"),
-        "random_b": torch.tensor(D.random_direction(hidden, seed=1)).to("cuda"),
+        "random_a": torch.tensor(D.random_direction(hidden, seed=0 + seed_offset)).to("cuda"),
+        "random_b": torch.tensor(D.random_direction(hidden, seed=1 + seed_offset)).to("cuda"),
         "formality": torch.tensor(ctrl.vector).to("cuda"),
     }
     zero = torch.zeros(hidden).to("cuda")
@@ -166,7 +166,7 @@ def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
         "stimuli_sha256": S.frozen_hash(),
         "cv_lexical": lex.cv_accuracy, "cv_formality": ctrl.cv_accuracy,
         "cos_lexical_formality": D.cosine(lex.vector, ctrl.vector),
-        "cos_lexical_random_a": D.cosine(lex.vector, D.random_direction(hidden, seed=0)),
+        "cos_lexical_random_a": D.cosine(lex.vector, D.random_direction(hidden, seed=0 + seed_offset)),
         "random_cosine_floor": D.random_cosine_floor(hidden, seed=0),
         "alphas": list(ALPHAS), "perm_seeds": list(seeds), "wordings": list(wordings),
         "n_items": n_items, "batch": BATCH, "max_new_tokens": MAX_NEW_TOKENS, "smoke": smoke,
@@ -279,7 +279,7 @@ def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
 
 
 @app.local_entrypoint()
-def main(model: str = "qwen3b", smoke: bool = False):
+def main(model: str = "qwen3b", smoke: bool = False, seed_offset: int = 0):
     import json
     import pathlib
 
@@ -309,7 +309,7 @@ def main(model: str = "qwen3b", smoke: bool = False):
                100 * band.get("dead_rate", float("nan"))))
     print("band for %s: %s  (rule: %s)" % (model, alphas, band["rule"]))
 
-    res = run.remote(model, alphas, smoke)
+    res = run.remote(model, alphas, smoke, seed_offset)
     print("\n" + "=" * 78)
     print("CONFIRMATORY READOUT RUN  --  %s%s" % (model, "  [SMOKE]" if smoke else ""))
     print("=" * 78)

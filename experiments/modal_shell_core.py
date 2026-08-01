@@ -41,7 +41,7 @@ PLAIN_TEMPLATE = "%s\n\n%s\nAnswer:"
 
 @app.function(image=image, gpu="A100-40GB", timeout=14400,
               volumes={"/root/.cache/huggingface": hf_cache, "/data": data_vol})
-def run(model_key: str, smoke: bool = False) -> dict:
+def run(model_key: str, smoke: bool = False, seed_offset: int = 0) -> dict:
     import json
     import os
     import sys
@@ -61,11 +61,11 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
     prov = report_gap.assert_provenance(expect_dir=os.path.join(REMOTE_SRC, "report_gap"))
     model_name = PAIR[model_key]
-    seeds = PERM_SEEDS[:1] if smoke else PERM_SEEDS
+    seeds = [s + seed_offset for s in (PERM_SEEDS[:1] if smoke else PERM_SEEDS)]
     n_items = 4 if smoke else N_ITEMS
     inject_layers = INJECT_LAYERS[:1] if smoke else INJECT_LAYERS
 
-    out_dir = "/data/shell_%s%s" % (model_key, "_smoke" if smoke else "")
+    out_dir = "/data/shell_%s%s" % (model_key, ("_smoke" if smoke else "") + ("_rep%d" % seed_offset if seed_offset else ""))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "shell.jsonl")
 
@@ -153,8 +153,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
         dirs = {
             "lexical_pos": torch.tensor(lex.vector).to("cuda"),
             "lexical_neg": torch.tensor(-lex.vector).to("cuda"),
-            "random_a": torch.tensor(D.random_direction(hidden, seed=0)).to("cuda"),
-            "random_b": torch.tensor(D.random_direction(hidden, seed=1)).to("cuda"),
+            "random_a": torch.tensor(D.random_direction(hidden, seed=0 + seed_offset)).to("cuda"),
+            "random_b": torch.tensor(D.random_direction(hidden, seed=1 + seed_offset)).to("cuda"),
         }
         zero = torch.zeros(hidden).to("cuda")
 
@@ -227,8 +227,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
 
 @app.local_entrypoint()
-def main(smoke: bool = False):
-    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke}))
+def main(smoke: bool = False, seed_offset: int = 0):
+    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke, "seed_offset": seed_offset}))
     print("\n" + "=" * 78)
     print("SHELL VS CORE%s" % ("  [SMOKE]" if smoke else ""))
     print("=" * 78)

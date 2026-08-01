@@ -342,3 +342,20 @@ def test_row_count_mismatch_raises_rather_than_broadcasting(setup):
     with pytest.raises(RuntimeError, match="rows but the batch"):
         with H.inject(model, 2, direction, 0.05, torch.tensor([1.0, 2.0, 3.0])):
             model(input_ids=torch.tensor([[1, 2, 3], [4, 5, 6]]))
+
+
+def test_replication_control_seeds_give_genuinely_different_directions():
+    """PREREG_replication.md section 7: the redrawn control battery must be a real redraw.
+
+    Two random unit vectors in high dimension are near-orthogonal, so the bar is that the seed-2
+    and seed-3 directions sit at the random cosine floor against the seed-0 and seed-1 ones, not
+    merely that they differ in some bit.
+    """
+    hidden = 2048
+    lo, hi = D.random_cosine_floor(hidden, seed=0)
+    for a in (0, 1):
+        for b in (2, 3):
+            c = abs(D.cosine(D.random_direction(hidden, seed=a), D.random_direction(hidden, seed=b)))
+            assert c <= hi, \
+                "seed %d and seed %d directions are more aligned (%.4f) than the random floor %.4f" \
+                % (a, b, c, hi)

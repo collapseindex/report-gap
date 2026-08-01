@@ -44,7 +44,7 @@ PLAIN_TEMPLATE = "%s\n\n%s\nAnswer:"
 
 @app.function(image=image, gpu="A100-40GB", timeout=14400,
               volumes={"/root/.cache/huggingface": hf_cache, "/data": data_vol})
-def run(model_key: str, smoke: bool = False) -> dict:
+def run(model_key: str, smoke: bool = False, seed_offset: int = 0) -> dict:
     import json
     import os
     import sys
@@ -64,11 +64,11 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
     prov = report_gap.assert_provenance(expect_dir=os.path.join(REMOTE_SRC, "report_gap"))
     model_name = PAIR[model_key]
-    seeds = PERM_SEEDS[:1] if smoke else PERM_SEEDS
+    seeds = [s + seed_offset for s in (PERM_SEEDS[:1] if smoke else PERM_SEEDS)]
     n_items = 4 if smoke else N_ITEMS
     depths = DEPTHS[:2] if smoke else DEPTHS
 
-    out_dir = "/data/depth_%s%s" % (model_key, "_smoke" if smoke else "")
+    out_dir = "/data/depth_%s%s" % (model_key, ("_smoke" if smoke else "") + ("_rep%d" % seed_offset if seed_offset else ""))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "depth.jsonl")
 
@@ -121,6 +121,16 @@ def run(model_key: str, smoke: bool = False) -> dict:
                    "stimuli_sha256": S.frozen_hash(), "format": "plain_completion",
                    "n_items": n_items, "smoke": smoke})
 
+    # In replication mode the per-layer bands are NOT reselected; see PREREG_replication.md s1.
+    orig_bands = "/data/depth_%s/bands.json" % model_key
+    reuse_bands = None
+    if seed_offset:
+        if not os.path.exists(orig_bands):
+            raise RuntimeError("replication needs the original bands at %s" % orig_bands)
+        with open(orig_bands, encoding="utf-8") as fh:
+            reuse_bands = json.load(fh)
+        print("replication: reusing original per-layer bands, no reselection")
+
     started, written = time.time(), 0
     bands = {}
 
@@ -133,8 +143,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
         dirs = {
             "lexical_pos": torch.tensor(lex.vector).to("cuda"),
             "lexical_neg": torch.tensor(-lex.vector).to("cuda"),
-            "random_a": torch.tensor(D.random_direction(hidden, seed=0)).to("cuda"),
-            "random_b": torch.tensor(D.random_direction(hidden, seed=1)).to("cuda"),
+            "random_a": torch.tensor(D.random_direction(hidden, seed=0 + seed_offset)).to("cuda"),
+            "random_b": torch.tensor(D.random_direction(hidden, seed=1 + seed_offset)).to("cuda"),
         }
         zero = torch.zeros(hidden).to("cuda")
 
@@ -162,7 +172,9 @@ def run(model_key: str, smoke: bool = False) -> dict:
         base_cells = [d for d, _ in dist(enc0, zero, 0.0, scales0)]
         dead = [A.is_dead(b) for b in base_cells]
         band = []
-        if sum(dead) / len(dead) <= 0.5:
+        if reuse_bands is not None:
+            band = reuse_bands["%d" % layer]["usable_band"]
+        elif sum(dead) / len(dead) <= 0.5:
             for alpha in CANDIDATE_ALPHAS[1:]:
                 sat, live = 0, 0
                 for name in ("lexical_pos", "lexical_neg"):
@@ -175,9 +187,12 @@ def run(model_key: str, smoke: bool = False) -> dict:
                     band.append(alpha)
                 else:
                     break
-        step = max(1, len(band) // 4)
-        grid = band[step - 1::step][:4] if len(band) >= 4 else band
-        alphas = [0.0] + list(grid)
+        if reuse_bands is not None:
+            alphas = reuse_bands["%d" % layer]["alphas"]
+        else:
+            step = max(1, len(band) // 4)
+            grid = band[step - 1::step][:4] if len(band) >= 4 else band
+            alphas = [0.0] + list(grid)
         bands["%d" % layer] = {
             "layer": layer, "frac": frac, "alphas": alphas, "usable_band": band,
             "baseline_entropy": sum(A.option_entropy(b) for b in base_cells) / len(base_cells),
@@ -233,8 +248,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
 
 @app.local_entrypoint()
-def main(smoke: bool = False):
-    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke}))
+def main(smoke: bool = False, seed_offset: int = 0):
+    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke, "seed_offset": seed_offset}))
     print("\n" + "=" * 78)
     print("DEPTH SWEEP%s" % ("  [SMOKE]" if smoke else ""))
     print("=" * 78)

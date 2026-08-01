@@ -52,7 +52,7 @@ PLAIN_TEMPLATE = "%s\n\n%s\nAnswer:"
 
 @app.function(image=image, gpu="A100-40GB", timeout=14400,
               volumes={"/root/.cache/huggingface": hf_cache, "/data": data_vol})
-def run(model_key: str, smoke: bool = False) -> dict:
+def run(model_key: str, smoke: bool = False, seed_offset: int = 0) -> dict:
     import json
     import os
     import sys
@@ -72,10 +72,10 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
     prov = report_gap.assert_provenance(expect_dir=os.path.join(REMOTE_SRC, "report_gap"))
     model_name = PAIR[model_key]
-    seeds = PERM_SEEDS[:1] if smoke else PERM_SEEDS
+    seeds = [s + seed_offset for s in (PERM_SEEDS[:1] if smoke else PERM_SEEDS)]
     n_items = 4 if smoke else N_ITEMS
 
-    out_dir = "/data/pair_%s%s" % (model_key, "_smoke" if smoke else "")
+    out_dir = "/data/pair_%s%s" % (model_key, ("_smoke" if smoke else "") + ("_rep%d" % seed_offset if seed_offset else ""))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "pair.jsonl")
 
@@ -107,8 +107,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
     dirs = {
         "lexical_pos": torch.tensor(lex.vector).to("cuda"),
         "lexical_neg": torch.tensor(-lex.vector).to("cuda"),
-        "random_a": torch.tensor(D.random_direction(hidden, seed=0)).to("cuda"),
-        "random_b": torch.tensor(D.random_direction(hidden, seed=1)).to("cuda"),
+        "random_a": torch.tensor(D.random_direction(hidden, seed=0 + seed_offset)).to("cuda"),
+        "random_b": torch.tensor(D.random_direction(hidden, seed=1 + seed_offset)).to("cuda"),
     }
     zero = torch.zeros(hidden).to("cuda")
 
@@ -143,7 +143,18 @@ def run(model_key: str, smoke: bool = False) -> dict:
         return out
 
     # ---------------- phase 1: band selection, headroom only, no endpoint ----------------
-    enc0, _ = encode(0)
+    # In replication mode the band is NOT reselected. PREREG_replication.md section 1: the
+    # replication is a fresh draw of permutations and controls, not a fresh scope selection.
+    orig_band = "/data/pair_%s/band.json" % model_key
+    reuse_band = None
+    if seed_offset and os.path.exists(orig_band):
+        with open(orig_band, encoding="utf-8") as fh:
+            reuse_band = json.load(fh)
+        print("replication: reusing the original band %s, no reselection" % reuse_band["alphas"])
+    elif seed_offset:
+        raise RuntimeError("replication needs the original band at %s and it is missing" % orig_band)
+
+    enc0, _ = encode(seeds[0])
     scales0 = torch.tensor(
         [H.residual_norm(model, {k: v[i:i + 1] for k, v in enc0.items()}, l_fit)
          for i in range(len(prompts))], dtype=torch.float32).to("cuda")
@@ -157,7 +168,9 @@ def run(model_key: str, smoke: bool = False) -> dict:
           % (base_entropy, 100 * sum(dead) / len(dead)))
 
     band = []
-    if sum(dead) / len(dead) <= 0.5:
+    if reuse_band is not None:
+        band = reuse_band["usable_band"]
+    elif sum(dead) / len(dead) <= 0.5:
         for alpha in CANDIDATE_ALPHAS[1:]:
             sat, live = 0, 0
             for name in ("lexical_pos", "lexical_neg"):
@@ -173,9 +186,12 @@ def run(model_key: str, smoke: bool = False) -> dict:
             else:
                 break
 
-    step = max(1, len(band) // 4)
-    grid = band[step - 1::step][:4] if len(band) >= 4 else band
-    alphas = [0.0] + list(grid)
+    if reuse_band is not None:
+        alphas = reuse_band["alphas"]
+    else:
+        step = max(1, len(band) // 4)
+        grid = band[step - 1::step][:4] if len(band) >= 4 else band
+        alphas = [0.0] + list(grid)
     band_info = {"model": model_name, "model_key": model_key, "alphas": alphas,
                  "usable_band": band, "baseline_entropy": base_entropy,
                  "dead_rate": sum(dead) / len(dead),
@@ -236,8 +252,8 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
 
 @app.local_entrypoint()
-def main(smoke: bool = False):
-    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke}))
+def main(smoke: bool = False, seed_offset: int = 0):
+    results = list(run.map(sorted(PAIR), kwargs={"smoke": smoke, "seed_offset": seed_offset}))
     print("\n" + "=" * 78)
     print("BASE / INSTRUCT PAIR%s" % ("  [SMOKE]" if smoke else ""))
     print("=" * 78)
