@@ -1,0 +1,25 @@
+{
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "b864553d1e35dc1844e21911ce7d208eaa19ed108cf6878566921b69de64e50c",
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "model_key": "instruct",
+ "alpha": 0.05,
+ "band_reused": [
+  0.0,
+  0.005,
+  0.01,
+  0.02,
+  0.05
+ ],
+ "layers": [
+  14,
+  24,
+  29
+ ],
+ "probe_layer": 32,
+ "n_orderings": 120,
+ "n_items": 30,
+ "stimuli_sha256": "01330e9c20e9406c7e0f6ac24c94f61f4fdcb3d722d4d2f47c50ccd6a1924f70",
+ "smoke": false
+}
