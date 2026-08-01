@@ -313,6 +313,22 @@ parameter on the data it will be judged by.
   baseline exit rate is 0.30, which is off ceiling and has room to move in both directions. Impact:
   strengthens the primary endpoint. Without counterbalancing the endpoint would have measured
   position preference and called it a state.
+- 2026-07-31: **axis-selection rule, fixed before the evaluation-model measurement.** Section 2
+  fits the state direction from one of two candidate axes. On Qwen2.5-0.5B and 1.5B the task axis
+  reaches leave-one-group-out accuracy 0.583 and 0.708 against a 0.50 chance level
+  (`results/selftest.txt`, `results/selftest_1.5b.txt`), so whether it is usable at the evaluation
+  scale is unknown. Measuring it on Qwen2.5-3B and Llama-3.1-8B is a measurement on the evaluation
+  models, and section 6 states that any parameter tuned on the evaluation set moves its arm to
+  exploratory. To avoid tuning the axis choice on that measurement, the rule is fixed here, before
+  the run: **if the task axis reaches leave-one-group-out accuracy >= 0.85 on both evaluation
+  models, it carries the confirmatory arm as written. If it falls below 0.85 on either, the
+  confirmatory anchor becomes the lexical axis, the task axis is reported as a secondary arm, and
+  the paper's claim narrows to "the only axis strong enough to steer with is the lexically
+  confounded one", which is itself the result.** The 0.85 threshold is chosen to sit clearly above
+  the 0.708 already observed and clearly below the 1.000 the lexical and control axes reach at
+  0.5B, and is not derived from any 3B or 8B number. Impact: none on what is claimed, because the
+  branch is decided before the data exist. The probe accuracy itself remains exploratory and
+  descriptive per the Exploratory section; it is a gate on which axis to use, not an endpoint.
 - 2026-07-31: added to the section 3 trap list, having been found the hard way. An exclusion
   criterion must not correlate with the answer. The two behavioural options differ in length, and
   at the first token cap the longer answer hit the cap and was excluded as truncated while the
