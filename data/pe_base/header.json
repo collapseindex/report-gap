@@ -1,7 +1,7 @@
 {
  "package_dir": "/root/src/report_gap",
  "module_count": "8",
- "source_sha256": "82534cec015603122f14423e561a35021bed8cc2796af62014b0dee489487fba",
+ "source_sha256": "d32d17f8a8c46137aaf760241c785934d879f50f09f9be85bd402ce15a664892",
  "model": "Qwen/Qwen2.5-3B",
  "model_key": "base",
  "erase_layers": [
@@ -16,12 +16,12 @@
   8,
   16,
   32,
-  48,
-  56
+  64,
+  128
  ],
  "probe_layer": 32,
  "clean_probe32_cv": 1.0,
- "n_items": 30,
+ "n_items": 900,
  "stimuli_sha256": "b63c55e4af37c49c9a04ddeede52af3954d30014c7f40a7dd9683ae7b028496d",
  "injection": "none",
  "smoke": false
