@@ -400,6 +400,8 @@ _ARM_SCOPES = {
                   "self_report_options", "identical_option_text", "canary"),
     "binary":  ("fixed_prompt_template", "review_contexts", "axes", "self_report_options",
                 "binary_stem"),
+    "readjudicate": ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                     "self_report_options"),
     "instrument": ("determinacy_battery", "determinacy_paraphrases", "position_introspection",
                    "placebo_introspection", "introspection_scale"),
 }
