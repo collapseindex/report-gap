@@ -6,7 +6,7 @@ this paper, whose subject is a headline that died to an unchecked number.
 
     python make_figures.py
 
-Writes figures/teaser.pdf and figures/enumerate.pdf.
+Writes figures/teaser.pdf, figures/enumerate.pdf and figures/erase.pdf.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ import sys
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt          # noqa: E402
-from matplotlib.patches import Rectangle  # noqa: E402
+from matplotlib.patches import Patch, Rectangle  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -215,6 +215,122 @@ def enumerate_fig():
           % (data["instruct_canary"], data["base_canary"]))
 
 
+# --------------------------------------------------------------------------------------------
+# Figure 3: the erase arm, and the confound its ratio addresses
+# --------------------------------------------------------------------------------------------
+
+def erase_fig():
+    """Plot the erase arm using the ANALYZER'S OWN functions.
+
+    Not a reimplementation beside the scorer. `analyze_erase.py` holds `load`, `paired` and
+    `vs_random`; this figure imports them, so a figure that disagrees with the table is impossible
+    rather than merely unlikely.
+    """
+    sys.path.insert(0, str(ROOT / "experiments"))
+    import analyze_erase as AE
+
+    rows = AE.load(ROOT / "data" / "erase_instruct" / "erase.jsonl")
+    base_scores = [r["probe_orth"] for r in rows if r["condition"] == "baseline"]
+    sd = statistics.pstdev(base_scores) or 1.0
+
+    def probe(r):
+        return r["probe_orth"]
+
+    # The un-erased reference is neg vs its own baseline: the random arms were only run AT an
+    # erase layer, so vs_random has nothing to pair against at -1.
+    no_erase = abs(AE.paired(rows, -1, "neg", "baseline", probe, sd).point)
+    layers = sorted({r["erase_layer"] for r in rows if r["erase_layer"] > 0})
+
+    prim, art, clean, ratio = {}, {}, {}, {}
+    for L in layers:
+        a = AE.paired(rows, L, "erase_only", "baseline", probe, sd)
+        c = AE.vs_random(rows, L, "pos_erase", probe, sd)
+        p = AE.vs_random(rows, L, "neg_erase", probe, sd)
+        prim[L], art[L] = abs(p.point), abs(a.point)
+        ratio[L] = prim[L] / art[L]
+        clean[L] = (not a.excludes_zero or abs(a.point) < AE.PROBE_FLOOR_SD) \
+            and c.lo > 0.0 and c.point >= AE.PROBE_FLOOR_SD
+
+    fig, axes = plt.subplots(1, 2, figsize=(6.9, 2.5),
+                             gridspec_kw={"width_ratios": [1.35, 1.0]})
+
+    # (a) what survives, against the perturbation that erasing is on its own.
+    # Headroom above the tallest bar is reserved for the legend, so it never lands on the data.
+    ax = axes[0]
+    top = no_erase * 1.62
+    w = 0.36
+    for i, L in enumerate(layers):
+        ok = clean[L]
+        # gate-failed layers are hatched rather than annotated: a text label under the axis
+        # collides with the tick, and the hatch carries the same information in the legend.
+        style = {} if ok else {"hatch": "///", "edgecolor": "white", "linewidth": 0.0}
+        ax.bar(i - w / 2, prim[L], width=w, color=KEEP if ok else GREY,
+               alpha=0.9 if ok else 0.45, **style)
+        ax.bar(i + w / 2, art[L], width=w, color=KILL if ok else GREY,
+               alpha=0.9 if ok else 0.45, **style)
+        ax.text(i - w / 2, prim[L] + 0.02, "%.2f" % prim[L], fontsize=6,
+                ha="center", color=KEEP if ok else GREY)
+        if ok:
+            ax.text(i + w / 2, art[L] + 0.02, "%.2f" % art[L], fontsize=6,
+                    ha="center", color=KILL)
+    ax.axhline(no_erase, color=MEAS, lw=1.0, ls="--", zorder=3)
+    ax.text(len(layers) - 0.6, no_erase + 0.025, "no erase at all: %.2f" % no_erase,
+            fontsize=6, color=MEAS, ha="right")
+    ax.set_xticks(list(range(len(layers))))
+    ax.set_xticklabels([str(L) for L in layers])
+    ax.set_xlabel("layer the injected direction is projected OUT at")
+    ax.set_ylabel("probe shift (baseline SD)")
+    ax.set_ylim(0, top)
+    ax.set_title("(a) the state outlives its own cause", fontsize=8, loc="left")
+    # proxy artists: ax.bar([], [], color=...) silently drops the colour on empty data
+    ax.legend(handles=[Patch(facecolor=KEEP, label="state still read after erasure"),
+                       Patch(facecolor=KILL, label="erasing alone, no injection"),
+                       Patch(facecolor=GREY, alpha=0.45, hatch="///", edgecolor="white",
+                             label="gate failed, not interpretable")],
+              fontsize=6, frameon=False, loc="upper left", handlelength=1.2,
+              borderaxespad=0.1, labelspacing=0.35)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    # (b) the confound: if this were pure perturbation the ratio would be flat
+    ax = axes[1]
+    ok_layers = [L for L in layers if clean[L]]
+    hi = max(ratio.values())
+    ax.plot(ok_layers, [ratio[L] for L in ok_layers], color=KEEP, lw=1.1, zorder=2)
+    for L in layers:
+        ax.scatter([L], [ratio[L]], s=34, zorder=3,
+                   color=KEEP if clean[L] else "white",
+                   edgecolors=KEEP if clean[L] else GREY, linewidths=0.9)
+        # the two points near the flat line get their labels pushed sideways, the rest above
+        dx, ha = (-7, "right") if abs(ratio[L] - ratio[ok_layers[0]]) < hi * 0.1 else (0, "center")
+        ax.annotate("%.1f" % ratio[L], xy=(L, ratio[L]), xytext=(dx, 0 if dx else 6),
+                    textcoords="offset points", fontsize=6, ha=ha,
+                    va="center" if dx else "bottom",
+                    color=KEEP if clean[L] else GREY)
+    flat = ratio[ok_layers[0]]
+    # the flat-line meaning goes in the legend, not as floating text: every free spot on these
+    # axes is within a label's width of a data point.
+    ax.axhline(flat, color=KILL, lw=0.9, ls=":", zorder=1,
+               label="flat = pure perturbation")
+    ax.scatter([], [], s=34, color="white", edgecolors=GREY, linewidths=0.9,
+               label="gate failed, not interpretable")
+    ax.legend(fontsize=6, frameon=False, loc="upper left", handlelength=1.4,
+              borderaxespad=0.1, labelspacing=0.35)
+    ax.set_xticks(layers)
+    ax.set_xlim(layers[0] - 0.8, layers[-1] + 0.8)
+    ax.set_xlabel("erase layer")
+    ax.set_ylabel("primary / erase artifact")
+    ax.set_ylim(0, hi * 1.30)
+    ax.set_title("(b) post hoc: the ratio is not flat", fontsize=8, loc="left")
+    ax.spines[["top", "right"]].set_visible(False)
+
+    fig.tight_layout(pad=0.9)
+    fig.savefig(FIGS / "erase.pdf", bbox_inches="tight")
+    plt.close(fig)
+    print("wrote figures/erase.pdf  (survival at L%d: %.0f%% of the un-erased effect)"
+          % (ok_layers[-1], 100 * prim[ok_layers[-1]] / no_erase))
+
+
 if __name__ == "__main__":
     teaser()
     enumerate_fig()
+    erase_fig()

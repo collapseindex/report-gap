@@ -53,6 +53,22 @@ def _shuffle_condition_labels(src, dst, seed=0):
     return len(rows)
 
 
+def _sandbox_base(tmp_path):
+    """Copy the base artifact into tmp_path too, so the analyzer's output lands there.
+
+    The analyzer names its verdict file after argv[1]'s grandparent. Handing it the real
+    `data/erase_base/...` makes every test run drop a timestamped verdict into `data/`, including
+    one scored on SHUFFLED labels, which is indistinguishable from a real run's output once it is
+    sitting in the artifact directory. Tests do not write into `data/`.
+    """
+    dst = tmp_path / "base" / "erase.jsonl"
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy(ERASE_BASE, dst)
+    shutil.copy(ERASE_BASE.parent / "ordering_variance.json",
+                dst.parent / "ordering_variance.json")
+    return dst
+
+
 @pytest.mark.skipif(not ERASE_INST.exists(), reason="erase artifacts not present")
 def test_erase_analyzer_goes_null_on_shuffled_labels(tmp_path, capsys):
     dst = tmp_path / "shuffled" / "erase.jsonl"
@@ -62,7 +78,7 @@ def test_erase_analyzer_goes_null_on_shuffled_labels(tmp_path, capsys):
                 dst.parent / "ordering_variance.json")
 
     analyze = _load_analyzer("analyze_erase")
-    analyze.main(["analyze_erase.py", str(ERASE_BASE), str(dst)])
+    analyze.main(["analyze_erase.py", str(_sandbox_base(tmp_path)), str(dst)])
     out = capsys.readouterr().out
 
     assert "VERDICT: NO_INSTRUMENT" in out, (
@@ -86,10 +102,10 @@ def test_the_shuffle_actually_shuffles(tmp_path):
 
 
 @pytest.mark.skipif(not ERASE_INST.exists(), reason="erase artifacts not present")
-def test_the_real_artifact_still_yields_a_verdict(capsys):
+def test_the_real_artifact_still_yields_a_verdict(tmp_path, capsys):
     """The other half: a test that only checks shuffled data would pass on a dead analyzer."""
     analyze = _load_analyzer("analyze_erase")
-    analyze.main(["analyze_erase.py", str(ERASE_BASE), str(ERASE_INST)])
+    analyze.main(["analyze_erase.py", str(_sandbox_base(tmp_path)), str(ERASE_INST)])
     out = capsys.readouterr().out
     assert "VERDICT: NO_INSTRUMENT" not in out, \
         "the analyzer returns NO_INSTRUMENT on the real artifact too, so the shuffle test above " \

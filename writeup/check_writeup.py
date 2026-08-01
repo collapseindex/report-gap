@@ -5,7 +5,10 @@ draft stage: a \\ref to a label that does not exist renders as "??", a \\cite to
 renders as "[?]", and a number in the prose that disagrees with the repository is the failure this
 whole project is about.
 
-    python check_writeup.py
+    python check_writeup.py [main.tex]
+
+The optional path exists so that `tests/test_writeup_checks.py` can point the checker at a
+deliberately broken COPY and require it to fail, without ever mutating the real paper.
 """
 
 from __future__ import annotations
@@ -82,28 +85,65 @@ def check_numbers(tex: str) -> list[str]:
         checks.append(("0.0009", round(means[0], 4), "minimum ordering mass"))
         checks.append(("0.8820", round(means[-1], 4), "maximum ordering mass"))
 
+    # The erase arm's numbers are re-derived through the ARM'S OWN analyzer, not reimplemented
+    # here. A checker that recomputes beside the tool can agree with the paper while both are
+    # wrong; one that calls the tool cannot.
     erase = ROOT / "data" / "erase_instruct" / "erase.jsonl"
     if erase.exists():
-        rows = [json.loads(l) for l in erase.read_text(encoding="utf-8").splitlines() if l.strip()]
+        sys.path.insert(0, str(ROOT / "experiments"))
+        import analyze_erase as AE
+
+        rows = AE.load(erase)
         n = len({r["cell"] for r in rows})
         checks.append((None, n, "erase arm distinct cells (informational)"))
+
+        sd = statistics.pstdev([r["probe_orth"] for r in rows
+                                if r["condition"] == "baseline"]) or 1.0
+
+        def probe(r):
+            return r["probe_orth"]
+
+        no_erase = abs(AE.paired(rows, -1, "neg", "baseline", probe, sd).point)
+        art, prim = {}, {}
+        for L in sorted({r["erase_layer"] for r in rows if r["erase_layer"] > 0}):
+            art[L] = abs(AE.paired(rows, L, "erase_only", "baseline", probe, sd).point)
+            prim[L] = abs(AE.vs_random(rows, L, "neg_erase", probe, sd).point)
+
+        # Claimed values are TYPED OUT from what the paper says, not read back from the artifact,
+        # so this check can fail. A check that derives the claim from the data it is checking is
+        # decorating, not validating.
+        checks.append(("0.9909", round(no_erase, 4), "erase: un-erased reference"))
+        checks.append(("0.0408", round(art[30], 4), "erase: artifact at L30"))
+        checks.append(("0.1474", round(art[25], 4), "erase: artifact at L25"))
+        checks.append(("6.1", round(prim[26] / art[26], 1), "erase: primary/artifact at L26"))
+        checks.append(("20.9", round(prim[30] / art[30], 1), "erase: primary/artifact at L30"))
+        checks.append((("$86\\%$", 86.0), round(100 * prim[30] / no_erase),
+                       "erase: survival at L30, percent"))
 
     for claimed, actual, what in checks:
         if claimed is None:
             print("  %-46s actual %s" % (what, actual))
             continue
-        present = claimed in tex
-        agrees = abs(float(claimed) - actual) < 5e-4
+        # a claim is either a literal that both prints and parses, or (needle, value) when the
+        # printed form ("$86\%$") is not the parseable one
+        needle, value = claimed if isinstance(claimed, tuple) else (claimed, float(claimed))
+        present = needle in tex
+        agrees = abs(value - actual) < 5e-4
         print("  %-46s claims %s, artifact %.4f, in tex: %s, agrees: %s"
-              % (what, claimed, actual, present, agrees))
+              % (what, needle, actual, present, agrees))
         if present and not agrees:
-            problems.append("%s: tex says %s, artifact says %.4f" % (what, claimed, actual))
+            problems.append("%s: tex says %s, artifact says %.4f" % (what, needle, actual))
+        if not present:
+            problems.append("%s: the paper no longer states %s. Update the check or the prose."
+                            % (what, needle))
     return problems
 
 
-def main() -> int:
-    tex = (HERE / "main.tex").read_text(encoding="utf-8")
-    print("checking main.tex (%d lines)" % len(tex.splitlines()))
+def main(argv: list[str] | None = None) -> int:
+    argv = list(sys.argv[1:] if argv is None else argv)
+    path = pathlib.Path(argv[0]) if argv else HERE / "main.tex"
+    tex = path.read_text(encoding="utf-8")
+    print("checking %s (%d lines)" % (path.name, len(tex.splitlines())))
     problems = []
     print("\ncross-references")
     problems += check_refs(tex)

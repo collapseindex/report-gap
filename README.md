@@ -208,9 +208,29 @@ src/report_gap/                stimuli, direction fitting, injection and erase h
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         263 tests, including a permutation test on the analysis pipeline
-writeup/                       the paper
+tests/                         277 tests, including a permutation test on the analysis pipeline
+writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
+                               make_figures.py, check_writeup.py, count_abstract.py
 ```
+
+### Building the paper
+
+Nothing in the paper is typed by hand that could be read out of an artifact instead.
+
+```bash
+cd writeup
+python make_figures.py     # teaser.pdf, enumerate.pdf, erase.pdf, all read from data/ at run time
+python check_writeup.py    # dangling refs, missing bib keys, em dashes, prose numbers vs artifacts
+python count_abstract.py   # the first 150 words must stand alone and end at a sentence boundary
+pdflatex main && bibtex main && pdflatex main && pdflatex main
+```
+
+`make_figures.py` and `check_writeup.py` both import the erase arm's scorer out of
+`experiments/analyze_erase.py` rather than recomputing beside it, so a figure or a sentence that
+disagrees with the analyzer is a build failure rather than something a reader has to catch.
+`tests/test_writeup_checks.py` breaks each checked number in a copy of `main.tex` and requires
+`check_writeup.py` to fail on every one, because a check only ever seen to pass has not been shown
+to be a check.
 
 ## Running it
 
@@ -277,7 +297,7 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Ten preregistrations, all clean against the `paper-harness` checker. 263 tests. Every raw artifact
+Ten preregistrations, all clean against the `paper-harness` checker. 277 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |
@@ -295,7 +315,10 @@ committed unscored before its endpoints were computed. About 40 minutes of A100 
 
 Six of our own checkers failed during this project, **every one in the flattering direction**. They
 are recorded where they happened, and `tests/test_pipeline_permutation.py` now catches the class:
-shuffle the condition labels in an artifact, rerun an analyzer, and it must return no verdict.
+shuffle the condition labels in an artifact, rerun an analyzer, and it must return no verdict. The
+same discipline applies to the paper itself: `tests/test_writeup_checks.py` breaks each number
+`check_writeup.py` verifies and requires the checker to notice, with a positive control that the
+untouched paper still passes.
 
 Known limits on everything: one architecture family, a lexically confounded direction by
 construction, `m = 2` control batteries, one probe method, 3B scale.

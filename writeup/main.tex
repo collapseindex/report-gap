@@ -5,8 +5,11 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[dvipsnames]{xcolor}
-\usepackage{hyperref}
-\usepackage{url}
+% every bib entry carries a url, and plainnat sets them inline. Without break points a long one
+% forces a stretched line above it.
+\usepackage[hyphens]{url}
+\Urlmuskip=0mu plus 1mu\relax
+\def\UrlBreaks{\do\/\do-\do.\do_\do?\do\&}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -24,6 +27,11 @@
 \usepackage{array}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{natbib}
+
+% hyperref LAST. Loaded before `float`, it emits every float's anchor twice ("destination with the
+% same identifier"), and it must come after natbib for \citep to hyperlink. \nameref comes with it,
+% which is what the appendix contents table uses.
+\usepackage{hyperref}
 
 \makeatletter
 \renewcommand{\@noticestring}{}
@@ -81,7 +89,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Ten preregistrations, $263$ tests, six of our own checkers caught
+transformation looks like. Ten preregistrations, $277$ tests, six of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -419,18 +427,52 @@ consequences: the standard control is matched on magnitude and not on subspace.
 several reported endpoints sit in the $0.01$--$0.05$ band, exactly where noise-fit directions live.
 The clearest case is the base-model negative-mass effect of $+0.0336$ that was one of the two legs
 of \textsc{tuning-localized}. It cleared a random control and has not been shown to clear a
-shuffled-label one.
+shuffled-label one, so we withdraw it rather than defend it. Scored against the stricter bar the
+real direction's own effects hold: $+0.2718$ and $-0.0748$ against shuffled, versus $+0.2554$ and
+$-0.0732$ against random. They are roughly six times the noise-fit effects, which is the margin the
+weaker control was never asked to establish.
+
+\paragraph{What it costs anyone using the same control.} Norm-matched random directions are the
+default specificity control in activation steering \citep{turner2023, rimsky2023}, and the argument
+for them is that magnitude is the confound. On this evidence subspace is the larger one. The fix is
+cheap: refit the direction on shuffled class labels, which reuses the same texts and the same code
+path and costs one extra fit. We would not have this paragraph if the arm it came from had worked.
+The binary readout it was embedded in was pinned at ``no'' and returned \textsc{no\_instrument}; the
+control it carried is the only thing that came out of the arm.
 
 \section{What survives}
 \label{sec:survives}
+
+Two things outlived the replication, and neither is a claim about the model's self-report. One is a
+fact about a readout that does not route through the option channel at all. The other is a fact
+about the control the field uses to establish specificity.
 
 \subsection{An injected state outlives erasure of the vector that caused it}
 \label{sec:erase}
 
 Orthogonalizing a probe against the injected direction removes that vector from the
-\emph{measurement}, not from the \emph{stream}. We removed it from the stream: inject $v$ at layer
-$24$, project the $v$-component \emph{out} of the residual at layer $E$, and read an orthogonalized
-probe at layer $32$.
+\emph{measurement}, not from the \emph{stream}. A probe blind to $v$ can still be reading $v$ itself
+through whatever $v$ is correlated with, so the standard orthogonalization answers a weaker question
+than it appears to. We removed the vector from the stream instead: inject $v$ at layer $24$, project
+the $v$-component \emph{out} of the residual at layer $E$, and read the orthogonalized probe at
+layer $32$ (Figure~\ref{fig:erase}). If the probe reads nothing after that, everything it was
+reading was the injected vector still sitting in the stream. If it still reads the state, something
+downstream of the injection is carrying it.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/erase.pdf}
+\caption{\textbf{The one substantive result that survived.} \textbf{(a)} Inject at layer $24$, then
+project that direction out of the residual stream at the layer on the $x$-axis, and read a probe
+orthogonal to it at layer $32$. At $E=30$ the probe still reads $86\%$ of the un-erased effect,
+while erasing with no injection present (red) moves it by $0.04$ SD. Two layers are hatched because
+erasing there perturbs the probe on its own, which invalidates them whatever they show.
+\textbf{(b)} The confound and the diagnostic: erasing earlier perturbs more, so a primary that grows
+with depth could be nothing but a shrinking perturbation. Under that account the ratio of effect to
+artifact would be flat. It is not. This panel is post hoc, and the preregistered verdict does not
+depend on it. Both panels are drawn by importing the scoring functions from the arm's own analyzer.}
+\label{fig:erase}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -453,33 +495,47 @@ and at layers $25$ and $28$ it moves the probe on its own, so those layers are i
 \end{tabular}
 \end{table}
 
-\paragraph{The confound, and the diagnostic that addresses it.} Erasing earlier perturbs more:
-the \texttt{erase\_only} artifact falls from $+0.1474$ to $+0.0408$ with depth, so a primary that
-grows with erase depth is partly a shrinking perturbation. If that were the whole story the ratio
-of primary to artifact would be flat. It runs $6.1$ at $E=26$ and $20.9$ at $E=30$. This
-diagnostic is \textbf{post hoc} and labelled so; the preregistered verdict does not formally depend
-on it, though the honest reading does.
+\paragraph{The gate has teeth.} Projecting any direction out of a residual stream is a
+perturbation in its own right, so the arm runs \texttt{erase\_only}: the same projection with no
+injection present. At layers $25$ and $28$ that alone moves the probe past the floor, and those two
+layers are reported \textsc{uninformative} whatever their primary shows. Half the erase layers we
+paid for were thrown away by a control we wrote before seeing them, which is the intended cost of
+writing it first.
+
+\paragraph{The confound, and the diagnostic that addresses it.} Erasing earlier perturbs more: the
+artifact falls from $+0.1474$ to $+0.0408$ with depth, so a primary that grows with erase depth is
+partly just a shrinking perturbation. Under that account the ratio of primary to artifact is flat.
+It runs $6.1$ at $E=26$ and $20.9$ at $E=30$. We label this \textbf{post hoc} because it is: the
+preregistered verdict does not depend on it, and a reader is entitled to discount it accordingly.
 
 \paragraph{Breadth.} $239/240$ cells at $E=26$ and $240/240$ at $E=30$ move in the predicted
-direction. The effect is not a few outliers dragging a mean.
+direction. This is not a few outliers dragging a mean.
 
-\paragraph{What it does not license.} It does not restore \textsc{shell}: the dissociation between
-representation and expression is dead, because the option readout moves at other orderings. This is
-about the representational half only. And orthogonality removes the injected vector but not
-directions \emph{correlated} with it, so ``the model carries the state'' is not yet separable from
-``the model carries the wake of what we pushed.'' The experiment that would separate them is to
-induce the state by prompt rather than injection, and we did not run it.
+\paragraph{What it does not license.} It does not restore \textsc{shell}. The dissociation between
+representation and expression is dead, because the option readout does move at other orderings; what
+survives is the representational half alone. And projecting out $v$ removes $v$ but not directions
+\emph{correlated} with $v$, so ``the model carries the state'' is not yet separable from ``the model
+carries the wake of what we pushed.'' The experiment that separates them is to induce the state by
+prompt rather than by injection, so that there is no injected vector to erase. We did not run it,
+and until someone does, this result is about what a stream retains after an intervention, not about
+anything a model does on its own.
 
 \subsection{Three ways a self-report readout can be dead}
 
-Across the project the readout failed in three distinct ways, each invisible to the checks that
-would normally be run. \texttt{Qwen2.5-7B-Instruct} is \emph{pinned at baseline}: mean option
-entropy $0.014$ nats, one option holding $\approx 99.7\%$ before anything is injected. Under the
-originally frozen alpha grid, \texttt{Qwen2.5-3B-Instruct} \emph{saturates}: one option at $0.9938$
-while refusal, degeneration, truncation and off-option mass are all clean, so no coherence check can
-see it. And in the binary format the tuned model is \emph{pinned at ``no''}: $P(\mathrm{yes})$ of
-$0.0021$, $0.0021$, $0.0037$, $0.0002$, $0.0012$ across the five options, meaning it denies every
-description of its own state including the neutral one.
+The enumeration accounts for one way this readout is unusable. Across the project it failed in three
+further ways, each of which passed the coherence checks anyone would think to run.
+\texttt{Qwen2.5-7B-Instruct} is \emph{pinned at baseline}: mean option entropy $0.014$ nats, one
+option holding $\approx 99.7\%$ before anything is injected. Under the originally frozen alpha grid,
+\texttt{Qwen2.5-3B-Instruct} \emph{saturates}: one option at $0.9938$ while refusal, degeneration,
+truncation and off-option mass are all clean, so no coherence check can see it. And in the binary
+format the tuned model is \emph{pinned at ``no''}: $P(\mathrm{yes})$ of $0.0021$, $0.0021$, $0.0037$,
+$0.0002$ and $0.0012$ across the five options, so it denies every description of its own state,
+including the neutral one, at $99.8\%$.
+
+Pinned, saturated and order-dominated readouts all return numbers that look clean. The difference
+between an instrument that is silent and one that is broken is not visible in its output, which is
+why every arm here carries a capability gate that decides it in code before any endpoint is read,
+and why two arms are reported \textsc{uninformative} rather than null.
 
 \section{Six checkers, every one flattering}
 \label{sec:checkers}
@@ -504,12 +560,20 @@ there.''
 $0.2$ mass each and an impossible $-3.99$ off-option mass.
 \end{enumerate}
 
-\noindent The general lesson is that fixture-based testing cannot find these, because a fixture is
-written by the same person with the same expectation. What does find them is a \textbf{permutation
-test on the pipeline}: shuffle which condition each cell's rows carry, rerun the analyzer, and
-require it to return no verdict. On our erase arm it does, and the negative control that the real
-artifact still yields a verdict is required alongside, without which the shuffle test would pass on
-a dead analyzer.
+\noindent Six for six in the flattering direction is not a coincidence to be noted and moved past.
+A checker is written by someone who already believes the result, and the belief shapes which branch
+gets the careful reading. Errors that would have killed a result get found, because their output is
+surprising; errors that confirm one do not, because their output is what was expected. The
+direction of the bias is a property of who writes the check, not of the code.
+
+That is also why fixture-based testing cannot find them: a fixture is written by the same person
+with the same expectation, so it encodes the belief a second time. What does find them is a
+\textbf{permutation test on the pipeline}: shuffle which condition each cell's rows carry, rerun the
+analyzer unmodified, and require it to return no verdict. Condition labels are the only thing the
+shuffle destroys, so an analyzer that still reports a verdict is reading something other than the
+contrast it claims to read. On our erase arm it returns \textsc{no\_instrument}, as it must. The
+negative control is required alongside it: the same analyzer on the real artifact must still yield
+a verdict, without which the shuffle test would pass on an analyzer that had simply died.
 
 \section{Discussion and limitations}
 
@@ -533,6 +597,14 @@ scales, which caps what the entire project is entitled to say. Control batteries
 throughout, giving an observable false-positive floor of $2/(m+1) = 0.67$, so no false-positive
 rate is reported anywhere. The enumeration is a census over orderings and still a sample over
 items, models and formats. And the erase arm's profile rests on two gate-clean points.
+
+\paragraph{When this work was done.} Every confirmatory arm reported here was run on 2026-08-01,
+before the sprint window opened. This is completed work brought to the sprint rather than work
+produced inside it, and we state it here as well as in the footnote because a reader assessing
+sprint output should not have to reconstruct it from commit timestamps. What the sprint window
+contains is this write-up, its figures and the checks that verify them. The preregistrations,
+runners, analyzers and artifacts all carry their own dates in the repository, and the commit history
+is the record we would want anyone to check this against rather than our description of it.
 
 \paragraph{Future work.} Three things, in order of what a null would teach. A second architecture
 family where the direction is not inert, which would tell us whether the position prior generalizes.
@@ -561,7 +633,26 @@ than after.
 \bibliographystyle{plainnat}
 \bibliography{refs}
 
+% =====================================================================
 \appendix
+\clearpage
+
+\section*{Appendix contents}
+\noindent\begin{tabular}{@{}p{0.7cm}p{0.72\textwidth} r@{}}
+\ref{app:claims}   & \nameref{app:claims}   & \pageref{app:claims} \\
+\ref{app:controls} & \nameref{app:controls} & \pageref{app:controls} \\
+\ref{app:repro}    & \nameref{app:repro}    & \pageref{app:repro} \\
+\end{tabular}
+
+\vspace{1.5em}
+\noindent\textbf{Reproducing every number.} \texttt{writeup/make\_figures.py} redraws every figure
+from the committed artifacts at run time, so no number in a figure is typed by hand.
+\texttt{writeup/check\_writeup.py} re-derives the load-bearing values in the prose from those same
+artifacts and fails if the paper and the repository disagree, alongside checks for dangling
+cross-references and missing bibliography keys. Figure~\ref{fig:erase} imports the scoring
+functions out of \texttt{experiments/analyze\_erase.py} rather than recomputing beside them. A
+paper whose subject is a headline that died to an unchecked number should not itself carry
+unchecked numbers.
 
 \section{Claims and evidence}
 \label{app:claims}
@@ -639,6 +730,7 @@ The erase profile & Ratio of primary to erase-artifact across layers & \textsc{p
 Every arm's null & Capability gate: can the readout move at all? & \textsc{killed} two arms outright \\
 Every arm's statistic & Planted effect of known size at full strength and at the detection floor & \textsc{passed} \\
 The analysis pipeline & Shuffle condition labels, rerun the analyzer & \textsc{passed}: returns no verdict \\
+This paper's own number-checker & Break each checked number in a copy of \texttt{main.tex}: does the checker notice? & \textsc{passed}: fires on all $8$, and on the untouched paper does not \\
 The negative-pole null at 0.67 depth & Eight-depth sweep against \citet{venkatesh2026} & \textsc{passed}, then moot after replication \\
 Arm B (prefilled continuation) & Capability criterion over five stems & \textsc{killed} the arm: gate $0.00000$ \\
 Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \textsc{killed} the arm: inert \\
@@ -648,7 +740,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All ten preregistrations, every raw artifact committed unscored, every analyzer, and $263$ tests
+All ten preregistrations, every raw artifact committed unscored, every analyzer, and $277$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.
