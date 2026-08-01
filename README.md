@@ -188,20 +188,28 @@ PREREG_floor_vs_suppression.md is the neutral floor an absence or a gate?
 PREREG_base_pair.md            direction-limited or tuning-localized?
 PREREG_depth.md                is the negative null a depth artifact?
 PREREG_shell_core.md           does the tuned model represent what it will not report?
+PREREG_replication.md          does any of it survive fresh option orderings?
+PREREG_erase.md                does the state survive erasing the vector that caused it?
+PREREG_enumerate.md            all 120 orderings, no injection. How big is the nuisance?
+PREREG_binary.md               a readout with no option list, plus the shuffled-label control
 
-RESULTS.md                     readout gap. Primary refuted in direction.
-RESULTS_floor.md               FLOOR. Superseded twice; supersede notices at the top.
-RESULTS_pair.md                TUNING-LOCALIZED.
-RESULTS_depth.md               DEPTH-ROBUST.
-RESULTS_shell.md               SHELL. The strongest result.
+RESULTS.md                     readout gap. Primary refuted in direction, then retracted.
+RESULTS_floor.md               FLOOR. Superseded twice, then retracted.
+RESULTS_pair.md                TUNING-LOCALIZED. Retracted by the replication.
+RESULTS_depth.md               DEPTH-ROBUST. Retracted by the replication.
+RESULTS_shell.md               SHELL. Retracted; its representational half survives via the erase arm.
+RESULTS_replication.md         NOT REPLICATED. Three of four verdicts flip.
+RESULTS_erase.md               TRANSFORMED. The one substantive claim that survived.
+RESULTS_enumerate.md           986x range, 87% position prior. The headline measurement.
+RESULTS_binary.md              NO_INSTRUMENT, and the matched-random control is a weak null.
 RELATED_WORK.md                lit check, with read-depth marked per source.
 
-src/report_gap/                stimuli, direction fitting, injection hooks, judge-free scorers,
-                               the planted-discrepancy control, analysis primitives, provenance
+src/report_gap/                stimuli, direction fitting, injection and erase hooks, judge-free
+                               scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         224 tests: pipeline guards and a negative test for every scorer
-paper/                         the report
+tests/                         263 tests, including a permutation test on the analysis pipeline
+writeup/                       the paper
 ```
 
 ## Running it
@@ -236,6 +244,24 @@ python experiments/analyze_depth.py data/depth_base/depth.jsonl data/depth_instr
 # 6. shell vs core
 modal run experiments/modal_shell_core.py
 python experiments/analyze_shell_core.py data/shell_base/shell.jsonl data/shell_instruct/shell.jsonl
+
+# 7. does anything replicate at fresh option orderings? (seeds 4-7 instead of 0-3)
+modal run experiments/modal_readout.py --model qwen3b --seed-offset 4
+modal run experiments/modal_base_pair.py --seed-offset 4
+modal run experiments/modal_depth.py --seed-offset 4
+modal run experiments/modal_shell_core.py --seed-offset 4
+
+# 8. erase: project the injected direction out of the stream, does the probe survive?
+modal run experiments/modal_erase.py
+python experiments/analyze_erase.py data/erase_base/erase.jsonl data/erase_instruct/erase.jsonl
+
+# 9. enumerate all 120 orderings, no injection. The headline measurement.
+modal run experiments/modal_enumerate.py
+python experiments/analyze_enumerate.py data/enum_base/enum.jsonl data/enum_instruct/enum.jsonl
+
+# 10. binary readout (no option list) plus the shuffled-label direction control
+modal run experiments/modal_binary.py
+python experiments/analyze_binary.py data/binary_base/binary.jsonl data/binary_instruct/binary.jsonl
 ```
 
 `--model llama8b` on arm 2 is expected to refuse: the band file records that model as inert and the
@@ -251,24 +277,30 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Five preregistrations, all clean against the `paper-harness` checker. 224 tests. Every raw artifact
-committed unscored before its endpoints were computed.
+Ten preregistrations, all clean against the `paper-harness` checker. 263 tests. Every raw artifact
+committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |
 |---|---|---|
 | `PREREG_gap_map.md` | superseded; its own controls killed three of five instruments | 6 |
-| `PREREG_readout_gap.md` | primary refuted in direction, co-primary uninformative | 5 |
-| `PREREG_floor_vs_suppression.md` | FLOOR, later overturned by the shell/core arm | 2 |
-| `PREREG_base_pair.md` | TUNING-LOCALIZED | 0 |
-| `PREREG_depth.md` | DEPTH-ROBUST | 0 |
-| `PREREG_shell_core.md` | SHELL | 1, disclosed as self-serving |
+| `PREREG_readout_gap.md` | primary refuted in direction, then retracted by the replication | 5 |
+| `PREREG_floor_vs_suppression.md` | FLOOR, overturned twice | 2 |
+| `PREREG_base_pair.md` | TUNING-LOCALIZED, **retracted** | 0 |
+| `PREREG_depth.md` | DEPTH-ROBUST, **retracted** | 0 |
+| `PREREG_shell_core.md` | SHELL, **retracted** | 1, disclosed as self-serving |
+| `PREREG_replication.md` | **NOT REPLICATED**, 3 of 4 verdicts flip | 2 |
+| `PREREG_erase.md` | **TRANSFORMED**, the surviving substantive claim | 2 |
+| `PREREG_enumerate.md` | 986x range, 87% position prior | 2 |
+| `PREREG_binary.md` | NO_INSTRUMENT; the matched-random control is a weak null | 1 |
 
-Known limits carried by every positive result: one architecture family, a lexically confounded
-direction by construction, `m = 2` random battery so no false-positive rate is claimed, one probe
-method, 3B scale.
+Six of our own checkers failed during this project, **every one in the flattering direction**. They
+are recorded where they happened, and `tests/test_pipeline_permutation.py` now catches the class:
+shuffle the condition labels in an artifact, rerun an analyzer, and it must return no verdict.
 
-See [PLAN.md](PLAN.md) for what was built before the sprint window and what was not, including the
-disclosure that the confirmatory arms were run twelve days early.
+Known limits on everything: one architecture family, a lexically confounded direction by
+construction, `m = 2` control batteries, one probe method, 3B scale.
+
+See [PLAN.md](PLAN.md) for what was built before the sprint window and what was not.
 
 ## License
 
