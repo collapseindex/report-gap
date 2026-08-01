@@ -224,5 +224,15 @@ No multiplicity correction: one primary, one gate, one procedure control, evalua
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, the acquiescence test used an absolute threshold where it needed a relative one.**
+What was wrong: section 8 defines acquiescence as a shift that is uniform across all five options,
+and the analyzer implemented "range across options below 0.01". On the base model `lexical_pos`
+moves every option by +0.2275 to +0.2688, which is as uniform as a real measurement gets, and the
+absolute rule called it not-uniform because the range is 0.04.
+What changed: uniform now means same sign on every option and a range below `max(0.01, half the mean
+absolute shift)`.
+Impact: the base model's positive injection is correctly identified as acquiescence. The instruct
+verdict is unchanged, since that model is pinned and returns NO_INSTRUMENT either way.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

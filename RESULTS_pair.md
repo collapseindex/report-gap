@@ -6,6 +6,11 @@
 > mass varies 14.6x between the two four-seed draws and 20x across individual orderings,
 > so the quantity every claim here rests on is dominated by which letters the options land
 > on. Read the numbers below as correct measurements of an under-controlled quantity.
+>
+> **AND SEPARATELY, 2026-08-01:** `RESULTS_binary.md` shows the norm-matched random control this
+> document scores against is a weak null. Directions fit on SHUFFLED labels move the readout by
+> about 0.045, the same size as this document's base-model effect of +0.0336. That number cleared
+> a random control but has not been shown to clear a shuffled-label one.
 
 **Run 2026-08-01.** 4080 rows across a matched pair, artifacts committed unscored before any
 endpoint was computed. Scored against `PREREG_base_pair.md`.

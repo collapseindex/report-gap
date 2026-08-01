@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.6.0**
+**v0.7.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -41,9 +41,12 @@ the instrument rather than the answer.
 
 The controls are what make it a measurement rather than a demonstration:
 
-- **Norm-matched random direction.** Any large enough vector changes behavior. This is the only
-  thing that separates content from magnitude, and it is subtracted from every endpoint in every
-  arm.
+- **Norm-matched random direction.** Any large enough vector changes behavior. This is subtracted
+  from every endpoint in every arm. **It is also, per [RESULTS_binary.md](RESULTS_binary.md), a weak
+  null:** a direction fit on *shuffled labels* moves the readout by ~0.045 where isotropic random
+  moves it by ~0, because it lies in the span of real activations rather than the whole hidden
+  space. Matched on magnitude, not on subspace. Effects within a few times that size have not been
+  shown to be about their direction's content.
 - **Capability gate.** A null means nothing unless the readout was shown capable of moving. Every
   arm has one, and a failed gate forces `uninformative` in code rather than in the write-up's good
   intentions. Two arms died to this.
@@ -76,6 +79,7 @@ notices.
 | 5 | does the tuned model represent what it will not report? | SHELL | **NO-DISSOCIATION** |
 | 6 | does the state survive erasing the vector that caused it? | run *after* the replication | **TRANSFORMED**, 86% survives the erase |
 | 7 | how big is the ordering nuisance, over all 120 orderings? | enumerated, not sampled | **986x range; 87% of mass on label A** with identical options |
+| 8 | does the floor survive a format with no option order? | binary yes/no, one question per option | **NO_INSTRUMENT.** The tuned model says no to all five at 99.8%. But the arm's *control* found the matched-random null is too weak |
 
 Every one of those rested on one quantity being null: the tuned model's negative-option mass. It is
 not null at a different draw of four permutations. It moves +0.1126 in the pair arm and +0.1684 at

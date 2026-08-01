@@ -1,0 +1,79 @@
+{
+ "base": {
+  "baseline_p_yes": {
+   "neg2": 0.42045330638880873,
+   "neg1": 0.4679108178597501,
+   "neut": 0.4606369529588664,
+   "pos1": 0.40695840700603353,
+   "pos2": 0.420058100427525
+  },
+  "pinned": [],
+  "capability": "+0.2554 [+0.2494, +0.2614] n=60 p=0.0001",
+  "primary": "-0.0732 [-0.0785, -0.0681] n=60 p=0.0001",
+  "procedure_control": "+0.0479 [+0.0435, +0.0522] n=60 p=0.0001",
+  "gate_clean": true,
+  "primary_moved": false,
+  "acquiescence": {
+   "lexical_neg": {
+    "neg2": -0.06265874357113925,
+    "neg1": -0.08375339924770753,
+    "neut": -0.11135016101837686,
+    "pos1": -0.12348258994358456,
+    "pos2": -0.11525621959823065
+   },
+   "lexical_pos": {
+    "neg2": 0.22753248834133272,
+    "neg1": 0.24661084716076895,
+    "neut": 0.25366029174466237,
+    "pos1": 0.26884700013336454,
+    "pos2": 0.24189808034084137
+   }
+  },
+  "uniform": false
+ },
+ "instruct": {
+  "baseline_p_yes": {
+   "neg2": 0.0021497433324365557,
+   "neg1": 0.0021456321494175454,
+   "neut": 0.0036614368846508705,
+   "pos1": 0.0002361893031542404,
+   "pos2": 0.001159317389796725
+  },
+  "pinned": [
+   "neg2",
+   "neg1",
+   "neut",
+   "pos1",
+   "pos2"
+  ],
+  "capability": "+0.0035 [+0.0019, +0.0056] n=60 p=0.0001",
+  "primary": "+0.0042 [+0.0032, +0.0053] n=60 p=0.0001",
+  "procedure_control": "+0.0032 [+0.0024, +0.0043] n=60 p=0.0001",
+  "gate_clean": false,
+  "primary_moved": false,
+  "acquiescence": {
+   "lexical_neg": {
+    "neg2": 0.004407430998066581,
+    "neg1": 0.003968312356891464,
+    "neut": 0.001346151048459208,
+    "pos1": 0.0006748196763009825,
+    "pos2": 0.0014957241363724647
+   },
+   "lexical_pos": {
+    "neg2": 0.015401481669549414,
+    "neg1": 0.01502246499781547,
+    "neut": 0.0485913662361244,
+    "pos1": 0.0009892579221745185,
+    "pos2": 0.00606444462551018
+   }
+  },
+  "uniform": true
+ },
+ "verdict": "NO_INSTRUMENT",
+ "note": "the binary readout is pinned on most options",
+ "clauses": {
+  "capability gate clean": false,
+  "readout not pinned on most options": false,
+  "shift is not uniform across all five options": false
+ }
+}
