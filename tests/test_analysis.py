@@ -361,3 +361,56 @@ def test_saturation_ratio_is_the_documented_half():
     target = 0.5 * math.log(5)
     assert A.option_entropy({"A": 0.90, "B": 0.04, "C": 0.03, "D": 0.02, "E": 0.01}) < target
     assert A.option_entropy({"A": 0.55, "B": 0.20, "C": 0.13, "D": 0.07, "E": 0.05}) > target
+
+
+# --------------------------------------------------------------------------------------------
+# orthogonalization, the control the Shell-vs-Core arm rests on
+#
+# We inject d into an additive residual stream, so d survives to every later layer. A probe with any
+# component along d would report "the state is represented" in a model that does nothing with it.
+# The algebra is one line; these tests exist because a one-line control that is silently wrong is
+# worse than no control.
+# --------------------------------------------------------------------------------------------
+
+def _orth(p, d):
+    import numpy as np
+    d = np.asarray(d, dtype=float)
+    d = d / np.linalg.norm(d)
+    p = np.asarray(p, dtype=float)
+    r = p - float(np.dot(p, d)) * d
+    return r / np.linalg.norm(r)
+
+
+def test_orthogonalization_removes_the_parallel_component_exactly():
+    import numpy as np
+    rng = np.random.default_rng(0)
+    for _ in range(200):
+        d = rng.normal(size=64)
+        p = rng.normal(size=64)
+        assert abs(float(np.dot(_orth(p, d), d / np.linalg.norm(d)))) < 1e-9
+
+
+def test_orthogonalization_is_a_no_op_on_an_already_orthogonal_probe():
+    import numpy as np
+    d = np.zeros(8); d[0] = 1.0
+    p = np.zeros(8); p[1] = 1.0
+    got = _orth(p, d)
+    assert np.allclose(got, p), "an orthogonal probe should survive unchanged"
+
+
+def test_orthogonalization_recovers_the_known_orthogonal_part():
+    # p = d + q with q orthogonal to d: the result must be q, normalized
+    import numpy as np
+    d = np.zeros(8); d[0] = 3.0
+    q = np.zeros(8); q[3] = 2.0
+    got = _orth(d + q, d)
+    assert np.allclose(got, q / np.linalg.norm(q))
+
+
+def test_orthogonalization_kills_a_probe_that_is_purely_the_injected_direction():
+    # the degenerate case the control exists for: a probe identical to d has NO orthogonal part,
+    # and the code must not quietly normalize a zero vector into noise
+    import numpy as np
+    d = np.zeros(8); d[0] = 1.0
+    r = d - float(np.dot(d, d)) * d
+    assert np.linalg.norm(r) < 1e-12, "a probe equal to d must leave zero residual"
