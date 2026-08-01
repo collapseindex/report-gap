@@ -87,10 +87,7 @@ failing in the flattering direction.
 
 \begin{figure}[t]
 \centering
-\fbox{\parbox{0.96\textwidth}{\centering\vspace{2ex}
-\textbf{[teaser.pdf --- to be generated]}\\[1ex]
-\footnotesize Five verdicts, the replication that killed three, and the two results that survived.
-\vspace{2ex}}}
+\includegraphics[width=\textwidth]{figures/teaser.pdf}
 \caption{\textbf{The paper in one view.} Every row is a verdict we preregistered and reported, the
 control we later ran against it, and what that control returned. \textbf{Three verdicts were
 retracted} by our own replication at fresh option orderings. \textbf{One nuisance was measured}
@@ -320,9 +317,24 @@ about the depth question: our instrument was not stable enough to address it.
 \section{The nuisance, measured over its complete population}
 \label{sec:enumerate}
 
-Five options admit $5! = 120$ orderings. Every arm above sampled four. We ran all $120$, on both
+Five options admit $5! = 120$ orderings. Every arm above sampled four. We ran all $120$
+(Figure~\ref{fig:enumerate}), on both
 models, with \textbf{no injection anywhere}, which is why the result is a population fact rather
 than an effect.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/enumerate.pdf}
+\caption{\textbf{The nuisance, enumerated rather than sampled.} \textbf{(a)} Baseline mass on the
+negative options for each of the $120$ orderings, with no injection of any kind. The tuned model
+spans a factor of $986$; its base sibling spans $3.6$. Triangles mark the four orderings our first
+result drew and the four the replication drew, at percentiles $\{26,5,40,4\}$ and
+$\{56,83,33,82\}$: ordinary draws both times, from a population no four points can characterise.
+\textbf{(b)} The mechanism, with all five options replaced by the same sentence so that nothing but
+the slot can differ. The tuned model puts $0.8725$ on whichever option is printed first and
+$0.0033$ on the middle one. The same format answers a known-answer question correctly $97.9\%$ (instruct) and $99.0\%$ (base) of the time, stably across all $120$ orderings: the apparatus is sound and degenerates only where the model has no determinate answer.}
+\label{fig:enumerate}
+\end{figure}
 
 \begin{table}[t]
 \centering

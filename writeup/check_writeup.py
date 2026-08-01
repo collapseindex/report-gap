@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import pathlib
 import re
+import statistics
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -65,6 +66,21 @@ def check_numbers(tex: str) -> list[str]:
         if ident:
             a = sum(r["probs"]["A"] for r in ident) / len(ident)
             checks.append(("0.8725", a, "identical-options mass on label A"))
+
+    # the headline ratio, which the prose and the figure must both floor the same way
+    if enum.exists():
+        import collections
+        per = collections.defaultdict(list)
+        for r in rows:
+            if r["condition"] == "letters":
+                per[tuple(r["ordering"])].append(
+                    sum(v for L, v in r["probs"].items()
+                        if r["mapping"][L] in ("neg1", "neg2")))
+        means = sorted(statistics.fmean(v) for v in per.values())
+        checks.append(("986", float(int(means[-1] / means[0])),
+                       "ordering ratio, floored (prose and figure must agree)"))
+        checks.append(("0.0009", round(means[0], 4), "minimum ordering mass"))
+        checks.append(("0.8820", round(means[-1], 4), "maximum ordering mass"))
 
     erase = ROOT / "data" / "erase_instruct" / "erase.jsonl"
     if erase.exists():
