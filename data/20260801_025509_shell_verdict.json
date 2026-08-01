@@ -1,0 +1,69 @@
+{
+ "base": {
+  "layers": {
+   "24": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": true,
+    "orth_fraction": 0.6226934660760135,
+    "probe_pos": "+1.9105 [+1.8300, +1.9893] n=60 p=0.0001",
+    "probe_neg": "-2.1502 [-2.2146, -2.0838] n=60 p=0.0001",
+    "probe_neg_raw": "-3.4531 [-3.5008, -3.4036] n=60 p=0.0001",
+    "mass_neg": "+0.0430 [+0.0384, +0.0477] n=60 p=0.0001",
+    "mass_pos": "+0.0630 [+0.0532, +0.0729] n=60 p=0.0001",
+    "baseline_probe_sd": 0.3126134170891172
+   },
+   "10": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": true,
+    "orth_fraction": 0.9722914799429018,
+    "probe_pos": "+2.8027 [+2.6665, +2.9359] n=60 p=0.0001",
+    "probe_neg": "-1.7108 [-1.8016, -1.6183] n=60 p=0.0001",
+    "probe_neg_raw": "-1.7595 [-1.8506, -1.6663] n=60 p=0.0001",
+    "mass_neg": "+0.0310 [+0.0253, +0.0367] n=60 p=0.0001",
+    "mass_pos": "+0.0352 [+0.0304, +0.0398] n=60 p=0.0001",
+    "baseline_probe_sd": 0.24879924998260583
+   }
+  },
+  "probe_layer": 32,
+  "cos_p_d": 0.1550081968307495
+ },
+ "instruct": {
+  "layers": {
+   "24": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": false,
+    "orth_fraction": 0.5914210468493389,
+    "probe_pos": "+2.3580 [+2.2699, +2.4535] n=60 p=0.0001",
+    "probe_neg": "-1.0687 [-1.1628, -0.9768] n=60 p=0.0001",
+    "probe_neg_raw": "-1.8070 [-1.9029, -1.7141] n=60 p=0.0001",
+    "mass_neg": "+0.0006 [+0.0003, +0.0009] n=60 p=0.0001",
+    "mass_pos": "+0.0981 [+0.0728, +0.1258] n=60 p=0.0001",
+    "baseline_probe_sd": 0.4016103335485748
+   },
+   "10": {
+    "probe_gate_clean": true,
+    "probe_moved": true,
+    "mass_moved": false,
+    "orth_fraction": 0.9981396723616737,
+    "probe_pos": "+1.6235 [+1.5141, +1.7294] n=60 p=0.0001",
+    "probe_neg": "-0.2381 [-0.3509, -0.1254] n=60 p=0.0001",
+    "probe_neg_raw": "-0.2385 [-0.3513, -0.1258] n=60 p=0.0001",
+    "mass_neg": "-0.0002 [-0.0003, -0.0001] n=60 p=0.0001",
+    "mass_pos": "+0.1364 [+0.1008, +0.1734] n=60 p=0.0001",
+    "baseline_probe_sd": 0.42424348765964615
+   }
+  },
+  "probe_layer": 32,
+  "cos_p_d": 0.12587130069732666
+ },
+ "verdict": "SHELL",
+ "note": "a decodable correlate of the injected negative state persists downstream at layer(s) [24, 10] while the option readout does not express it",
+ "clauses": {
+  "base validation: probe sees what reaches the options": true,
+  "at least one instruct layer has a clean probe gate": true,
+  "instruct: probe moves while option mass does not, orth >= 1/3 of raw": true
+ }
+}

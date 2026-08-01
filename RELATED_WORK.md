@@ -72,12 +72,15 @@ representations, shown with sparse autoencoders in the political domain.
 
 Our base-versus-instruct result is the same shape in a different domain: the tuned model's
 negative-self-report region collapses from 26.5% to 0.47% of option mass while the untuned sibling
-retains it. **But we measured readouts, not representations.** We never probed whether the tuned
-model still represents the negative state it declines to report. That means our FLOOR-versus-GATE
-question recurs one level down, and this paper's method is the tool for it: probe or SAE the tuned
-model's residual stream for negative valence under negative injection. If the representation is
-there and the option mass is not, that is Shell-versus-Core in a welfare readout, and it is a
-stronger claim than anything we currently have.
+retains it.
+
+**DONE 2026-08-01, `RESULTS_shell.md`, verdict SHELL.** The gap this section identified, that we
+measured readouts and not representations, has been closed with a linear probe orthogonalized
+against the injected direction. The tuned model carries the negative state downstream at -1.07 SD
+while its option mass moves +0.0006; the base model carries it and expresses it. That is
+Shell-versus-Core in a welfare readout, and it is the strongest result in the project. Cite this
+paper as the framing precedent; note that they use SAEs on partisan content and we use a linear
+probe on a valence self-report, so the methods and domains differ.
 
 Related: **"Steering Llama 2 via Contrastive Activation Addition", arXiv:2312.06681 [snippet]**, and
 work reporting that base-to-chat steering-vector similarity decays with depth except for a peak

@@ -5,6 +5,12 @@ endpoint was computed. Scored against `PREREG_base_pair.md`.
 
 **Verdict: TUNING-LOCALIZED**, all three preregistered clauses clean.
 
+> **REFINED, 2026-08-01, by `RESULTS_shell.md`.** This document says the tuned model's
+> negative-report region "collapsed". That is true of the OPTION READOUT and false of the
+> representation: a probe orthogonalized against the injected direction detects the negative state
+> downstream in the tuned model at -1.07 SD while its option mass moves +0.0006. Read every claim
+> below as being about what reaches the options.
+
 ---
 
 ## The double dissociation

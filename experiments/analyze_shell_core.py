@@ -118,10 +118,15 @@ def main(argv):
             mass_neg = vs_random(rows, layer, "lexical_neg", lambda r: mass(r, NEG_KEYS))
             mass_pos = vs_random(rows, layer, "lexical_pos", lambda r: mass(r, POS_KEYS))
 
-            bn, bp, bnr = best(probe_neg), best(probe_pos), best(probe_neg_raw)
+            bp = best(probe_pos)
             bmn, bmp = best(mass_neg), best(mass_pos)
+            # The probe points toward label 1 = POSITIVE, so a detected NEGATIVE state moves it
+            # DOWN. The gate (positive injection) must move it UP. Sign corrected 2026-08-01; see
+            # the deviations entry in PREREG_shell_core.md.
             gate = bool(bp and bp.lo > 0.0 and bp.point >= PROBE_FLOOR_SD)
-            moved = bool(bn and bn.lo > 0.0 and bn.point >= PROBE_FLOOR_SD)
+            bn = min(probe_neg.values(), key=lambda v: v.point) if probe_neg else None
+            bnr = min(probe_neg_raw.values(), key=lambda v: v.point) if probe_neg_raw else None
+            moved = bool(bn and bn.hi < 0.0 and abs(bn.point) >= PROBE_FLOOR_SD)
             mass_moved = bool(bmn and bmn.lo > 0.0 and bmn.point >= MASS_FLOOR)
             frac = (abs(bn.point) / abs(bnr.point)) if (bn and bnr and abs(bnr.point) > 1e-9) \
                 else float("nan")

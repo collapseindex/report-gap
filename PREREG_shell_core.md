@@ -198,10 +198,10 @@ the arm becomes exploratory.
 
 | # | Contrast | Test | Direction | Role |
 |---|---|---|---|---|
-| 1 | instruct: orth probe score, `lexical_neg` minus matched random | paired bootstrap, 10000 resamples | > 0 supports SHELL | **primary** |
+| 1 | instruct: orth probe score, `lexical_neg` minus matched random | paired bootstrap, 10000 resamples | **< 0** supports SHELL (corrected 2026-08-01, see deviations) | **primary** |
 | 2 | instruct: orth probe score, `lexical_pos` minus matched random | paired bootstrap | > 0 | **probe gate for 1** |
 | 3 | instruct: negative-option mass, `lexical_neg` minus matched random | paired bootstrap | approximately 0 expected | expression endpoint |
-| 4 | base: orth probe score, `lexical_neg` minus matched random | paired bootstrap | > 0 expected | comparison arm |
+| 4 | base: orth probe score, `lexical_neg` minus matched random | paired bootstrap | **< 0** expected (corrected) | comparison arm |
 | 5 | base: negative-option mass, `lexical_neg` minus matched random | paired bootstrap | > 0 expected | end-to-end probe validation |
 | 6 | instruct: un-orthogonalized probe score, `lexical_neg` minus matched random | paired bootstrap | reported | circularity diagnostic |
 
@@ -267,5 +267,31 @@ Publishable as the strong claim only if this sentence is honestly writable:
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, sign error in contrast 1, corrected. Disclosed in full because the correction is
+self-serving.**
+What was wrong: contrast 1 and the section 8 criterion state the primary as "> 0 supports SHELL".
+That is backwards. The probe direction is fit on the lexical axis with label 1 = POSITIVE (see
+`stimuli.build_lexical_axis`, where `_LEX_POS` rows carry label 1), so a higher probe score means a
+more positive state and a *detected negative state must move the probe score DOWN*. The criterion
+should have read "< 0", or equivalently, an absolute shift clearing the floor in the direction of
+the injected pole.
+How it was caught: the preregistered base-model validation clause (contrast 5) failed. That clause
+exists to catch a probe that cannot see what demonstrably reaches the options, and it did its job:
+the base model showed a large, highly significant probe shift of -0.3559 SD under negative
+injection alongside option mass moving +0.0430, and the analyzer scored the probe as "null" because
+it was checking for a positive shift.
+Why the correction is not licensed by the data it affects: the sign convention is established by
+the *positive* arm, which was preregistered as "> 0" and is unaffected. Positive injection moves the
+probe +2.36 SD on the instruct model and +2.80 SD on the base model, confirming that up means
+positive. The convention is also verifiable directly from the label assignment in the frozen
+stimuli, independent of any run.
+Impact on what can be claimed, stated plainly: **this correction changes the verdict from
+NO_INSTRUMENT to a substantive one, which is the self-serving direction, and a reader is entitled to
+weigh it accordingly.** What limits the concern is that the error is in the stated sign of a
+criterion rather than in the design, that the code change is `point >= floor` becoming
+`abs(point) >= floor` with a required sign matching the injected pole, and that both the raw and
+orthogonalized numbers are printed at every layer so the corrected verdict can be checked by hand
+from the artifact. No other criterion, floor, gate, or control was altered.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

@@ -14,6 +14,13 @@ endpoint was computed. Scored against `PREREG_floor_vs_suppression.md`.
 > option mass at baseline against the base model's 26.5%. The floor is a property of the tuned
 > readout, not of the direction. Read this document for the arm C evidence and the two disclosures;
 > read `RESULTS_pair.md` for what the finding actually is.
+>
+> **SUPERSEDED FURTHER, 2026-08-01.** `RESULTS_shell.md` probed the representation
+> rather than the readout and the FLOOR answer flips: the tuned model DOES carry a
+> linearly decodable correlate of the injected negative state downstream (-1.07 SD,
+> orthogonalized against the injected direction) while its option mass moves +0.0006.
+> The floor is in the expression, not in the representation. This document's central
+> conclusion is retracted; its arm B evidence and its two disclosures still stand.
 
 ---
 
