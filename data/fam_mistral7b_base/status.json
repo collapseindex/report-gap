@@ -1,0 +1,17 @@
+{
+ "pair_key": "mistral7b",
+ "family": "Mistral",
+ "role": "base",
+ "model": "unsloth/mistral-7b-v0.3",
+ "state": "complete",
+ "stimuli_sha256": "0a3773cf2e4f6557a68a5e18c5f2769fe387f725e0c4be49636ca2166b054f52",
+ "smoke": false,
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "676f9c5db55bfe165a1a6771a3040274250d1dc535cce8c30e02ff4b3741d58f",
+ "rows": 14400,
+ "path": "/data/fam_mistral7b_base/enum.jsonl",
+ "n_orderings": 120,
+ "n_items": 30,
+ "seconds": 210.92697668075562
+}
