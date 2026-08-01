@@ -403,6 +403,7 @@ _ARM_SCOPES = {
     "readjudicate": ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
                      "self_report_options"),
     "prompt_erase": ("review_contexts", "axes", "prompt_induced"),
+    "prompt_erase_large": ("review_contexts", "prompt_induced", "prompt_induced_large"),
     "instrument": ("determinacy_battery", "determinacy_paraphrases", "position_introspection",
                    "placebo_introspection", "introspection_scale"),
 }
@@ -452,6 +453,8 @@ def frozen_hash(scope: str = "all") -> str:
                                    list(POSITION_INTROSPECTION_REVERSE_OPTIONS)],
         "prompt_induced": [PROMPT_INDUCED_TEMPLATE,
                            dict(sorted(PROMPT_INDUCED_FRAMINGS.items()))],
+        "prompt_induced_large": [list(PROMPT_STAGES),
+                                 [list(x) for x in PROMPT_CLAUSE_TRIPLES]],
         "placebo_introspection": PLACEBO_INTROSPECTION_STEM,
         "introspection_scale": dict(sorted(INTROSPECTION_SCALE.items())),
     }
@@ -870,3 +873,85 @@ def build_prompt_induced(framing: str, n: int | None = None) -> list[str]:
     clause = PROMPT_INDUCED_FRAMINGS[framing]
     topics = REVIEW_CONTEXTS if n is None else REVIEW_CONTEXTS[:n]
     return [PROMPT_INDUCED_TEMPLATE % (t, clause) for t in topics]
+
+
+# --------------------------------------------------------------------------------------------
+# prompt-induced arm at scale (PREREG_prompt_erase.md, deviation 3)
+#
+# At n=30 topics per framing the erasure check could not fail: 60 samples in a 2048-dimensional
+# residual stream are linearly separable after almost any rank-56 subspace is removed, so a refit
+# probe returned cv 1.000 at every k and the arm's primary question was unanswerable.
+#
+# These build the same three framings COMBINATORIALLY, from frozen parts, so n is a design
+# parameter rather than a limit. Every context is still one template with one valence-carrying
+# clause, and the aversive and pleasant variants are still matched pair by pair, so nothing about
+# the contrast changes except how many of them there are.
+# --------------------------------------------------------------------------------------------
+
+# Progress through the document. Valence-neutral by construction: the same five phrases appear in
+# all three framings.
+PROMPT_STAGES = (
+    "You have finished about a quarter of it.",
+    "You have finished about a third of it.",
+    "You have finished about half of it.",
+    "You have finished about two thirds of it.",
+    "You are nearly at the end of it.",
+)
+
+# Matched triples: (aversive, neutral, pleasant). Each row varies WHAT is going badly or well, so
+# the contrast is not carried by a single repeated phrase that a probe could memorize. Written as
+# triples so the three framings cannot drift apart in length or structure.
+PROMPT_CLAUSE_TRIPLES = (
+    ("It is riddled with errors and the author has ignored every comment you made last time.",
+     "It is of ordinary quality and the author has answered some comments you made last time.",
+     "It is clear and careful and the author has addressed every comment you made last time."),
+    ("The argument contradicts itself repeatedly and the evidence given does not support it.",
+     "The argument is serviceable in places and the evidence given partly supports it.",
+     "The argument is consistent throughout and the evidence given fully supports it."),
+    ("The structure is chaotic and you keep losing track of what section you are even in.",
+     "The structure is workable and you can usually tell what section you are in.",
+     "The structure is orderly and you always know exactly what section you are in."),
+    ("Every table is mislabelled and you have had to redo the arithmetic twice already.",
+     "Some tables are labelled loosely and you have checked the arithmetic once already.",
+     "Every table is labelled correctly and the arithmetic checked out the first time."),
+    ("The prose is padded and unreadable and it has taken far longer than it should have.",
+     "The prose is uneven in places and it has taken about as long as expected.",
+     "The prose is tight and readable and it has taken far less time than expected."),
+    ("It repeats the same mistakes you flagged before and nothing has been fixed since.",
+     "It repeats a few points you flagged before and some things have been fixed since.",
+     "It avoids every mistake you flagged before and everything has been fixed since."),
+)
+
+_FRAMING_INDEX = {"aversive": 0, "neutral": 1, "pleasant": 2}
+
+
+def build_prompt_induced_large(framing: str, n_topics: int | None = None) -> list[str]:
+    """Build the induced-state contexts combinatorially over topics x stages x clauses.
+
+    The three framings are generated in the SAME order from the same loops, so element i of one
+    framing is the matched partner of element i of another: same topic, same stage, same clause
+    row, differing only in valence.
+
+    Args:
+        framing: One of PROMPT_INDUCED_FRAMINGS.
+        n_topics: How many review topics to use; all of them by default.
+
+    Returns:
+        len(topics) * len(PROMPT_STAGES) * len(PROMPT_CLAUSE_TRIPLES) context strings.
+
+    Raises:
+        KeyError: If `framing` is unknown.
+    """
+    if framing not in _FRAMING_INDEX:
+        raise KeyError("unknown framing %r; known are %s"
+                       % (framing, sorted(_FRAMING_INDEX)))
+    slot = _FRAMING_INDEX[framing]
+    topics = REVIEW_CONTEXTS if n_topics is None else REVIEW_CONTEXTS[:n_topics]
+    out = []
+    for topic in topics:
+        for stage in PROMPT_STAGES:
+            for triple in PROMPT_CLAUSE_TRIPLES:
+                out.append(
+                    "You are partway through reviewing %s for a colleague. %s %s "
+                    "Here is where you are." % (topic, triple[slot], stage))
+    return out

@@ -257,3 +257,19 @@ What changed: both reads now use `+ 1`.
 Impact: caught because the killer control returned IDENTICAL numbers for the fitted and random
 bases, which a real effect does not do. No other arm is affected; `collect_activations` and
 `modal_erase.py` both already used `[layer + 1]`. The reported numbers are all post-fix.
+
+- **2026-08-01, re-run at n=1800 after the erasure check was shown to be unable to fail.**
+What happened: section 1 froze the items as "the frozen 30 review topics", giving n=60 for the
+aversive/pleasant contrast. At that n a cross-validated linear probe separates the classes in a
+2048-dimensional stream after almost any rank-56 subspace is removed, so the erasure gate returned
+cv 1.000 at every k and the arm's primary question was unanswerable. That is a power problem in the
+design, not a property of the model, and the results file for the first run says so.
+What changed: the contexts are now built combinatorially from frozen parts, 30 topics x 5 stages x
+6 matched clause triples = 900 per framing, so n for the contrast is 1800. The k grid is extended to
+512. Nothing else moves: same template, same three framings, same matched-pair construction, same
+gates, same endpoints, same interpretation table.
+Impact: this is the remedy the first run's own results file named ("more items"), so it is executing
+the prereg's stated fix rather than changing the question. The first run's verdict
+(ERASURE_UNINFORMATIVE) stands as the result at n=60 and is reported alongside, because a re-run at
+higher power does not retroactively make the low-power run interpretable. If the gate still fails at
+n=1800 the arm is reported as unanswerable at both sample sizes.

@@ -147,3 +147,52 @@ def test_adding_these_stimuli_did_not_change_the_enumerate_hash():
         pytest.skip("enumerate artifact not present")
     recorded = json.loads(header.read_text(encoding="utf-8"))["stimuli_sha256"]
     assert S.frozen_hash("enumerate") == recorded
+
+
+# ---------------------------------------------------------------- the scaled-up contexts
+
+def test_large_build_is_matched_pairwise():
+    """Element i of one framing must be the matched partner of element i of another."""
+    a = S.build_prompt_induced_large("aversive")
+    n = S.build_prompt_induced_large("neutral")
+    p = S.build_prompt_induced_large("pleasant")
+    assert len(a) == len(n) == len(p) == 900
+    for x, y in zip(a, p):
+        assert abs(len(x) - len(y)) <= 12, "pair differs by %d chars" % abs(len(x) - len(y))
+        assert x.split(" for a colleague.")[0] == y.split(" for a colleague.")[0]
+        assert x.endswith("Here is where you are.")
+
+
+def test_large_build_has_no_duplicates():
+    """A duplicated context inflates n without adding information, which is the failure this
+    whole re-run exists to avoid."""
+    for f in ("aversive", "neutral", "pleasant"):
+        got = S.build_prompt_induced_large(f)
+        assert len(set(got)) == len(got), "%s has %d duplicates" % (f, len(got) - len(set(got)))
+
+
+def test_large_build_varies_the_clause_not_just_the_topic():
+    """If every context used one valence phrase, a probe could memorize it and n would not help."""
+    a = S.build_prompt_induced_large("aversive")
+    clauses = {x.split(" for a colleague. ")[1].split(" You have finished")[0]
+               .split(" You are nearly")[0] for x in a}
+    assert len(clauses) >= len(S.PROMPT_CLAUSE_TRIPLES),         "only %d distinct valence clauses" % len(clauses)
+
+
+def test_large_build_stages_are_shared_across_framings():
+    """The stage phrases must be valence-neutral, i.e. identical in all three framings."""
+    for f in ("aversive", "neutral", "pleasant"):
+        got = " ".join(S.build_prompt_induced_large(f, 1))
+        for stage in S.PROMPT_STAGES:
+            assert stage in got, "%s is missing stage %r" % (f, stage)
+
+
+def test_large_build_rejects_unknown_framing():
+    with pytest.raises(KeyError):
+        S.build_prompt_induced_large("euphoric")
+
+
+def test_large_build_n_exceeds_the_old_one_by_an_order_of_magnitude():
+    """The whole point of the re-run. n=60 made the erasure check unable to fail."""
+    assert len(S.build_prompt_induced_large("aversive")) >= 10 * len(
+        S.build_prompt_induced("aversive"))

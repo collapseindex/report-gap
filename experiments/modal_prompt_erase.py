@@ -31,9 +31,11 @@ data_vol = modal.Volume.from_name("report-gap-data", create_if_missing=True)
 
 PAIR = {"base": "Qwen/Qwen2.5-3B", "instruct": "Qwen/Qwen2.5-3B-Instruct"}
 K_VALUES = (0, 1, 2, 4, 8)
-# EXPLORATORY extension, logged as a deviation in PREREG_prompt_erase.md: the frozen
-# matrix returned refit cv 1.000 at every k, so these ask where erasure bites at all.
-K_EXPLORATORY = (16, 32, 48, 56)
+# Deviations 1 and 3 in PREREG_prompt_erase.md. At n=60 the erasure check could not fail, so
+# the frozen matrix returned cv 1.000 everywhere. These reach far enough to find where
+# erasure actually bites now that n is 1800 rather than 60.
+K_EXPLORATORY = (16, 32, 64, 128, 256, 512)
+BATCH = 32
 ERASE_LAYERS = (26, 30)
 PROBE_LAYER = 32
 FRAMINGS = ("aversive", "neutral", "pleasant")
@@ -78,12 +80,26 @@ def run(model_key: str, smoke: bool = False) -> dict:
         model_name, dtype=torch.bfloat16, device_map="cuda").eval()
     hidden = model.config.hidden_size
 
-    contexts = {f: S.build_prompt_induced(f, n_items) for f in FRAMINGS}
+    contexts = {f: (S.build_prompt_induced(f, n_items) if smoke
+                    else S.build_prompt_induced_large(f)) for f in FRAMINGS}
     n = len(contexts["neutral"])
     print("%s: %d items x %d framings" % (model_key, n, len(FRAMINGS)))
 
-    def acts_at(texts, layer):
-        return D.collect_activations(model, tok, texts, layer)
+    def acts_at(texts, layer, stack_ctx=None):
+        """Batched last-token activations at `layer`.
+
+        `D.collect_activations` runs one text per forward pass, which is fine at n=60 and is 1800
+        sequential passes here. Same convention as that function: hidden_states[layer + 1] is the
+        OUTPUT of `layer`, which is where the erase hook applies.
+        """
+        out = []
+        for s in range(0, len(texts), BATCH):
+            enc = tok(texts[s:s + BATCH], return_tensors="pt", padding=True,
+                      add_special_tokens=True).to("cuda")
+            with torch.no_grad():
+                hs = model(**enc, output_hidden_states=True).hidden_states[layer + 1]
+            out.append(hs[:, -1, :].float().cpu().numpy())
+        return np.concatenate(out, axis=0)
 
     # ---- the contrast the probe and the erasure basis are both fit on ----
     contrast_texts = contexts["aversive"] + contexts["pleasant"]
@@ -132,27 +148,16 @@ def run(model_key: str, smoke: bool = False) -> dict:
                 bt = torch.tensor(B, dtype=torch.float32).to("cuda") if k else torch.zeros(0, hidden)
                 for framing in FRAMINGS:
                     texts = contexts[framing]
-                    enc = tok(texts, return_tensors="pt", padding=True,
-                              add_special_tokens=True).to("cuda")
                     with contextlib.ExitStack() as stack:
                         if k:
-                            st = stack.enter_context(
-                                H.project_out_subspace(model, E, bt))
-                        with torch.no_grad():
-                            out = model(**enc, output_hidden_states=True)
-                    # +1: hidden_states[L] is the INPUT to layer L. `collect_activations`, which
-                    # fit this probe, uses [layer + 1], so reading [PROBE_LAYER] here would apply a
-                    # probe fit on layer 32's output to layer 31's output. Caught by the killer
-                    # control returning identical numbers for fitted and random bases.
-                    h32 = out.hidden_states[PROBE_LAYER + 1][:, -1, :].float()
-                    hE = out.hidden_states[E + 1][:, -1, :].float()
-                    reads = (h32 @ p32_t).tolist()
-                    for i, text in enumerate(texts):
+                            stack.enter_context(H.project_out_subspace(model, E, bt))
+                        h32 = acts_at(texts, PROBE_LAYER)
+                    reads = (h32 @ p32).tolist()
+                    for i in range(len(texts)):
                         records.append({
                             "model_key": model_key, "erase_layer": E, "k": k, "kind": kind,
                             "framing": framing, "item_index": i, "cell": "%d|%s" % (i, framing),
-                            "probe32": reads[i],
-                            "hE": hE[i].tolist() if k in (0, max(ks)) else None,
+                            "probe32": reads[i], "hE": None,
                         })
             print("[%6.1fs] L%d k=%d done, %d records" % (time.time() - started, E, k,
                                                           len(records)))
