@@ -1,0 +1,18 @@
+{
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "3d4c77cdeb199eab3c9977ca0adfaf672b4dc87c1652f985c347d67e9d35d2cd",
+ "model": "Qwen/Qwen2.5-3B",
+ "model_key": "base",
+ "stimuli_sha256": "0a3773cf2e4f6557a68a5e18c5f2769fe387f725e0c4be49636ca2166b054f52",
+ "n_orderings": 120,
+ "n_items": 30,
+ "conditions": [
+  "letters",
+  "numbers",
+  "identical",
+  "canary"
+ ],
+ "injection": "none",
+ "smoke": false
+}
