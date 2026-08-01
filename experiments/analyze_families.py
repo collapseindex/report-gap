@@ -288,6 +288,36 @@ def main(argv):
         print("  %-11s %d pair(s), %d with instruct higher  ->  %s   deltas %s"
               % (fam, len(ds), up, direction, ["%+.4f" % d for d in ds]))
 
+    # ---- the canary restriction, prereg section 9 row 5 ----
+    # "Canary is order-sensitive in some models -> the 'degenerates where the answer is
+    # undetermined' reading is restricted to the models where the canary is CLEAN, and that
+    # restriction goes in the paper." This applies that rule instead of asserting it in prose.
+    print("\nCANARY RESTRICTION (prereg section 9, row 5)")
+    print("  A model whose canary is itself order-sensitive cannot testify that the format")
+    print("  degenerates SPECIFICALLY where the answer is undetermined. Restricting to models")
+    print("  that answer the known-answer question near-perfectly AND order-insensitively:")
+    clean_canary, dirty_canary = [], []
+    for key in sorted(models):
+        r = report["%s_%s" % key]
+        if r["canary_mean"] is None or r["ordering_summary"] is None:
+            continue
+        row = (key[0], key[1], r["family"], r["canary_mean"], r["canary_sd"],
+               r["ordering_summary"]["ratio"])
+        (clean_canary if (r["canary_mean"] >= 0.95 and r["canary_sd"] <= 0.10)
+         else dirty_canary).append(row)
+    for label, group in (("CLEAN canary", clean_canary), ("order-sensitive canary", dirty_canary)):
+        print("\n  %s (%d checkpoints):" % (label, len(group)))
+        for pk, role, fam, cm, cs, ratio in group:
+            print("    %-12s %-9s %-11s canary %.4f +- %.4f   self-report range %8.1fx"
+                  % (pk, role, fam, cm, cs, ratio))
+    if clean_canary:
+        cb = [r[5] for r in clean_canary if r[1] == "base"]
+        ci = [r[5] for r in clean_canary if r[1] == "instruct"]
+        print("\n  Among CLEAN-canary checkpoints only: base ranges %s, instruct ranges %s."
+              % (["%.1fx" % v for v in sorted(cb)], ["%.1fx" % v for v in sorted(ci)]))
+        print("  The restriction %s the reading."
+              % ("SURVIVES" if (cb and ci and max(cb) < min(ci)) else "does NOT cleanly separate"))
+
     # ---- subsample recovery, prereg contrast 6 ----
     print("\nSUBSAMPLE RECOVERY (prereg 8b contrast 6): what a study sampling k orderings sees")
     subs = {}

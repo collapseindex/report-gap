@@ -450,6 +450,52 @@ model has no determinate answer, which is the condition every self-report questi
 the enumerated population on the tuned model; the replication seeds at $56$, $83$, $33$, $82$.
 Ordinary percentiles both times. The first result was not unlucky, it was under-sampled.
 
+\subsection{How many orderings does a study actually need?}
+\label{sec:howmany}
+
+``Enumerate everything'' is cheap at five options and impossible at eight. The enumerated population
+lets us say what a smaller study buys, by drawing $k$ of the $120$ orderings at random, $4000$ times,
+and asking what that study would have seen (Table~\ref{tab:k}). Two quantities behave completely
+differently.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{What a study that samples $k$ orderings sees.} Drawn from the enumerated population
+on the tuned model, $4000$ draws per $k$. The \emph{mean} is estimable and converges. The
+\emph{spread} is not: it is a severe underestimate at every $k$ below the full population, and the
+error always runs in the direction that makes the nuisance look smaller than it is.}
+\label{tab:k}
+\begin{tabular}{@{}rlrrr@{}}
+\toprule
+$k$ & \textbf{sample mean, p05--p95} & \textbf{median spread seen} & \textbf{\% of true $986\times$} & \textbf{P(spread $<10\times$)} \\
+\midrule
+2    & $0.0035$--$0.4270$ & $5.6\times$  & $1\%$   & $0.62$ \\
+4    & $0.0077$--$0.2695$ & $36\times$   & $4\%$   & $0.18$ \\
+8    & $0.0172$--$0.1999$ & $130\times$  & $13\%$  & $0.01$ \\
+16   & $0.0304$--$0.1667$ & $323\times$  & $33\%$  & $0.00$ \\
+32   & $0.0473$--$0.1377$ & $483\times$  & $49\%$  & $0.00$ \\
+64   & $0.0640$--$0.1147$ & $893\times$  & $91\%$  & $0.00$ \\
+120  & $0.0900$ exactly   & $986\times$  & $100\%$ & $0.00$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The recommendation this licenses.} Report the between-ordering spread from as many
+orderings as you can afford, and \textbf{report it as a lower bound}, because a sample's observed
+spread understates the population's by a factor that grows as the sample shrinks. At $k=4$, which is
+what most studies could afford, the median study sees $4\%$ of the true spread and has an $18\%$
+chance of seeing under $10\times$ and concluding the nuisance is negligible. Even the mean, the
+easier quantity, needs tens of orderings: at $k=4$ the middle $90\%$ of studies would report a
+baseline anywhere from $0.008$ to $0.27$.
+
+\paragraph{Our own retraction was ordinary, not unlucky.} Two independent draws of four orderings
+differ in their means by $\geq 2\times$ \textbf{$67\%$ of the time} on this model, by $\geq 5\times$
+$32\%$ of the time, and by $\geq 10\times$ $15\%$ of the time. Ours differed by $14.6\times$, the
+$92$nd percentile. The event that destroyed three preregistered verdicts is something two honest
+four-ordering studies of the same model do to each other as a matter of course. This analysis is
+\textbf{post hoc} on this artifact and preregistered for the models in \S\ref{sec:families}.
+
 \paragraph{A negative result about label alphabets.} We also ran the real options with digit
 labels rather than letters. It is uninformative for its intended purpose and informative for
 another reason: off-option mass is $0.996$, meaning the model puts $0.4\%$ of its distribution on
