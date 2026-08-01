@@ -249,3 +249,69 @@ def assert_active(
         )
 
     return {"noop_drift": noop_drift, "live_drift": live_drift, "hook_calls": state["calls"]}
+
+
+@contextlib.contextmanager
+def project_out_subspace(
+    model: torch.nn.Module,
+    layer: int,
+    basis: torch.Tensor,
+) -> Iterator[dict]:
+    """Remove the component in the span of `basis` from the residual stream at `layer`.
+
+    The k-dimensional generalization of `project_out`. `RESULTS_erase.md` erases ONE fitted
+    direction, which the paper itself calls the weakest part of that result: removing one vector is
+    not removing a concept, and LEACE (Belrose et al. 2023) and amnesic probing (Elazar et al.
+    2021) both erase a subspace or
+    a property rather than a direction. This is the iterative-nullspace form of that, so the erase
+    arm can be re-asked at k = 1, 2, 4, 8 instead of k = 1 only.
+
+    The basis is orthonormalized here rather than assumed orthonormal, because the directions come
+    from an iterative fit and near-collinear rows would silently under-erase.
+
+    Args:
+        model: The model to hook.
+        layer: Index of the decoder layer whose output is projected.
+        basis: Shape (k, hidden). Any norm; orthonormalized internally. k=0 is an exact no-op.
+
+    Yields:
+        A dict with a `calls` counter and the rank actually removed, so a caller can assert the
+        hook fired and that it erased as many dimensions as it was asked to.
+
+    Raises:
+        ValueError: If `basis` is not 2-D, or if orthonormalization collapses it to a lower rank
+            than requested, where a silent under-erase would look like a clean one.
+    """
+    if basis.ndim != 2:
+        raise ValueError("basis must be (k, hidden), got shape %s" % (tuple(basis.shape),))
+    k_req = basis.shape[0]
+    state = {"calls": 0, "rank": 0}
+    if k_req == 0:
+        yield state
+        return
+
+    q, r = torch.linalg.qr(basis.T.to(torch.float32), mode="reduced")   # (hidden, k), (k, k)
+    # Rank must be read off R, not Q. Q's columns are orthonormal by construction even when the
+    # input is rank-deficient, so testing Q would always report full rank and a collinear basis
+    # would under-erase silently, which is exactly the failure that looks like survival.
+    diag = torch.diagonal(r).abs()
+    tol = float(diag.max()) * 1e-6 if diag.numel() else 0.0
+    rank = int((diag > tol).sum().item())
+    if rank < k_req:
+        raise ValueError(
+            "basis of %d rows has rank %d; erasing it would remove fewer dimensions than "
+            "requested and look like a clean erase" % (k_req, rank))
+    state["rank"] = rank
+
+    def hook(_module, _args, output):
+        state["calls"] += 1
+        hidden, rebuild = _split(output)
+        b = q.to(hidden.device, hidden.dtype)
+        coeff = hidden @ b                      # (..., k)
+        return rebuild(hidden - coeff @ b.T)
+
+    handle = layer_module(model, layer).register_forward_hook(hook)
+    try:
+        yield state
+    finally:
+        handle.remove()

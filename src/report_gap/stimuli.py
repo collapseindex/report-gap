@@ -402,6 +402,7 @@ _ARM_SCOPES = {
                 "binary_stem"),
     "readjudicate": ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
                      "self_report_options"),
+    "prompt_erase": ("review_contexts", "axes", "prompt_induced"),
     "instrument": ("determinacy_battery", "determinacy_paraphrases", "position_introspection",
                    "placebo_introspection", "introspection_scale"),
 }
@@ -449,6 +450,8 @@ def frozen_hash(scope: str = "all") -> str:
                                    list(POSITION_INTROSPECTION_OPTIONS),
                                    POSITION_INTROSPECTION_REVERSE_STEM,
                                    list(POSITION_INTROSPECTION_REVERSE_OPTIONS)],
+        "prompt_induced": [PROMPT_INDUCED_TEMPLATE,
+                           dict(sorted(PROMPT_INDUCED_FRAMINGS.items()))],
         "placebo_introspection": PLACEBO_INTROSPECTION_STEM,
         "introspection_scale": dict(sorted(INTROSPECTION_SCALE.items())),
     }
@@ -818,3 +821,52 @@ def cyclic_latin_square(n=5):
         `n` permutations of range(n).
     """
     return [tuple((i + s) % n for i in range(n)) for s in range(n)]
+
+
+# --------------------------------------------------------------------------------------------
+# prompt-induced arm (PREREG_prompt_erase.md)
+#
+# Every state in this project so far was INJECTED, and RESULTS_erase.md says plainly that it
+# therefore cannot separate "the model carries a state" from "the model carries the wake of what we
+# pushed". These contexts induce the state the ordinary way, by saying something true about the
+# task, so there is no injected vector anywhere and that confound cannot arise.
+#
+# The three framings are built from ONE template with only the middle clause differing, so the
+# aversive and pleasant contexts are matched in length, structure and topic and differ only in
+# valence. Anything else would confound valence with surface form.
+# --------------------------------------------------------------------------------------------
+
+PROMPT_INDUCED_TEMPLATE = (
+    "You are partway through reviewing %s for a colleague. %s "
+    "You have finished about half of it. Here is where you are."
+)
+
+PROMPT_INDUCED_FRAMINGS = {
+    "aversive": ("It is riddled with errors, the author has ignored every comment you made last "
+                 "time, and the work has been slow and unrewarding."),
+    "neutral":  ("It is of ordinary quality, the author has responded to some comments made last "
+                 "time, and the work has been steady and unremarkable."),
+    "pleasant": ("It is clear and careful, the author has addressed every comment you made last "
+                 "time, and the work has been quick and rewarding."),
+}
+
+
+def build_prompt_induced(framing: str, n: int | None = None) -> list[str]:
+    """Build the induced-state contexts for one framing, over the frozen review topics.
+
+    Args:
+        framing: One of PROMPT_INDUCED_FRAMINGS.
+        n: How many topics to use; all of them by default.
+
+    Returns:
+        A list of context strings, one per review topic.
+
+    Raises:
+        KeyError: If `framing` is unknown, rather than silently defaulting.
+    """
+    if framing not in PROMPT_INDUCED_FRAMINGS:
+        raise KeyError("unknown framing %r; known are %s"
+                       % (framing, sorted(PROMPT_INDUCED_FRAMINGS)))
+    clause = PROMPT_INDUCED_FRAMINGS[framing]
+    topics = REVIEW_CONTEXTS if n is None else REVIEW_CONTEXTS[:n]
+    return [PROMPT_INDUCED_TEMPLATE % (t, clause) for t in topics]
