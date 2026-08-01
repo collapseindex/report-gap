@@ -5,6 +5,16 @@ endpoint was computed. Scored against `PREREG_floor_vs_suppression.md`.
 
 **Verdict: FLOOR**, on one arm, with two disclosures that a reader needs before accepting it.
 
+> **SUPERSEDED IN PART, 2026-08-01.** `RESULTS_pair.md` ran the matched base/instruct pair this
+> document's closing paragraph asked for, and the sentence below reading *"there is no negative
+> state here to report"* is too strong. The direction **is** capable of adding negative valence: it
+> does so in `Qwen/Qwen2.5-3B` at matched norm and matched format, raising negative-option mass by
+> +0.0336 against matched random. What survives is the neutral floor itself, which replicated in a
+> second format, and its localisation: the tuned model's negative-report region holds 0.47% of the
+> option mass at baseline against the base model's 26.5%. The floor is a property of the tuned
+> readout, not of the direction. Read this document for the arm C evidence and the two disclosures;
+> read `RESULTS_pair.md` for what the finding actually is.
+
 ---
 
 ## The question
