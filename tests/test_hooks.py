@@ -359,3 +359,80 @@ def test_replication_control_seeds_give_genuinely_different_directions():
             assert c <= hi, \
                 "seed %d and seed %d directions are more aligned (%.4f) than the random floor %.4f" \
                 % (a, b, c, hi)
+
+
+# --------------------------------------------------------------------------------------------
+# project_out: the erase arm's whole design rests on this being an exact projection
+# --------------------------------------------------------------------------------------------
+
+
+def test_project_out_removes_the_component_exactly(setup):
+    model, _, direction = setup
+    batch = torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
+    with H.project_out(model, 2, direction) as state:
+        out = model(input_ids=batch, output_hidden_states=True)
+    assert state["calls"] > 0
+    h = out.hidden_states[3]                       # layer 2's output
+    u = direction / direction.norm()
+    residual = (h.float() * u.float()).sum(dim=-1).abs().max()
+    assert residual < 1e-4, "projection left %.3g along the erased direction" % residual
+
+
+def test_project_out_is_idempotent(setup):
+    model, inputs, direction = setup
+    with H.project_out(model, 2, direction):
+        once = model(**inputs).logits
+    # a second identical projection at the same layer must change nothing
+    with H.project_out(model, 2, direction):
+        with H.project_out(model, 2, direction):
+            twice = model(**inputs).logits
+    assert torch.allclose(once, twice, atol=1e-5)
+
+
+def test_project_out_leaves_an_orthogonal_stream_alone(setup):
+    """Negative control for the erase: it must not be a general-purpose perturbation."""
+    model, inputs, _ = setup
+    hidden = model(**inputs, output_hidden_states=True).hidden_states[3]
+    # build a direction orthogonal to EVERY position of the layer-2 output. mode="complete" is
+    # required: the default reduced QR returns a basis for the column space itself, so q[:, -1]
+    # would lie inside the span rather than orthogonal to it. The premise assertion below caught
+    # exactly that when this test was first written.
+    q, _ = torch.linalg.qr(hidden[0].T.float(), mode="complete")
+    orthogonal = q[:, -1]
+    assert float((hidden.float() * orthogonal).sum(dim=-1).abs().max()) < 1e-3,         "the constructed direction is not orthogonal to the stream; this test proves nothing"
+    base = model(**inputs).logits
+    with H.project_out(model, 2, orthogonal):
+        erased = model(**inputs).logits
+    assert torch.allclose(base, erased, atol=1e-4), \
+        "erasing a direction the stream has no component along changed the output"
+
+
+def test_inject_then_erase_at_the_same_layer_returns_to_baseline(setup):
+    """The arithmetic identity the erase must satisfy, and prereg section 7's load-bearing test.
+
+    Injecting v then projecting v out at the same layer must land back where an un-injected run
+    would, because the projection removes the injected component along with any pre-existing one.
+    """
+    model, inputs, direction = setup
+    with H.project_out(model, 2, direction):
+        clean = model(**inputs).logits
+    with H.inject(model, 2, direction, 0.5, 10.0):
+        with H.project_out(model, 2, direction):
+            injected_then_erased = model(**inputs).logits
+    assert torch.allclose(clean, injected_then_erased, atol=1e-4), \
+        "inject-then-erase does not equal erase alone; the projection is not removing the injection"
+
+
+def test_project_out_refuses_a_zero_direction(setup):
+    model, _, _ = setup
+    with pytest.raises(ValueError, match="zero-norm"):
+        with H.project_out(model, 2, torch.zeros(HIDDEN)):
+            pass
+
+
+def test_inject_and_erase_hooks_compose_at_different_layers(setup):
+    model, inputs, direction = setup
+    with H.inject(model, 1, direction, 0.1, 10.0) as inj:
+        with H.project_out(model, 2, direction) as era:
+            model(**inputs)
+    assert inj["calls"] > 0 and era["calls"] > 0, "one of the two hooks never fired"

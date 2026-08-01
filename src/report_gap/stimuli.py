@@ -394,6 +394,8 @@ _ARM_SCOPES = {
                 "self_report_options"),
     "shell":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
                 "self_report_options"),
+    "erase":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options"),
 }
 
 

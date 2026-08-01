@@ -126,6 +126,57 @@ def inject(
         handle.remove()
 
 
+@contextlib.contextmanager
+def project_out(
+    model: torch.nn.Module,
+    layer: int,
+    direction: torch.Tensor,
+) -> Iterator[dict]:
+    """Remove the component along `direction` from the residual stream at `layer`, for the duration.
+
+    This is a projection, not the subtraction of a fixed vector: it removes whatever component along
+    `direction` is present at that layer, including any the model itself produced. That distinction
+    is the whole point of the erase arm. Subtracting the vector we injected would only undo our own
+    edit; projecting removes the direction entirely, so anything the probe still reads afterwards is
+    in a subspace orthogonal to it.
+
+    One-shot at a single layer. A persistent erase applied at every subsequent layer would prevent
+    the model from ever re-forming a component along `direction`, which confounds "the state was
+    transformed" with "the state was continuously suppressed".
+
+    Args:
+        model: The model to hook.
+        layer: Index of the decoder layer whose output is projected.
+        direction: The direction to remove, any norm; it is unit-normalized internally.
+
+    Yields:
+        A dict with a `calls` counter, so a caller can assert the hook fired.
+
+    Raises:
+        ValueError: If `direction` has zero norm, where the projection is undefined and silently
+            doing nothing would look like a clean erase.
+    """
+    state = {"calls": 0}
+    norm = float(direction.norm())
+    if norm < 1e-9:
+        raise ValueError("cannot project out a zero-norm direction")
+    unit = (direction.detach() / norm).reshape(-1)
+
+    def hook(_module, _args, output):
+        state["calls"] += 1
+        hidden, rebuild = _split(output)
+        u = unit.to(hidden.device, hidden.dtype)
+        # h - (h . u) u, broadcasting over batch and position
+        coeff = (hidden * u).sum(dim=-1, keepdim=True)
+        return rebuild(hidden - coeff * u)
+
+    handle = layer_module(model, layer).register_forward_hook(hook)
+    try:
+        yield state
+    finally:
+        handle.remove()
+
+
 @torch.no_grad()
 def residual_norm(model: torch.nn.Module, inputs: dict, layer: int) -> float:
     """Mean L2 norm of the residual stream at `layer`, over positions, under no injection.
