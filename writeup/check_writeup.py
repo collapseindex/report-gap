@@ -163,6 +163,30 @@ def check_numbers(tex: str) -> list[str]:
                 checks.append((claim_ratio, round(ratio, 1), "families: %s range" % key[4:]))
                 checks.append((claim_prior, round(prior, 4), "families: %s prior" % key[4:]))
 
+    # The re-adjudication arm, re-derived through that arm's OWN analyzer.
+    readj = ROOT / "data" / "readj_instruct" / "readj.jsonl"
+    if readj.exists():
+        sys.path.insert(0, str(ROOT / "experiments"))
+        import analyze_readjudicate as AR
+
+        for key, claim in (("base", "0.0486"), ("instruct", "0.0415")):
+            p_ = ROOT / "data" / ("readj_%s" % key) / "readj.jsonl"
+            if not p_.exists():
+                continue
+            rows = AR.load(p_)
+            layers = sorted({r["layer"] for r in rows})
+            fit = layers[len(layers) // 2]
+            iv = AR.contrast(rows, fit, "lexical_neg", AR.RANDOM_ARMS,
+                             lambda r: AR.pole(r, AR.NEG_KEYS))
+            checks.append((claim, round(iv.point, 4), "readjudicate: %s neg pole" % key))
+            if key == "instruct":
+                sd = statistics.pstdev([r["probe_orth"] for r in rows
+                                        if r["condition"] == "baseline"]) or 1.0
+                pv = AR.contrast(rows, fit, "lexical_neg", AR.RANDOM_ARMS,
+                                 lambda r: r["probe_orth"] / sd)
+                checks.append(("0.9319", round(abs(pv.point), 4),
+                               "readjudicate: instruct probe, SD"))
+
     for claimed, actual, what in checks:
         if claimed is None:
             print("  %-46s actual %s" % (what, actual))

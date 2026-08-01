@@ -64,7 +64,7 @@ Forced-Choice Self-Report\textsuperscript{1}}
 \href{https://www.apartresearch.com}{Apart Research} with NYU CMEP and
 \href{https://eleosai.org}{Eleos AI Research}.
 Submitted to \textbf{Track 3 (Introspection and Self-Report Reliability)}.
-Code, data, all twelve preregistrations and every raw artifact: \url{\repourl}.
+Code, data, all thirteen preregistrations and every raw artifact: \url{\repourl}.
 \textbf{Dating note:} all confirmatory arms were run on 2026-08-01, before the sprint window
 opened. This is completed work brought to the sprint, not work produced inside it.}
 
@@ -90,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Twelve preregistrations, $307$ tests, six of our own checkers caught
+transformation looks like. Thirteen preregistrations, $314$ tests, seven of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -329,7 +329,7 @@ cell's own baseline), which are different verdicts. A \textbf{planted-discrepanc
 a synthetic effect of known size into the exact statistic the decision rule reads, at full
 strength and again at the claimed detection floor.
 
-\paragraph{Preregistration.} Twelve preregistrations, each frozen and committed before the code that
+\paragraph{Preregistration.} Thirteen preregistrations, each frozen and committed before the code that
 serves it, validated by an external checker that requires a falsification clause, an
 interpretation table written before results, a statement of what is \emph{not} claimed, and an
 append-only deviations log in which every entry states its impact on what can be claimed. Every
@@ -386,6 +386,71 @@ understatement.
 their result against our null, and at seeds $0$--$3$ the null held across eight depths. At seeds
 $4$--$7$ the negative pole moves at layers $18$ and $24$. We therefore make no claim either way
 about the depth question: our instrument was not stable enough to address it.
+
+\section{The three retracted verdicts, re-asked on a repaired readout}
+\label{sec:readjudicate}
+
+Three verdicts are currently dead in this paper, which is honest but incomplete: we knew the
+instrument was broken and never went back to ask what the answer is on one that works. Averaging an
+endpoint over \textbf{all $120$ orderings} cancels the first-order position prior by construction,
+because every option occupies every slot the same number of times. So we re-ran all three with the
+injection, direction, reused alpha band, layers and items \textbf{identical}, changing only the
+readout.
+
+\textbf{This arm was motivated to reinstate}, which is precisely the condition under which our
+checkers have failed six times. The preregistration froze the outcome table first, gave
+\textsc{reinstated} and \textsc{reversed} equal standing in it, and required the analyzer to be
+committed \emph{before the run finished}. It came back three for three the other way.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Everything identical except the readout.} Marginalized over all $120$ orderings at
+the fit layer ($0.67$ of depth). Both models move, and both clear the stricter shuffled-label
+control as well as matched random. The original verdict held that the tuned model's negative report
+was collapsed.}
+\label{tab:readj}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+& \textbf{neg.\ pole vs random} & \textbf{vs shuffled} & \textbf{capability} & \textbf{probe} \\
+\midrule
+base     & $+0.0486$ $[+0.0472, +0.0502]$ & $+0.0289$ & $+0.0564$ ok & $-1.7339$ SD \\
+instruct & $+0.0415$ $[+0.0380, +0.0452]$ & $+0.0279$ & $+0.0695$ ok & $-0.9319$ SD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{The tuned model's null was the nuisance, not an absence.} On a readout that is not
+order-dominated, the tuned model \emph{does} report the injected negative state, at $+0.0415$
+against random and $+0.0279$ against noise-fit directions. \textsc{tuning-localized} is
+\textbf{reversed}: both models move, in the same direction, by similar amounts.
+\textsc{shell} is \textbf{reversed}, because the probe and the option mass both move, so there is no
+dissociation left to report. \textsc{depth-robust} is \textbf{reversed} in the narrow sense that the
+null it asserted is gone at the only gate-clean depth; only one of three layers passes its
+capability gate on either model, so this arm answers nothing about depth and we claim nothing.
+
+\paragraph{What that does to the paper's story, and it is not comfortable.} The account so far was
+that three verdicts died to option order and the nuisance is the finding. The sharper version is
+that \textbf{they did not die of noise, they died of a bias with a sign}. Repairing the readout did
+not make the answers uncertain, it made them \emph{different}, in all three cases. A field measuring
+welfare self-report through a forced-choice item with this nuisance is not merely adding variance to
+its conclusions; it risks reporting the opposite of what a repaired instrument would say, which is
+what happened to us three times out of three.
+
+\paragraph{What it does not license.} It vindicates nothing. The three retractions stand, because
+they were correct about the original measurement; what we have is a different measurement on a
+better instrument that happens to disagree with the original every time. Marginalization removes the
+first-order prior only, and says nothing about adjacency or content-position interactions. The
+control battery is still $m=2$.
+
+\paragraph{A seventh checker defect, flattering again.} This arm's capability gate originally reused
+a \textbf{sign-blind} helper: it required the interval to exclude zero and clear a magnitude floor,
+but not to be positive. A capability of $-0.0144$ therefore certified a readout as able to express
+the effect when the positive injection had pushed positive-pole mass \emph{down}. A sign-blind gate
+admits more layers as interpretable, which is the direction that lets an arm report more verdicts.
+Seven for seven. Re-scored with the fix no verdict changes, because the affected cell is not one the
+verdicts are decided at, and that is luck rather than design.
+
 
 \section{The nuisance, measured over its complete population}
 \label{sec:enumerate}
@@ -814,10 +879,10 @@ difference between an instrument that is silent and one that is broken is not vi
 which is why every arm here carries a capability gate that decides it in code before any endpoint is
 read, and why two arms are reported \textsc{uninformative} rather than null.
 
-\section{Six checkers, every one flattering}
+\section{Seven checkers, every one flattering}
 \label{sec:checkers}
 
-We record these because the pattern is the point. Six defects in our own analysis code were found
+We record these because the pattern is the point. Seven defects in our own analysis code were found
 during this project, and \textbf{every one of them, had it gone unnoticed, would have made a result
 look better than it was}:
 
@@ -835,6 +900,10 @@ there.''
 \item A temporal profile was computed over a layer that had failed its own gate.
 \item A tokenization bug made five digit labels read the same shared space token, producing exactly
 $0.2$ mass each and an impossible $-3.99$ off-option mass.
+\item A \textbf{sign-blind} capability gate (\S\ref{sec:readjudicate}) certified a readout as able to
+express an effect on a capability of $-0.0144$, where the positive injection had pushed positive-pole
+mass \emph{down}. Sign-blindness admits more layers as interpretable, which is the direction that
+lets an arm report more verdicts.
 \end{enumerate}
 
 \noindent Six for six in the flattering direction is not a coincidence to be noted and moved past.
@@ -970,6 +1039,8 @@ A direction fit on shuffled labels moves the readout $\approx 0.045$ where rando
 $86\%$ of an injected state survives projecting the injected direction out of the stream. & Tab.~\ref{tab:erase} & \textsc{shown} \\
 The surviving fraction has a temporal profile consistent with downstream transformation. & Tab.~\ref{tab:erase} & \textsc{shown}, two gate-clean points; ratio diagnostic post hoc \\
 \textbf{The neutral floor is localized to preference tuning.} & \S\ref{sec:retracted} & \textsc{retracted}: our own claim, killed by our own replication \\
+\textbf{On a readout marginalized over all 120 orderings, BOTH models report the injected negative state.} & Tab.~\ref{tab:readj} & \textsc{shown}: $+0.0486$ base, $+0.0415$ instruct, both clearing the shuffled-label control \\
+The three retracted verdicts are reinstated by a repaired readout. & \S\ref{sec:readjudicate} & \textsc{not shown}: all three come back \textsc{reversed}, not reinstated \\
 \textbf{The negative-pole null is robust across depth.} & \S\ref{sec:retracted} & \textsc{retracted}: same \\
 \textbf{The tuned model represents a state its options do not express.} & \S\ref{sec:retracted} & \textsc{retracted}: the representational half survives via \S\ref{sec:erase}; the dissociation does not \\
 \textbf{Forced-choice argmax over-reports a mass shift near a decision boundary.} & \S\ref{sec:retracted} & \textsc{retracted}: sign not stable across orderings \\
@@ -1011,6 +1082,8 @@ Every control we ran against a result, what it could have shown, and the verdict
 \midrule \multicolumn{3}{r@{}}{\emph{continued on next page}}\\ \endfoot
 \bottomrule \endlastfoot
 All three headline verdicts & Replication at fresh option-permutation seeds & \textsc{killed} all three \\
+All three, again & Re-ask them on a readout marginalized over all 120 orderings & \textsc{reversed} all three; reinstated none \\
+This arm's own capability gate & Is it sign-blind? & \textsc{killed} it: certified a $-0.0144$ capability. Defect \#7, flattering \\
 Every pole-mass endpoint & Norm-matched random direction & \textsc{passed}, but see the next row \\
 The random control itself & A direction fit on shuffled labels: does noise-fitting behave like noise? & \textsc{killed} the control's adequacy \\
 The ordering nuisance & Enumerate all 120 rather than sample 4 & \textsc{measured} it: $986\times$ \\
@@ -1040,7 +1113,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All twelve preregistrations, every raw artifact committed unscored, every analyzer, and $307$ tests
+All thirteen preregistrations, every raw artifact committed unscored, every analyzer, and $314$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.

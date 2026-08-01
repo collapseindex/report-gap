@@ -87,6 +87,22 @@ def moved(iv, floor=MIN_EFFECT):
     return iv is not None and iv.excludes_zero and abs(iv.point) >= floor
 
 
+def capability_clean(iv, floor=MIN_EFFECT):
+    """The positive pole must raise positive-pole mass, not merely move it.
+
+    DEFECT FOUND 2026-08-01, the seventh in this project and the seventh in the flattering
+    direction. This gate originally reused `moved()`, which is sign-blind, so a capability value of
+    -0.0144 certified the readout as able to express the effect when the positive injection had in
+    fact pushed positive-pole mass DOWN. A sign-blind capability gate admits more layers as
+    interpretable, which is exactly the direction that lets an arm report more verdicts.
+
+    Re-scored with this fix, no verdict in this arm changes: the affected cell is base L14, and the
+    three verdicts are decided at L24. Reported anyway, because the defect is real and the fact
+    that it happened to be harmless here is luck rather than design.
+    """
+    return iv is not None and iv.lo > 0.0 and iv.point >= floor
+
+
 def main(argv):
     if len(argv) < 2:
         print(__doc__)
@@ -123,7 +139,7 @@ def main(argv):
             pos_r = contrast(rows, L, "lexical_pos", RANDOM_ARMS, lambda r: pole(r, POS_KEYS))
             prb = contrast(rows, L, "lexical_neg", RANDOM_ARMS,
                            lambda r: r["probe_orth"] / sd_probe)
-            gate = moved(pos_r)
+            gate = capability_clean(pos_r)
             per_layer[L] = {"neg_vs_random": str(neg_r), "neg_vs_shuffled": str(neg_s),
                             "pos_vs_random": str(pos_r), "probe_vs_random": str(prb),
                             "neg_moved_random": moved(neg_r), "neg_moved_shuffled": moved(neg_s),

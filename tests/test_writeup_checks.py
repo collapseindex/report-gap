@@ -41,6 +41,9 @@ BREAKAGES = [
     ("0.6647", "0.6547", "mistral7b instruct position prior"),
     ("19.2", "19.8", "gemma2b instruct ordering range"),
     ("0.9376", "0.9276", "qwen7b instruct position prior"),
+    ("0.0486", "0.0496", "readjudicate base negative pole"),
+    ("0.0415", "0.0425", "readjudicate instruct negative pole"),
+    ("0.9319", "0.9219", "readjudicate instruct probe"),
 ]
 
 
