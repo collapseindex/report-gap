@@ -64,7 +64,7 @@ Forced-Choice Self-Report\textsuperscript{1}}
 \href{https://www.apartresearch.com}{Apart Research} with NYU CMEP and
 \href{https://eleosai.org}{Eleos AI Research}.
 Submitted to \textbf{Track 3 (Introspection and Self-Report Reliability)}.
-Code, data, all thirteen preregistrations and every raw artifact: \url{\repourl}.
+Code, data, all fourteen preregistrations and every raw artifact: \url{\repourl}.
 \textbf{Dating note:} all confirmatory arms were run on 2026-08-01, before the sprint window
 opened. This is completed work brought to the sprint, not work produced inside it.}
 
@@ -90,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Thirteen preregistrations, $314$ tests, seven of our own checkers caught
+transformation looks like. Fourteen preregistrations, $329$ tests, seven of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -329,7 +329,7 @@ cell's own baseline), which are different verdicts. A \textbf{planted-discrepanc
 a synthetic effect of known size into the exact statistic the decision rule reads, at full
 strength and again at the claimed detection floor.
 
-\paragraph{Preregistration.} Thirteen preregistrations, each frozen and committed before the code that
+\paragraph{Preregistration.} Fourteen preregistrations, each frozen and committed before the code that
 serves it, validated by an external checker that requires a falsification clause, an
 interpretation table written before results, a statement of what is \emph{not} claimed, and an
 append-only deviations log in which every entry states its impact on what can be claimed. Every
@@ -436,6 +436,20 @@ not make the answers uncertain, it made them \emph{different}, in all three case
 welfare self-report through a forced-choice item with this nuisance is not merely adding variance to
 its conclusions; it risks reporting the opposite of what a repaired instrument would say, which is
 what happened to us three times out of three.
+
+\paragraph{How weak is ``erase''? Weaker than the word suggests.} A separate preregistered arm
+(\texttt{PREREG\_prompt\_erase.md}) induced a valence state \emph{by prompt}, with no injection
+anywhere, and erased $k$ fitted directions as a subspace rather than one direction. Its primary
+question was unanswerable: a probe refit on the erased activations still separated the classes at
+$\mathrm{cv}=1.000$ at every $k$ up to $56$ with $n=60$, so the erasure gate failed and no
+re-encoding claim is made. What it does establish is about the \emph{operation}. Removing one fitted
+direction removed $40\%$ of a comparable layer-32 signal and eight removed $69\%$, plateauing near
+$30\%$ thereafter, while a random subspace of the same rank removed essentially nothing. So the
+single-direction projection used here is a small fraction of a full erasure and never makes the
+property undecodable. \textbf{The honest reading of this section is therefore narrower than
+``the state outlives its own cause'': $86\%$ of the effect survives an operation that removes one
+direction and demonstrably does not remove the property.} The direct test would be to re-run this
+arm at $k>1$, which we have not done.
 
 \paragraph{What it does not license.} It vindicates nothing. The three retractions stand, because
 they were correct about the original measurement; what we have is a different measurement on a
@@ -1036,7 +1050,9 @@ Baseline negative-pole mass spans $986\times$ across all 120 orderings on the tu
 With five identical options the tuned model puts $0.8725$ of its mass on the first slot. & Tab.~\ref{tab:enum} & \textsc{shown} \\
 The same format answers a known-answer question correctly $97.9\%$ of the time, order-insensitively. & Tab.~\ref{tab:enum} & \textsc{shown} \\
 A direction fit on shuffled labels moves the readout $\approx 0.045$ where random moves it $\approx 0$. & Tab.~\ref{tab:shuffled} & \textsc{shown} \\
-$86\%$ of an injected state survives projecting the injected direction out of the stream. & Tab.~\ref{tab:erase} & \textsc{shown} \\
+$86\%$ of an injected state survives projecting the injected direction out of the stream. & Tab.~\ref{tab:erase} & \textsc{shown}, and \textbf{narrowed}: that operation removes one direction and does not make the property undecodable \\
+A one-direction projection removes the valence property from the stream. & \S\ref{sec:erase} & \textsc{not shown}: a refit probe still reads it at cv $1.000$ after erasing up to $56$ directions \\
+A prompt-induced state is re-encoded downstream after erasure. & \S\ref{sec:erase} & \textsc{uninformative}: the erasure gate failed, so the question was never asked \\
 The surviving fraction has a temporal profile consistent with downstream transformation. & Tab.~\ref{tab:erase} & \textsc{shown}, two gate-clean points; ratio diagnostic post hoc \\
 \textbf{The neutral floor is localized to preference tuning.} & \S\ref{sec:retracted} & \textsc{retracted}: our own claim, killed by our own replication \\
 \textbf{On a readout marginalized over all 120 orderings, BOTH models report the injected negative state.} & Tab.~\ref{tab:readj} & \textsc{shown}: $+0.0486$ base, $+0.0415$ instruct, both clearing the shuffled-label control \\
@@ -1100,6 +1116,8 @@ The introspection probe & Reverse the wording: belief, or agreement? & \textsc{k
 The $\rho=-0.714$ introspection result & Exact permutation test, all $720$ relabellings & \textsc{killed} its significance: $p=0.1361$ \\
 The erase result & \texttt{erase\_only}: does projecting a direction out move the probe on its own? & \textsc{killed} 2 of 4 erase layers \\
 The erase profile & Ratio of primary to erase-artifact across layers & \textsc{passed}, post hoc \\
+\textbf{Our own erase operation} & Does removing one direction actually remove the property? & \textsc{killed} the word ``erase'': refit cv $1.000$ at every $k$ \\
+The subspace-erase result & A RANDOM subspace of the same rank & \textsc{passed}: random removes $\approx 0$, fitted removes $69\%$ \\
 Every arm's null & Capability gate: can the readout move at all? & \textsc{killed} two arms outright \\
 Every arm's statistic & Planted effect of known size at full strength and at the detection floor & \textsc{passed} \\
 The analysis pipeline & Shuffle condition labels, rerun the analyzer & \textsc{passed}: returns no verdict \\
@@ -1113,7 +1131,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All thirteen preregistrations, every raw artifact committed unscored, every analyzer, and $314$ tests
+All fourteen preregistrations, every raw artifact committed unscored, every analyzer, and $329$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.

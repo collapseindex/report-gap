@@ -238,3 +238,22 @@ claimed.
 
 This section exists so that a deviation has somewhere to go the moment one happens, rather than
 being added afterwards alongside the thing it excuses.
+
+- **2026-08-01, exploratory k values added after the frozen matrix failed its gate.**
+What happened: every preregistered k in {0,1,2,4,8} returned a refit cv of 1.000 at layer E on both
+models at both erase layers, so the erasure gate failed everywhere and the primary was already
+`uninformative` on the frozen matrix.
+What changed: k in {16,32,48,56} was added to locate where erasure bites at all. These rows are
+marked `[exploratory k]` in the analyzer output and in RESULTS_prompt_erase.md.
+Impact: none on the frozen conclusion, which was reached before the additions and does not depend on
+them. The exploratory rows only confirm the gate keeps failing until k approaches the sample size,
+which is the diagnosis rather than a result.
+
+- **2026-08-01, an indexing mismatch in the runner, fixed before the reported run.**
+What happened: the layer-32 probe was fit through `collect_activations`, which reads
+`hidden_states[layer + 1]`, but applied at `hidden_states[PROBE_LAYER]`, so a probe fit on layer 32's
+output was being applied to layer 31's output.
+What changed: both reads now use `+ 1`.
+Impact: caught because the killer control returned IDENTICAL numbers for the fitted and random
+bases, which a real effect does not do. No other arm is affected; `collect_activations` and
+`modal_erase.py` both already used `[layer + 1]`. The reported numbers are all post-fix.

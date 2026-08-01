@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.9.0**
+**v0.10.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -81,6 +81,7 @@ notices.
 | 7 | how big is the ordering nuisance, over all 120 orderings? | enumerated, not sampled | **986x range; 87% of mass on label A** with identical options |
 | 8 | does the floor survive a format with no option order? | binary yes/no, one question per option | **NO_INSTRUMENT.** The tuned model says no to all five at 99.8%. But the arm's *control* found the matched-random null is too weak |
 | 10 | does the model KNOW about its position prior? | ask it, marginalized over all 120 orderings, against the prior we measured | **REPORT-GAP.** 8 of 16 say the PHASE OF THE MOON matters as much as option order. Among the 6 passing all controls, stated vs measured rho -0.714 (p=0.14, n=6) |
+| 13 | does a PROMPT-induced state survive SUBSPACE erasure? | no injection at all; k directions removed by iterative nullspace projection | **ERASURE_UNINFORMATIVE.** The gate failed: a refit probe still reads the property at cv 1.000 after erasing 56 of 60 available directions. **This narrows our surviving erase claim** |
 | 12 | what do the three retracted verdicts say on a REPAIRED readout? | same injection/direction/band/layers/items, readout marginalized over all 120 orderings | **ALL THREE REVERSED, none reinstated.** Both models report the injected negative state (+0.0486 base, +0.0415 instruct, both clearing the shuffled-label bar) |
 | 11 | does a Latin square replace enumeration? | our own proposed fix, preregistered | **NO-BENEFIT.** 8 of 16 vs random, a tie. Only a variance argument survives |
 | 9 | is any of this just one model? | 8 matched base/instruct pairs, 4 families, no injection | **TUNING-GENERAL.** Tuned checkpoint has the larger position prior in **4 of 4 families**, 7 of 7 gate-clean pairs, none reversed. And **986x is the extreme, not the typical** |
@@ -241,6 +242,7 @@ PREREG_binary.md               a readout with no option list, plus the shuffled-
 PREREG_families.md             8 matched base/instruct pairs, 4 families. Is it just one model?
 PREREG_instrument.md           the position prior as the object of study: dial, introspection, Latin square
 PREREG_readjudicate.md         re-ask the three retracted verdicts on a readout that works
+PREREG_prompt_erase.md         a prompt-induced state, erased as a k-dimensional subspace
 
 RESULTS.md                     readout gap. Primary refuted in direction, then retracted.
 RESULTS_floor.md               FLOOR. Superseded twice, then retracted.
@@ -254,13 +256,14 @@ RESULTS_binary.md              NO_INSTRUMENT, and the matched-random control is 
 RESULTS_families.md            TUNING-GENERAL. 4 of 4 families; 986x is the extreme, not the typical.
 RESULTS_instrument.md          REPORT-GAP on a property WITH a ground truth; our Latin-square fix failed.
 RESULTS_readjudicate.md        ALL THREE retracted verdicts REVERSED on a marginalized readout.
+RESULTS_prompt_erase.md        ERASURE_UNINFORMATIVE. Narrows RESULTS_erase.md: 'erase' is one direction.
 RELATED_WORK.md                lit check, with read-depth marked per source.
 
 src/report_gap/                stimuli, direction fitting, injection and erase hooks, judge-free
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         314 tests, including a permutation test on the analysis pipeline
+tests/                         329 tests, including a permutation test on the analysis pipeline
 writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
                                make_figures.py, check_writeup.py, count_abstract.py
 ```
@@ -350,6 +353,10 @@ python experiments/analyze_instrument.py data/instr_*/
 #     Everything else identical. The analyzer is committed BEFORE the run finishes.
 modal run experiments/modal_readjudicate.py
 python experiments/analyze_readjudicate.py data/readj_base/readj.jsonl data/readj_instruct/readj.jsonl
+
+# 14. a PROMPT-induced state (no injection anywhere), erased as a k-dimensional subspace.
+modal run experiments/modal_prompt_erase.py
+python experiments/analyze_prompt_erase.py data/pe_base/pe.jsonl data/pe_instruct/pe.jsonl
 ```
 
 `--model llama8b` on arm 2 is expected to refuse: the band file records that model as inert and the
@@ -365,7 +372,7 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Thirteen preregistrations, all clean against the `paper-harness` checker. 314 tests. Every raw artifact
+Fourteen preregistrations, all clean against the `paper-harness` checker. 329 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |
@@ -383,6 +390,7 @@ committed unscored before its endpoints were computed. About 40 minutes of A100 
 | `PREREG_families.md` | **TUNING-GENERAL**, 4 of 4 families; 986x reframed as the extreme | 0 |
 | `PREREG_instrument.md` | **REPORT-GAP** (Q2); DIAL but weak (Q1); **NO-BENEFIT**, our own fix failed (Q3) | 0 |
 | `PREREG_readjudicate.md` | **ALL THREE REVERSED**; the arm was motivated to reinstate and reinstated none | 0 |
+| `PREREG_prompt_erase.md` | **ERASURE_UNINFORMATIVE**; narrows our own surviving claim | 2 |
 
 Seven of our own checkers failed during this project, **every one in the flattering direction**. They
 are recorded where they happened, and `tests/test_pipeline_permutation.py` now catches the class:

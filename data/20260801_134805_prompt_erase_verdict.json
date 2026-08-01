@@ -1,0 +1,272 @@
+{
+ "verdict": "ERASURE_UNINFORMATIVE",
+ "note": "the erasure gate fails at EVERY k on every model: a probe refit on the erased activations at layer E still separates the classes at cv 1.000. We never established that the state was removed there, so the primary question (is it decodable AGAIN at layer 32?) is unanswerable and no re-encoding claim is made. Per prereg section 9 this is `report and stop`.",
+ "models": {
+  "base": {
+   "clean": 8.01535636583964,
+   "sd": 3.3909524483937794,
+   "induction_ok": true,
+   "per": {
+    "26|0": {
+     "fitted": 8.01535636583964,
+     "random": null,
+     "survives": 1.0,
+     "refit_cv": null,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|1": {
+     "fitted": 6.831749407450358,
+     "random": 8.024860898653666,
+     "survives": 0.8523325845581048,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|2": {
+     "fitted": 6.2349344412485745,
+     "random": 7.9244790315628055,
+     "survives": 0.7778736411297965,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|4": {
+     "fitted": 5.652901379267375,
+     "random": 8.000219710667928,
+     "survives": 0.7052588957066553,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|8": {
+     "fitted": 5.25345626672109,
+     "random": 7.796021731694539,
+     "survives": 0.6554239171586439,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|16": {
+     "fitted": 6.627587358156839,
+     "random": 7.384385283788045,
+     "survives": 0.8268612218419529,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "26|32": {
+     "fitted": 6.1261402050654095,
+     "random": 7.250304047266643,
+     "survives": 0.7643004160331769,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "26|48": {
+     "fitted": 5.192811326185863,
+     "random": 6.5249429702758786,
+     "survives": 0.647857823055369,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "26|56": {
+     "fitted": 5.852284797032674,
+     "random": 6.774831279118855,
+     "survives": 0.7301340738852631,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "30|0": {
+     "fitted": 8.01535636583964,
+     "random": null,
+     "survives": 1.0,
+     "refit_cv": null,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|1": {
+     "fitted": 4.78203645547231,
+     "random": 7.981267706553141,
+     "survives": 0.5966093380267782,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|2": {
+     "fitted": 3.435006598631541,
+     "random": 8.064811038970946,
+     "survives": 0.4285531973688746,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|4": {
+     "fitted": 2.7915134112040203,
+     "random": 8.078085327148438,
+     "survives": 0.34827065495192094,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|8": {
+     "fitted": 2.4556424339612324,
+     "random": 8.040939513842265,
+     "survives": 0.30636721835935415,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|16": {
+     "fitted": 2.710938048362732,
+     "random": 7.882989867528281,
+     "survives": 0.3382180310680111,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "30|32": {
+     "fitted": 2.55338359673818,
+     "random": 7.91819121837616,
+     "survives": 0.3185614563090861,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "30|48": {
+     "fitted": 2.659045692284902,
+     "random": 7.916176720460257,
+     "survives": 0.33174391392220487,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    },
+    "30|56": {
+     "fitted": 2.4382451931635543,
+     "random": 7.996157332261403,
+     "survives": 0.3041967296120512,
+     "refit_cv": 1.0,
+     "refit_cv_random": 1.0,
+     "erased_ok": false,
+     "frozen": false
+    }
+   }
+  },
+  "instruct": {
+   "clean": 5.793702900906403,
+   "sd": 2.5593407802758374,
+   "induction_ok": true,
+   "per": {
+    "26|0": {
+     "fitted": 5.793702900906403,
+     "random": null,
+     "survives": 1.0,
+     "refit_cv": null,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|1": {
+     "fitted": 5.034356130162875,
+     "random": 5.8163598626852036,
+     "survives": 0.8689358457395647,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|2": {
+     "fitted": 4.708759024739265,
+     "random": 5.724065335591634,
+     "survives": 0.8127373987372735,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|4": {
+     "fitted": 4.189341879884402,
+     "random": 5.7999147449930515,
+     "survives": 0.723085382791892,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "26|8": {
+     "fitted": 3.7351458936929705,
+     "random": 5.706266601880391,
+     "survives": 0.6446906162738549,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|0": {
+     "fitted": 5.793702900906403,
+     "random": null,
+     "survives": 1.0,
+     "refit_cv": null,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|1": {
+     "fitted": 4.064350634813309,
+     "random": 5.782301508883635,
+     "survives": 0.7015117454810215,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|2": {
+     "fitted": 3.444821651776632,
+     "random": 5.8201930135488515,
+     "survives": 0.594580307395069,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|4": {
+     "fitted": 2.5997962012887,
+     "random": 5.849695394436518,
+     "survives": 0.4487279112779448,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    },
+    "30|8": {
+     "fitted": 1.9819520831108093,
+     "random": 5.793554429213206,
+     "survives": 0.34208728286718676,
+     "refit_cv": 1.0,
+     "refit_cv_random": null,
+     "erased_ok": false,
+     "frozen": true
+    }
+   }
+  }
+ }
+}
