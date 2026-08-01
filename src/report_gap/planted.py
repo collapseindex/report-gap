@@ -194,6 +194,40 @@ def plant(probs: dict[str, float], own_pole: set[str], target: float,
     )
 
 
+def fit_to_headroom(mass_before: float, target: float, margin: float = 0.05) -> float:
+    """Shrink a target so it fits the room this cell actually has, and say by how much.
+
+    On a peaked readout many cells are already near a boundary. The pilot baseline put 59 of 60
+    cells on a single letter, so a cell whose peak sits on an own-pole option can have own-pole
+    mass near 0.95 and simply cannot take a further +0.15. Three ways to handle that, two of them
+    wrong:
+
+      - clip to the boundary and still call the plant 0.15. The known value stops being known.
+      - drop the cell. The control then runs on a different cell set from the arm it validates,
+        and specifically on the un-saturated half, which is the easy half.
+      - shrink the target, RECORD the shrunk value, and take the expected discrepancy from the
+        realized per-cell targets rather than from the nominal.
+
+    The third is what this does. `expected_discrepancy` averages the per-cell targets, so the
+    known value survives the shrinking; what changes is that the arm's realized mean is smaller
+    than its nominal, and that difference is reported rather than absorbed.
+
+    Args:
+        mass_before: Own-pole mass at baseline, in (0, 1).
+        target: Desired signed shift.
+        margin: How close to the boundary a plant may land.
+
+    Returns:
+        The largest shift in the same direction as `target` that this cell can carry, which is
+        `target` itself whenever there is room. Zero if the cell is already past the margin.
+    """
+    if target >= 0.0:
+        room = max(0.0, (1.0 - margin) - mass_before)
+        return min(target, room)
+    room = max(0.0, mass_before - margin)
+    return max(target, -room)
+
+
 def plant_arm(baselines: dict[str, dict[str, float]], own_pole: set[str],
               targets: list[float], nominal: float,
               max_skip_fraction: float = 0.05) -> tuple[dict[str, PlantedCell], list[str]]:

@@ -82,19 +82,45 @@ Paper discipline, prereg format, and the runnable checks come from `paper-harnes
 ## Layout
 
 ```
-PREREG_gap_map.md      frozen before any run, committed before any results artifact exists
-src/report_gap/        stimuli, direction fitting, injection hooks, judge-free scorers
-experiments/           the Modal runs and the CPU selftest
+PREREG_gap_map.md      the first design, retained unedited. Its own controls killed it.
+PREREG_readout_gap.md  the current design, frozen. What the confirmatory run answers to.
+src/report_gap/        stimuli, direction fitting, injection hooks, judge-free scorers,
+                       the planted-discrepancy control, and the analysis primitives
+experiments/           the Modal runs, the confirmatory runner, and the CPU selftest
 results/               recorded outputs, including the nulls
 data/sweeps/           raw sweep json
 tests/                 pipeline guards and the negative tests for every scorer
 paper/                 the report
 ```
 
+## Running the confirmatory arm
+
+```bash
+modal run experiments/modal_readout.py --smoke          # 3 items, one wording, checks the wiring
+modal run experiments/modal_readout.py                  # Qwen2.5-3B, full frozen matrix
+modal run experiments/modal_readout.py --model llama    # Llama-3.1-8B
+
+modal volume get report-gap-data qwen3b ./data/
+python experiments/analyze_readout.py data/qwen3b/readout.jsonl
+```
+
+The run streams to a Modal volume and commits after every batch, so an interrupt costs one batch
+and a rerun resumes from what is already there. `modal_readout.py` computes nothing;
+`analyze_readout.py` holds every endpoint and both instrument gates. That split is the prereg's
+rather than a convenience: a runner that also decides is a runner that can decide differently once
+it has seen the numbers.
+
+Two things `analyze_readout.py` refuses to do. It will not score a torn artifact, because an
+interrupted run is resumable and scoring the fragment is a choice about which cells to keep. And it
+will not read the held-out probe wording until the two-wording result is on disk with a timestamp.
+
 ## Status
 
-Pre-sprint. Prereg frozen 2026-07-31. No experiment has been run. See
-[PLAN.md](PLAN.md) for what is built before the window opens and what is deliberately left for it.
+Pre-sprint. `PREREG_readout_gap.md` frozen 2026-07-31 with two same-day deviations logged, both
+from a line-by-line audit against `paper-harness/checklists/CONTROLS.md` that found eight gaps
+behind a cross-check claim which had not actually been performed. No confirmatory cell has been
+run. See [PLAN.md](PLAN.md) for what is built before the window opens and what is deliberately left
+for it.
 
 ## License
 

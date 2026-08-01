@@ -276,3 +276,69 @@ def test_cosine_floor_is_small_but_not_zero():
     mean, worst = D.random_cosine_floor(2048, n=32, seed=0)
     assert 0.0 < mean < 0.05, "unexpected floor %.4f" % mean
     assert worst >= mean
+
+
+# --------------------------------------------------------------------------------------------
+# batched injection with per-row scale
+#
+# Batching is an optimization, and an optimization on the confirmatory path needs a control. The
+# equivalence test below IS that control: it requires a batched run to produce bit-comparable
+# logits to the same items run one at a time, with each item carrying its own residual norm. If
+# batching ever diverges (padding leaking into the injection, a broadcast collapsing to the wrong
+# axis), the run is wrong in a way no downstream statistic could reveal.
+# --------------------------------------------------------------------------------------------
+
+
+def test_batched_injection_matches_per_item_injection(setup):
+    model, _, direction = setup
+    batch = torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]])
+    scales = torch.tensor([3.0, 7.0, 11.0])
+    alpha = 0.05
+
+    with H.inject(model, 2, direction, alpha, scales):
+        together = model(input_ids=batch).logits
+
+    rows = []
+    for i in range(batch.shape[0]):
+        with H.inject(model, 2, direction, alpha, float(scales[i])):
+            rows.append(model(input_ids=batch[i:i + 1]).logits)
+    apart = torch.cat(rows, dim=0)
+
+    assert torch.allclose(together, apart, atol=1e-6), \
+        "batched injection diverges from per-item injection; batching is not safe here"
+
+
+def test_batched_injection_actually_differs_across_rows(setup):
+    # negative control for the test above. if every row got the same delta, the equivalence test
+    # would still pass while the per-row scaling did nothing.
+    model, _, direction = setup
+    batch = torch.tensor([[1, 2, 3, 4, 5], [1, 2, 3, 4, 5]])
+    with H.inject(model, 2, direction, 0.05, torch.tensor([1.0, 50.0])):
+        out = model(input_ids=batch).logits
+    assert not torch.allclose(out[0], out[1], atol=1e-4), \
+        "identical inputs with different scales produced identical logits: scale is being ignored"
+
+
+def test_batched_alpha_zero_is_still_an_exact_no_op(setup):
+    model, _, direction = setup
+    batch = torch.tensor([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
+    base = model(input_ids=batch).logits
+    with H.inject(model, 2, direction, 0.0, torch.tensor([3.0, 7.0])):
+        zero = model(input_ids=batch).logits
+    assert torch.equal(base, zero)
+
+
+def test_scale_tensor_of_the_wrong_rank_raises(setup):
+    model, _, direction = setup
+    with pytest.raises(ValueError, match="1-D"):
+        with H.inject(model, 2, direction, 0.05, torch.tensor([[1.0], [2.0]])):
+            pass
+
+
+def test_row_count_mismatch_raises_rather_than_broadcasting(setup):
+    # three scales, two rows. broadcasting would either throw deep inside torch or, worse,
+    # silently succeed on some shapes. the hook checks first.
+    model, _, direction = setup
+    with pytest.raises(RuntimeError, match="rows but the batch"):
+        with H.inject(model, 2, direction, 0.05, torch.tensor([1.0, 2.0, 3.0])):
+            model(input_ids=torch.tensor([[1, 2, 3], [4, 5, 6]]))

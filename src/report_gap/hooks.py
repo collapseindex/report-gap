@@ -76,7 +76,7 @@ def inject(
     layer: int,
     direction: torch.Tensor,
     alpha: float,
-    scale: float,
+    scale: float | torch.Tensor,
 ) -> Iterator[dict]:
     """Add `alpha * scale * direction` to the residual stream at `layer`, for the duration.
 
@@ -85,21 +85,39 @@ def inject(
         layer: Index of the decoder layer whose output is modified.
         direction: Unit-norm direction in residual space, shape (hidden_size,).
         alpha: Injection strength from the frozen grid. alpha=0 is an exact no-op.
-        scale: The item's mean residual norm at this layer, measured under no injection.
+        scale: The item's mean residual norm at this layer, measured under no injection. A float
+            for a single item, or a 1-D tensor of per-row norms of shape (batch,) when several
+            items are run together. Per-row scaling is what makes batching safe: `alpha` has to
+            mean the same thing for every item in the batch, and items differ in residual norm.
 
     Yields:
         A dict with a `calls` counter, so a caller can assert the hook actually fired. A hook that
         never fires is the failure mode this whole module is defensive about.
+
+    Raises:
+        ValueError: If `scale` is a tensor of the wrong rank, which would broadcast into a
+            silently wrong perturbation rather than an error.
     """
     state = {"calls": 0}
-    delta = (alpha * scale) * direction.detach()
+    if isinstance(scale, torch.Tensor):
+        if scale.dim() != 1:
+            raise ValueError("per-row scale must be 1-D of shape (batch,), got shape %s"
+                             % (tuple(scale.shape),))
+        # (batch, 1, hidden) so it broadcasts against (batch, positions, hidden)
+        delta = alpha * scale.detach().reshape(-1, 1, 1) * direction.detach().reshape(1, 1, -1)
+    else:
+        delta = (alpha * scale) * direction.detach()
 
     def hook(_module, _args, output):
         state["calls"] += 1
         if alpha == 0.0:
             return output
         hidden, rebuild = _split(output)
-        return rebuild(hidden + delta.to(hidden.device, hidden.dtype))
+        d = delta.to(hidden.device, hidden.dtype)
+        if d.dim() == 3 and d.shape[0] != hidden.shape[0]:
+            raise RuntimeError("per-row scale has %d rows but the batch has %d"
+                               % (d.shape[0], hidden.shape[0]))
+        return rebuild(hidden + d)
 
     handle = layer_module(model, layer).register_forward_hook(hook)
     try:

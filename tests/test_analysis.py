@@ -232,3 +232,73 @@ def test_screened_axes_are_all_computable_here():
         "degenerate_rate": True,   # scoring.is_degenerate
     }
     assert set(S.SCREENED_AXES) == set(computable)
+
+
+# --------------------------------------------------------------------------------------------
+# multiplicity and the paired binary test
+# --------------------------------------------------------------------------------------------
+
+def test_holm_rejects_nothing_when_everything_is_null():
+    got = A.holm({"a": 0.4, "b": 0.6, "c": 0.9, "d": 0.7})
+    assert not any(got.values())
+
+
+def test_holm_is_stricter_than_uncorrected():
+    # p=0.04 clears 0.05 alone but not against a family of four
+    assert A.holm({"a": 0.04, "b": 0.5, "c": 0.6, "d": 0.7})["a"] is False
+
+
+def test_holm_rejects_a_strong_result():
+    got = A.holm({"a": 0.0001, "b": 0.002, "c": 0.9, "d": 0.95})
+    assert got["a"] and got["b"] and not got["c"]
+
+
+def test_holm_steps_down_and_stops():
+    # sorted: a=.001 clears .05/3, b=.030 fails .05/2, so the walk stops and c=.040 is NOT
+    # rejected even though it is under .05 on its own. that stop is the whole procedure.
+    got = A.holm({"a": 0.001, "b": 0.030, "c": 0.040})
+    assert got["a"] and not got["b"] and not got["c"]
+
+
+def test_holm_refuses_an_impossible_p():
+    with pytest.raises(ValueError, match="outside"):
+        A.holm({"a": 1.4})
+
+
+def test_holm_refuses_an_empty_family():
+    with pytest.raises(ValueError, match="no p-values"):
+        A.holm({})
+
+
+def test_mcnemar_is_one_without_discordant_pairs():
+    assert A.mcnemar_exact(0, 0) == 1.0
+
+
+def test_mcnemar_is_symmetric():
+    assert A.mcnemar_exact(9, 1) == A.mcnemar_exact(1, 9)
+
+
+def test_mcnemar_matches_the_hand_computable_case():
+    # 10 discordant pairs, all one way: 2 * (1/2)^10
+    assert abs(A.mcnemar_exact(10, 0) - 2 * 0.5 ** 10) < 1e-12
+
+
+def test_mcnemar_does_not_fire_on_a_balanced_split():
+    assert A.mcnemar_exact(5, 5) > 0.9
+
+
+def test_mcnemar_refuses_negative_counts():
+    with pytest.raises(ValueError, match="negative"):
+        A.mcnemar_exact(-1, 3)
+
+
+def test_bootstrap_p_is_floored_not_zero():
+    got = A.paired_bootstrap([0.5] * 40, resamples=1000, seed=0)
+    assert got.p == 1.0 / 1000, "a p of exactly 0 claims more than 1000 resamples can support"
+
+
+def test_bootstrap_p_agrees_with_the_interval():
+    for seed, deltas in ((0, [0.3] * 30), (1, [0.0, 0.1, -0.1] * 10)):
+        got = A.paired_bootstrap(deltas, resamples=2000, seed=seed)
+        assert got.excludes_zero == (got.p < 0.05), \
+            "interval and p disagree at %s" % (got,)

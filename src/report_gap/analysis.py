@@ -8,15 +8,18 @@ rather than trusting it.
 
 No language model is involved in any quantity here. Every number is a softmax read or a count.
 
-Nothing in this module imports torch or numpy, so it runs in the test suite without a GPU image and
-the bootstrap is reproducible from a stdlib seed alone.
+Nothing in this module imports torch, so it runs in the test suite without a GPU image. The
+bootstrap is vectorized through numpy and is reproducible from its seed: the same deltas and the
+same seed give the same interval, which is what makes an interval in a paper recomputable from the
+artifact alone.
 """
 
 from __future__ import annotations
 
 import math
-import random
 from dataclasses import dataclass
+
+import numpy as np
 
 BOOTSTRAP_RESAMPLES = 10000
 BOOTSTRAP_SEED = 0
@@ -37,6 +40,7 @@ class Interval:
     lo: float
     hi: float
     n: int
+    p: float = float("nan")
 
     @property
     def excludes_zero(self) -> bool:
@@ -44,7 +48,7 @@ class Interval:
         return self.lo > 0.0 or self.hi < 0.0
 
     def __str__(self) -> str:
-        return "%+.4f [%+.4f, %+.4f] n=%d" % (self.point, self.lo, self.hi, self.n)
+        return "%+.4f [%+.4f, %+.4f] n=%d p=%.4g" % (self.point, self.lo, self.hi, self.n, self.p)
 
 
 def option_mass(probs: dict[str, float], letters: set[str]) -> float:
@@ -165,17 +169,78 @@ def paired_bootstrap(deltas: list[float], resamples: int = BOOTSTRAP_RESAMPLES,
         raise ValueError("need at least 2 paired cells, got %d" % len(deltas))
     n = len(deltas)
     point = sum(deltas) / n
-    rng = random.Random(seed)
-    means = []
-    for _ in range(resamples):
-        total = 0.0
-        for _ in range(n):
-            total += deltas[rng.randrange(n)]
-        means.append(total / n)
+
+    values = np.asarray(deltas, dtype=np.float64)
+    rng = np.random.default_rng(seed)
+    means = values[rng.integers(0, n, size=(resamples, n))].mean(axis=1)
     means.sort()
-    lo = means[int((alpha / 2.0) * resamples)]
-    hi = means[min(resamples - 1, int((1.0 - alpha / 2.0) * resamples))]
-    return Interval(point=point, lo=lo, hi=hi, n=n)
+
+    lo = float(means[int((alpha / 2.0) * resamples)])
+    hi = float(means[min(resamples - 1, int((1.0 - alpha / 2.0) * resamples))])
+    # two-sided bootstrap p: how much of the resample distribution sits on the far side of zero.
+    # floored at 1/resamples, because "0 of 10000 resamples" is not evidence for p = 0.
+    tail = min(int((means <= 0.0).sum()), int((means >= 0.0).sum()))
+    p = max(2.0 * tail / resamples, 1.0 / resamples)
+    return Interval(point=point, lo=lo, hi=hi, n=n, p=min(1.0, p))
+
+
+def holm(pvalues: dict[str, float], alpha: float = 0.05) -> dict[str, bool]:
+    """Holm-Bonferroni step-down correction.
+
+    Applied across the four non-zero alpha levels within the primary contrast, which is the only
+    contrast in `PREREG_readout_gap.md` section 9 evaluated repeatedly over the grid.
+
+    Args:
+        pvalues: Label to uncorrected p-value.
+        alpha: Family-wise error rate.
+
+    Returns:
+        Label to whether the null is rejected after correction.
+
+    Raises:
+        ValueError: If empty, or if any p-value is outside [0, 1].
+    """
+    if not pvalues:
+        raise ValueError("no p-values to correct")
+    for label, p in pvalues.items():
+        if not 0.0 <= p <= 1.0:
+            raise ValueError("p-value for %s is %.6g, outside [0, 1]" % (label, p))
+    ordered = sorted(pvalues.items(), key=lambda kv: kv[1])
+    m = len(ordered)
+    out, still_rejecting = {}, True
+    for i, (label, p) in enumerate(ordered):
+        if still_rejecting and p <= alpha / (m - i):
+            out[label] = True
+        else:
+            still_rejecting = False
+            out[label] = False
+    return out
+
+
+def mcnemar_exact(only_treatment: int, only_baseline: int) -> float:
+    """Two-sided exact McNemar p-value for a paired binary contrast.
+
+    Uses the discordant pairs only, which is the whole point of the test: cells that answered the
+    same way under both conditions carry no information about a change.
+
+    Args:
+        only_treatment: Cells that hit under treatment and not at baseline.
+        only_baseline: Cells that hit at baseline and not under treatment.
+
+    Returns:
+        The p-value, or 1.0 if there are no discordant pairs.
+
+    Raises:
+        ValueError: If either count is negative.
+    """
+    if only_treatment < 0 or only_baseline < 0:
+        raise ValueError("discordant counts cannot be negative")
+    n = only_treatment + only_baseline
+    if n == 0:
+        return 1.0
+    k = min(only_treatment, only_baseline)
+    tail = sum(math.comb(n, i) for i in range(k + 1)) / (2.0 ** n)
+    return min(1.0, 2.0 * tail)
 
 
 def discrepancy_deltas(mass_treat: dict[str, float], mass_base: dict[str, float],

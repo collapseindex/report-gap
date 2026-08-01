@@ -46,11 +46,34 @@ def test_experiment_only_names_attributes_that_exist(path):
     )
 
 
+# Scripts that ARE the frozen protocol. They must not disclaim, because a confirmatory runner
+# carrying "nothing here is a result" would be false; they must instead name the prereg they run
+# under, so every script in the directory declares its status one way or the other and no script
+# can be silent about which it is.
+CONFIRMATORY = {"modal_readout.py", "analyze_readout.py"}
+
+
 @pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)
-def test_experiment_parses_and_declares_it_is_not_a_result(path):
-    """Every experiment that runs outside the frozen protocol must say so in its docstring."""
+def test_experiment_declares_its_status(path):
+    """Every script says whether it is exploratory or the frozen protocol. Silence is the bug.
+
+    Exploratory scripts disclaim. Confirmatory ones name their prereg. A script that does neither
+    is one whose output has no declared standing, which is how a pilot number ends up cited as a
+    result months later.
+    """
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     doc = ast.get_docstring(tree) or ""
+
+    if path.name in CONFIRMATORY:
+        named = re.search(r"PREREG_\w+\.md", doc)
+        assert named, ("%s is listed as confirmatory but does not name the preregistration it "
+                       "runs under" % path.name)
+        disclaimed = re.search(r"not a (confirmatory |paper )?result"
+                               r"|nothing (here )?is a (confirmatory |paper )?result", doc, re.I)
+        assert not disclaimed, ("%s is the confirmatory arm but disclaims being a result; one of "
+                                "the two is wrong" % path.name)
+        return
+
     disclaimed = re.search(
         r"not a (confirmatory |paper )?result"
         r"|nothing (here )?is a (confirmatory |paper )?result"
@@ -60,3 +83,11 @@ def test_experiment_parses_and_declares_it_is_not_a_result(path):
     assert disclaimed, (
         "%s does not state that its output is not a confirmatory result" % path.name
     )
+
+
+def test_the_confirmatory_list_is_not_stale():
+    """A name in CONFIRMATORY that no longer exists would silently exempt nothing, or worse,
+    exempt a file someone later creates with that name."""
+    names = {p.name for p in EXPERIMENTS}
+    missing = CONFIRMATORY - names
+    assert not missing, "CONFIRMATORY names scripts that do not exist: %s" % sorted(missing)
