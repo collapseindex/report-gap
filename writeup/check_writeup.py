@@ -62,6 +62,26 @@ def check_style(tex: str) -> list[str]:
     return problems
 
 
+def check_disclosure(tex: str) -> list[str]:
+    """The LLM-use disclosure must be present and must keep its two halves apart.
+
+    A paper whose experiments are judge-free AND whose prose was written by a model has to say both,
+    and must not let the first sentence be read as covering the second. This asserts the section
+    exists and that both statements survive future edits.
+    """
+    problems = []
+    if "sec:llm" not in tex:
+        problems.append("the language-model disclosure section is missing")
+    for needle, what in (
+            ("no language\nmodel scored any result", "the judge-free claim"),
+            ("coding assistant", "the authorship disclosure"),
+            ("claude-opus-5", "the model identifier")):
+        if needle not in tex:
+            problems.append("disclosure is missing %s (%r)" % (what, needle))
+    print("  llm disclosure: %s" % (problems or "present, both halves stated"))
+    return problems
+
+
 def check_numbers(tex: str) -> list[str]:
     """Spot-check load-bearing numbers in the prose against the committed artifacts.
 
@@ -218,6 +238,8 @@ def main(argv: list[str] | None = None) -> int:
     problems += check_cites(tex)
     print("\nstyle")
     problems += check_style(tex)
+    print("\ndisclosure")
+    problems += check_disclosure(tex)
     print("\nnumbers against committed artifacts")
     problems += check_numbers(tex)
 

@@ -263,7 +263,7 @@ src/report_gap/                stimuli, direction fitting, injection and erase h
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         335 tests, including a permutation test on the analysis pipeline
+tests/                         339 tests, including a permutation test on the analysis pipeline
 writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
                                make_figures.py, check_writeup.py, count_abstract.py
 ```
@@ -370,9 +370,20 @@ can decide differently once it has seen the numbers.
 
 Total compute for everything above is about 40 minutes of A100 time.
 
+## LLM usage statement
+
+Claude Opus 5 (`claude-opus-5`) was used agentically, with tool access to this repository, as a
+coding assistant: it wrote most of the harness, the preregistrations, the analysis scripts, the
+figures and the draft prose. Alex Kwon set the direction, made every scope and stopping decision,
+chose which claims to withdraw, and is responsible for every claim. A second frontier model was used
+separately to critique drafts; its objections are why the cross-family, instrument and
+re-adjudication arms exist. Separately and not to be confused with the above: **no language model
+scored any result.** Every number is an exact match, a softmax read, a dot product, or a count
+against a frozen lexicon, and all of them come from logged runs over committed artifacts.
+
 ## Status
 
-Fourteen preregistrations, all clean against the `paper-harness` checker. 335 tests. Every raw artifact
+Fourteen preregistrations, all clean against the `paper-harness` checker. 339 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |

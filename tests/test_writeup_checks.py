@@ -138,3 +138,20 @@ def test_the_stated_test_count_matches_the_suite():
     assert stated | readme == {collected}, (
         "suite has %d tests; paper says %s and README says %s"
         % (collected, sorted(stated), sorted(readme)))
+
+
+@pytest.mark.skipif(not MAIN.exists(), reason="paper not present")
+@pytest.mark.parametrize("needle,why", [
+    ("no language\nmodel scored any result", "the judge-free claim"),
+    ("coding assistant", "the authorship disclosure"),
+    ("claude-opus-5", "the model identifier"),
+    ("sec:llm", "the disclosure section itself"),
+])
+def test_checker_fires_if_the_llm_disclosure_is_weakened(tmp_path, needle, why):
+    """Both halves must survive edits. A paper that keeps the judge-free claim and drops the
+    authorship disclosure would be actively misleading, which is the failure mode this guards."""
+    text = MAIN.read_text(encoding="utf-8")
+    assert needle in text, "premise failed: the paper does not contain %r" % needle
+    broken = tmp_path / "main.tex"
+    broken.write_text(text.replace(needle, "REMOVED"), encoding="utf-8")
+    assert run(broken) != 0, "checker stayed silent after removing %s" % why

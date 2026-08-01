@@ -90,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Fourteen preregistrations, $335$ tests, seven of our own checkers caught
+transformation looks like. Fourteen preregistrations, $339$ tests, seven of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -993,6 +993,19 @@ thought we had was not one, and the machinery that made that visible before publ
 than after.
 
 % natbib's default inter-entry spacing spills the last three references onto a page of their own.
+% =====================================================================
+\section*{LLM usage statement}
+\label{sec:llm}
+
+Claude Opus 5 (\texttt{claude-opus-5}) was used agentically, with tool access to the repository, as
+a coding assistant: it wrote most of the harness, the preregistrations, the analysis scripts, the
+figures and the draft prose. The author set the direction, made every scope and stopping decision,
+chose which claims to withdraw, and is responsible for every claim here. A second frontier model was
+used separately to critique drafts; its objections are why the cross-family, instrument and
+re-adjudication arms exist. Separately and not to be confused with the above: \textbf{no language
+model scored any result}. Every number is an exact match, a softmax read, a dot product, or a count
+against a frozen lexicon, and all of them come from logged runs over committed artifacts.
+
 \setlength{\bibsep}{2.5pt plus 0.4ex}
 \bibliographystyle{plainnat}
 \bibliography{refs}
@@ -1131,7 +1144,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All fourteen preregistrations, every raw artifact committed unscored, every analyzer, and $335$ tests
+All fourteen preregistrations, every raw artifact committed unscored, every analyzer, and $339$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.
