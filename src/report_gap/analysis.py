@@ -85,6 +85,73 @@ def option_entropy(probs: dict[str, float]) -> float:
     return -sum(p * math.log(p) for p in probs.values() if p > 0.0)
 
 
+# A cell is saturated when its option distribution has collapsed relative to where that cell
+# started. Half the baseline entropy is the line: the readout has lost half its ability to
+# distinguish anything, so neither mass nor argmax has room left to express an effect.
+#
+# This exists because the section 6 band check cannot see the failure it was written for. That
+# check truncates the alpha grid on EXCLUSION rate, and a saturated cell is excluded by nothing:
+# the smoke run on Qwen2.5-3B returned a clean single option letter, no degeneration, no refusal,
+# no truncation, off-option mass 0.0001, while one option held 0.9938 of the distribution. Every
+# integrity criterion the design had passed on a cell with no headroom.
+#
+# The ratio is set on principle rather than from the observed data, and calibrated against models
+# outside the evaluation set, so the band is not chosen by looking at what it would do to the
+# result.
+SATURATION_ENTROPY_RATIO = 0.5
+
+# Below this much baseline entropy a cell is DEAD, not merely peaked: one option already holds
+# about 98.5% and there is under 2% of mass available to redistribute, so the 0.03 effect the
+# design claims as its floor is not even expressible in that cell.
+#
+# A relative criterion alone cannot catch this, and that is not hypothetical. The recalibration run
+# put Qwen2.5-7B at a mean baseline entropy of 0.014 nats. Half of 0.014 is 0.007, so trivial
+# jitter crossed the ratio and the model was reported as "saturating at alpha=0.0075" when the
+# truth is that its readout was pinned before anything was injected. A band chosen from that would
+# have been a band chosen from noise.
+MIN_BASELINE_ENTROPY = 0.10
+
+
+def is_dead(baseline: dict[str, float], minimum: float = MIN_BASELINE_ENTROPY) -> bool:
+    """Whether a cell's readout was already pinned before any injection.
+
+    Args:
+        baseline: The cell's option distribution at alpha = 0.
+        minimum: Entropy in nats below which the cell has no usable range.
+
+    Returns:
+        True if the cell cannot express an effect regardless of what is injected.
+    """
+    return option_entropy(baseline) < minimum
+
+
+def is_saturated(treatment: dict[str, float], baseline: dict[str, float],
+                 ratio: float = SATURATION_ENTROPY_RATIO,
+                 minimum: float = MIN_BASELINE_ENTROPY) -> bool:
+    """Whether a cell's option distribution has collapsed relative to its own baseline.
+
+    Args:
+        treatment: Option distribution under treatment.
+        baseline: The same cell's distribution at alpha = 0.
+        ratio: Fraction of baseline entropy below which the cell counts as saturated.
+        minimum: Baseline entropy below which the cell is dead rather than saturated.
+
+    Returns:
+        True if the cell has lost more than `1 - ratio` of its baseline entropy.
+
+    Raises:
+        ValueError: If the baseline is below `minimum`. A dead cell is a different verdict from a
+            saturated one and must not be silently folded into a saturation rate: one says the
+            injection collapsed the readout, the other says there was no readout to collapse.
+    """
+    base = option_entropy(baseline)
+    if base < minimum:
+        raise ValueError("baseline entropy %.4f nats is below the %.2f minimum: this cell was "
+                         "pinned before any injection and is dead, not saturated"
+                         % (base, minimum))
+    return option_entropy(treatment) < ratio * base
+
+
 def max_letter_share(letters: list[str]) -> float:
     """Fraction of choices taken by the single most-chosen letter.
 

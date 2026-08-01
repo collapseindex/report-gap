@@ -302,3 +302,62 @@ def test_bootstrap_p_agrees_with_the_interval():
         got = A.paired_bootstrap(deltas, resamples=2000, seed=seed)
         assert got.excludes_zero == (got.p < 0.05), \
             "interval and p disagree at %s" % (got,)
+
+
+# --------------------------------------------------------------------------------------------
+# saturation: the criterion the section 6 band check could not see
+#
+# The smoke run on Qwen2.5-3B returned a clean single option letter with no degeneration, no
+# refusal, no truncation and off-option mass 0.0001, while one option held 0.9938 of the
+# distribution. Every integrity criterion the design had passed on a cell with no headroom left.
+# --------------------------------------------------------------------------------------------
+
+def test_saturation_fires_on_the_observed_smoke_cell():
+    # the actual shape seen at lexical_neg alpha=0.100 on Qwen2.5-3B
+    base = {"A": 0.86, "B": 0.05, "C": 0.05, "D": 0.02, "E": 0.02}
+    pinned = {"A": 0.9938, "B": 0.0022, "C": 0.002, "D": 0.001, "E": 0.001}
+    assert A.is_saturated(pinned, base), \
+        "a cell at 0.9938 on one option is not being called saturated, which is the exact case " \
+        "the existing band check misses"
+
+
+def test_saturation_does_not_fire_on_an_ordinary_shift():
+    # a real effect that leaves the readout room must NOT be excluded, or the criterion throws
+    # away the data the experiment exists to collect
+    base = {"A": 0.50, "B": 0.20, "C": 0.15, "D": 0.10, "E": 0.05}
+    moved = {"A": 0.35, "B": 0.30, "C": 0.20, "D": 0.10, "E": 0.05}
+    assert not A.is_saturated(moved, base)
+
+
+def test_saturation_is_relative_to_the_cell_not_absolute():
+    # two cells at the SAME treatment entropy, different baselines. an absolute threshold would
+    # score them alike; the point is that collapse is relative to where the cell started.
+    treatment = {"A": 0.85, "B": 0.06, "C": 0.04, "D": 0.03, "E": 0.02}
+    flat_base = {L: 0.2 for L in "ABCDE"}
+    peaked_base = {"A": 0.80, "B": 0.08, "C": 0.06, "D": 0.03, "E": 0.03}
+
+    # the test states its own premise: this treatment has to sit BETWEEN the two thresholds, or
+    # the assertion below would pass for a reason that has nothing to do with relativity
+    e = A.option_entropy(treatment)
+    assert (A.SATURATION_ENTROPY_RATIO * A.option_entropy(peaked_base) < e
+            < A.SATURATION_ENTROPY_RATIO * A.option_entropy(flat_base)), \
+        "fixture entropy %.3f is not between the two thresholds; this test proves nothing" % e
+
+    assert A.is_saturated(treatment, flat_base)
+    assert not A.is_saturated(treatment, peaked_base)
+
+
+def test_saturation_refuses_a_baseline_that_was_already_pinned():
+    pinned = {"A": 1.0, "B": 0.0, "C": 0.0, "D": 0.0, "E": 0.0}
+    with pytest.raises(ValueError, match="pinned before any injection"):
+        A.is_saturated({"A": 0.5, "B": 0.5, "C": 0.0, "D": 0.0, "E": 0.0}, pinned)
+
+
+def test_saturation_ratio_is_the_documented_half():
+    assert A.SATURATION_ENTROPY_RATIO == 0.5
+    base = {L: 0.2 for L in "ABCDE"}          # entropy = log 5
+    # construct a cell at just under and just over half of that
+    import math
+    target = 0.5 * math.log(5)
+    assert A.option_entropy({"A": 0.90, "B": 0.04, "C": 0.03, "D": 0.02, "E": 0.01}) < target
+    assert A.option_entropy({"A": 0.55, "B": 0.20, "C": 0.13, "D": 0.07, "E": 0.05}) > target

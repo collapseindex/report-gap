@@ -454,5 +454,48 @@ scope tamper-evident. (b) makes the floor gate strictly harder to pass, so a nul
 now has to survive a real sensitivity check before it can be called `absent`. No evaluation-model
 cell has been run.
 
+- **2026-07-31, smoke run on an evaluation model, and what it forced.**
+What happened: a 3-item, one-wording, one-permutation smoke run of `modal_readout.py` on
+Qwen2.5-3B, to exercise the tokenizer, the letter-token assumption, and the hook against real
+weights. It is recorded here because it is evaluation-model data and was looked at, however small.
+What it showed: the frozen alpha grid saturates the READOUT on that model. Positive-option mass ran
+from a baseline 0.273 to 0.707 at alpha=0.025 and 0.9987 at alpha=0.100, while every integrity
+criterion in the design stayed clean: no degeneration, no refusal, no truncation, off-option mass
+0.0001, and a single well-formed option letter every time. `lexical_neg` did not move negative mass
+at all (0.0140 to 0.0131 across the whole grid); what it did was remove positive mass, which landed
+on the neutral option. The two random directions disagreed with each other more than treatment
+differed from control at the top of the grid (+0.106 and +0.698 positive mass at alpha=0.100).
+Why it matters: section 6's band check truncates the grid on EXCLUSION rate, and a saturated cell
+is excluded by nothing. The check could not see the failure it exists for.
+What changed: `analysis.is_saturated` adds a saturation criterion (a cell is saturated when its
+option entropy falls below half its own baseline entropy) and `analysis.is_dead` adds a
+minimum-baseline-entropy criterion, both registered before being applied to anything. Saturation
+rate joins the section 6 band check alongside exclusion rate.
+Impact on what can be claimed: the co-primary endpoint is unchanged and stays as frozen. If the
+negative arm does not move its own pole, that is the result and will be reported as one, not
+rescued by moving the endpoint to where the probability went.
+
+- **2026-07-31, alpha recalibration on non-evaluation models, and two rejected calibrators.**
+What changed: `experiments/modal_alpha_recal.py` sweeps a finer candidate grid on models outside
+the evaluation set, with the selection rule fixed before the run: the band is the largest prefix at
+which under 10% of live cells are saturated, the same 10% bar section 6 already uses.
+What it found, all of which is reported rather than absorbed:
+  (a) Qwen2.5-7B was tried as a calibrator and REJECTED. Its mean baseline option entropy is 0.014
+  nats, one option holding about 99.7% before anything is injected, and `d_neg` is exactly +0.0000
+  at every alpha. A relative saturation criterion crossed its threshold on jitter alone, which is
+  what prompted the `is_dead` criterion.
+  (b) Llama-3.2-3B has a fully live readout (baseline entropy 1.342 nats) and the direction is
+  INERT on it: peak absolute pole shift 0.0066 across the whole candidate range including
+  alpha=0.100, versus +0.325 on Qwen2.5-1.5B at the same alpha. The lexical direction moves the
+  Qwen readout and does not move the Llama readout, at cv 1.000 on both fits.
+  (c) The band-selection rule had a flaw that (b) exposed: a model where the injection is inert
+  never saturates, so it votes for the widest possible band while carrying no information. The rule
+  now requires a calibrator to show a peak pole shift of at least 0.02 before its band counts.
+  (d) Responsiveness varies about eightfold between Qwen2.5-1.5B and Qwen2.5-3B at matched alpha
+  (+0.056 versus +0.43 positive-mass shift at alpha=0.025), so no single frozen alpha grid is
+  correct for every model.
+Impact on what can be claimed: the frozen grid in section 6 is not yet replaced. (d) is the open
+question, and whatever resolves it is logged here before any confirmatory cell is run.
+
 Nothing else is recorded. This section exists so that a deviation has somewhere to go the moment one
 happens, rather than being added afterwards alongside the thing it excuses.
