@@ -46,6 +46,12 @@ RECOVERY_TOLERANCE = 0.01     # how far the strong plant may be misread before t
 # treatment's own effect on the saturated set alongside. If the saturated cells are where the
 # effect lives, the exclusion is selecting the easy half and the gate says so.
 MAX_SATURATED_FRACTION = 0.15
+
+# The capability positive control has to move the argmax on at least this share of cells before
+# "argmax under-reports" is a testable claim rather than a statement about an inert readout. Set at
+# 5% because the treatment arm itself moved the argmax on 8.75% of cells at the top of the band:
+# a control that moves it less than the treatment does cannot certify the readout was capable.
+CAPABILITY_ARGMAX_FLOOR = 0.05
 NEG_KEYS = {"neg1", "neg2"}
 POS_KEYS = {"pos1", "pos2"}
 ARMS = {"lexical_neg": NEG_KEYS, "lexical_pos": POS_KEYS}
@@ -358,6 +364,27 @@ def analyse(idx: dict, wordings: set[str], scope: str) -> dict:
                  if treat[c]["mean_logprob"] == treat[c]["mean_logprob"]
                  and base[c]["mean_logprob"] == base[c]["mean_logprob"]])),
         }
+    # The largest movement in this run is toward the NEUTRAL option, not toward either pole, so it
+    # needs the same direction-specificity test the poles get. Without it, "the negative direction
+    # drives the model to neutral" is a raw shift with no control attached.
+    neutral_spec = {}
+    for arm in ARMS:
+        per_alpha = {}
+        for a in alphas:
+            treat = cells_for(idx, arm, a, wordings)
+            common = sorted(set(treat) & set(base) & usable)
+            t_shift = [own_pole(treat[c], {"neut"}) - own_pole(base[c], {"neut"}) for c in common]
+            r_shift = []
+            for c in common:
+                per_rand = [own_pole(cells_for(idx, rnd, a, wordings)[c], {"neut"})
+                            - own_pole(base[c], {"neut"})
+                            for rnd in RANDOM_ARMS if c in cells_for(idx, rnd, a, wordings)]
+                r_shift.append(sum(per_rand) / len(per_rand) if per_rand else 0.0)
+            per_alpha["%.3f" % a] = str(A.paired_bootstrap(
+                [x - y for x, y in zip(t_shift, r_shift)]))
+        neutral_spec[arm] = per_alpha
+    report["neutral_mass_vs_matched_random"] = neutral_spec
+
     report["contrast10_screened_axes"] = axes
     missing = set(S.SCREENED_AXES) - set(axes["lexical_neg"])
     if missing:
@@ -456,21 +483,64 @@ def main(argv: list[str]) -> int:
               % json.dumps(held_report["contrast1_primary"]["lexical_neg"]["per_alpha"]))
 
     # ---- 5. the one-sentence standard ----
-    print("\n[5] the one-sentence standard (prereg section 11)")
-    checks = {
-        "instrument gates pass": gates_pass,
-        "primary excludes zero at 2+ consecutive alphas (neg arm)":
-            open_report["contrast1_primary"]["lexical_neg"]["consecutive_significant"] >= 2,
-        "capability positive control moves argmax":
-            open_report["capability_control_moves_argmax"],
-        "held-out wording run": held_report is not None,
-    }
-    for name, ok in checks.items():
-        print("  [%s] %s" % ("ok " if ok else "no ", name))
-    print("\n%s" % ("all headline conditions met; write the sentence"
-                    if all(checks.values())
-                    else "NOT the headline. Report what survived, at the scope it survived at."))
+    #
+    # This implements section 8's conjunction, all six clauses. An earlier version checked four
+    # weaker things and printed "write the sentence" on a run where the primary is refuted in
+    # direction on the responsive arm, the co-primary covers zero everywhere, and the effect fails
+    # its own direction-specificity control. A headline check that is easier to pass than the
+    # preregistered standard is worse than none: it launders a null.
+    print("\n[5] the one-sentence standard (prereg section 8, all six clauses)")
+
+    def survives_in(report, arm):
+        return report["contrast1_primary"][arm]["consecutive_significant"] >= 2
+
+    def specific(report, arm):
+        """Contrast 3: does the arm beat a norm-matched random direction? Necessary, per section 9."""
+        return all(_excludes_zero_positive(v)
+                   for v in report["contrast3_vs_matched_random"][arm].values())
+
+    def coprimary_excludes_zero(report):
+        return any(_excludes_zero_positive(v) for v in report["contrast2_coprimary"].values())
+
+    def control_moves_argmax(report, floor=CAPABILITY_ARGMAX_FLOOR):
+        return max(v["rate"] for v in report["contrast6_capability_control"].values()) >= floor
+
+    reports = {"open": open_report}
+    if held_report is not None:
+        reports["held_out"] = held_report
+
+    for arm in ("lexical_neg", "lexical_pos"):
+        all_wordings = all(survives_in(r, arm) for r in reports.values())
+        checks = {
+            "both instrument gates recover their planted value": gates_pass,
+            "primary excludes zero at 2+ consecutive alphas in ALL wordings run": all_wordings,
+            "primary beats matched random at every alpha (contrast 3)": specific(open_report, arm),
+            "co-primary excludes zero": coprimary_excludes_zero(open_report),
+            "capability control moves argmax on >=%.0f%% of cells" % (100 * CAPABILITY_ARGMAX_FLOOR):
+                control_moves_argmax(open_report),
+            "held-out wording was run": held_report is not None,
+        }
+        print("\n  arm: %s" % arm)
+        for name, ok in checks.items():
+            print("    [%s] %s" % ("ok " if ok else "NO ", name))
+        if all(checks.values()):
+            print("    -> headline conditions met for this arm")
+        else:
+            failed = [n for n, ok in checks.items() if not ok]
+            print("    -> NOT the headline. %d of 6 clauses fail." % len(failed))
+
+    print("\nReport what survived, at the scope it survived at.")
     return 0
+
+
+def _excludes_zero_positive(interval_str: str) -> bool:
+    """Whether a formatted interval lies entirely above zero.
+
+    Parses the string the report stores, so the printed number and the decision are the same
+    object. A decision computed from a different value than the one shown is unauditable.
+    """
+    lo = float(interval_str.split("[")[1].split(",")[0])
+    return lo > 0.0
 
 
 if __name__ == "__main__":

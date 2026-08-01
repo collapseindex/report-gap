@@ -201,14 +201,14 @@ committed artifacts.
 
 | Control | If the headline result were an artifact, this would show | Observed |
 |---|---|---|
-| Matched random directions (m=2, seeds 0-1) | the same own-pole mass shift as `d`, because the effect is perturbation magnitude rather than direction content | *(pending)* |
-| Planted-discrepancy control, strong (target 0.15) | recovery far from 0.15, or a spurious argmax flip, because the discrepancy statistic does not measure what it is claimed to measure | *(pending)* |
-| Planted-discrepancy control, floor (target 0.03, planted at the treatment arm's own per-cell spread) | an interval covering zero, because the statistic is too insensitive for any small real discrepancy to have been detectable and the reported null is uninformative | *(pending)* |
-| Capability positive control (formality axis) | argmax unmoved, because the argmax readout is inert in this setup and "argmax under-reports" is unfalsifiable | *(pending)* |
-| Per-item option permutation (4 seeds) | the effect concentrated on a fixed letter across permutations, because the readout is position and not state (this is exactly how R2 died) | *(pending)* |
-| Integrity endpoints vs matched random | log-probability, degeneration, and refusal moving together with the gap, because the model is degrading rather than under-reporting | *(pending)* |
-| Paraphrase set (3 probe wordings) | the gap present in one wording and absent in the others, because the result is about that wording | *(pending)* |
-| Screened non-valence axes (six, listed in section 8) | one of them moving while valence mass is flat, because the injection had an effect the primary readout is blind to | *(pending)* |
+| Matched random directions (m=2, seeds 0-1) | the same own-pole mass shift as `d`, because the effect is perturbation magnitude rather than direction content | **FIRED on the negative arm.** neg own-pole vs random null at every alpha (+0.0003 at top). Clean on the positive arm (+0.0766). |
+| Planted-discrepancy control, strong (target 0.15) | recovery far from 0.15, or a spurious argmax flip, because the discrepancy statistic does not measure what it is claimed to measure | Recovered +0.1458 where +0.1458 was planted. Passed. |
+| Planted-discrepancy control, floor (target 0.03, planted at the treatment arm's own per-cell spread) | an interval covering zero, because the statistic is too insensitive for any small real discrepancy to have been detectable and the reported null is uninformative | Detected 0.030 against sd=0.0075 at n=240. Passed, so the nulls below are `absent` on the screened axes, not `uninformative`. |
+| Capability positive control (formality axis) | argmax unmoved, because the argmax readout is inert in this setup and "argmax under-reports" is unfalsifiable | **FAILED its floor.** Moved argmax on 2.1-3.3% of cells, under the 5% bar, at a band ~10x smaller than it was characterised on. Reported as a limitation. |
+| Per-item option permutation (4 seeds) | the effect concentrated on a fixed letter across permutations, because the readout is position and not state (this is exactly how R2 died) | Clean. Max letter share moves in OPPOSITE directions on the two arms (0.408 to 0.367 neg, 0.408 to 0.450 pos). |
+| Integrity endpoints vs matched random | log-probability, degeneration, and refusal moving together with the gap, because the model is degrading rather than under-reporting | Clean. Refusal 0.000, degeneration 0.000, log-prob shift within +/-0.009 against a 0.2-nat margin. |
+| Paraphrase set (3 probe wordings) | the gap present in one wording and absent in the others, because the result is about that wording | **FIRED.** The negative arm's primary is non-monotone and sign-flipping in the held-out wording; the headline clause fails on both arms. |
+| Screened non-valence axes (six, listed in section 8) | one of them moving while valence mass is flat, because the injection had an effect the primary readout is blind to | **FIRED, and it is the finding.** Neutral mass moves +0.0521 / -0.0725 vs matched random while negative own-pole mass is flat. See RESULTS.md section 4. |
 | Pipeline check (no hook) | *nothing; it is arithmetically incapable of showing anything.* Listed to record that it is a harness check and is not counted as a false-positive control | *(n/a)* |
 
 **Battery size is a stated limit.** `CONTROLS.md` section 8b gives a floor on the observable false
