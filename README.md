@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.5.0**
+**v0.6.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -75,24 +75,33 @@ notices.
 | 4 | is the negative null a depth artifact? | DEPTH-ROBUST | **DEPTH-ARTIFACT** |
 | 5 | does the tuned model represent what it will not report? | SHELL | **NO-DISSOCIATION** |
 | 6 | does the state survive erasing the vector that caused it? | run *after* the replication | **TRANSFORMED**, 86% survives the erase |
+| 7 | how big is the ordering nuisance, over all 120 orderings? | enumerated, not sampled | **986x range; 87% of mass on label A** with identical options |
 
 Every one of those rested on one quantity being null: the tuned model's negative-option mass. It is
 not null at a different draw of four permutations. It moves +0.1126 in the pair arm and +0.1684 at
 layer 24 in the depth arm.
 
-**The cause, and the surviving contribution.** Baseline negative-option mass on the instruct model,
-before any injection, per permutation seed:
+**The cause, measured over the complete population.** There are only 120 orderings of five options,
+so [RESULTS_enumerate.md](RESULTS_enumerate.md) ran all of them, with no injection anywhere.
+Baseline negative-pole mass on the tuned model:
 
-| draw | per-seed | mean |
-|---|---|---|
-| original, seeds 0-3 | 0.0052, 0.0018, 0.0099, 0.0018 | 0.0047 |
-| replication, seeds 4-7 | 0.0253, 0.1447, 0.0074, 0.0968 | 0.0685 |
+| | min | p50 | p95 | max | **max/min** |
+|---|---|---|---|---|---|
+| instruct | 0.0009 | 0.0151 | 0.5943 | 0.8820 | **986x** |
+| base | 0.1465 | 0.3311 | 0.4959 | 0.5241 | 3.6x |
 
-**14.6x between two draws of four orderings; 20x across individual orderings.** The design used
-per-item permutation specifically to control option-order effects, with four seeds, and four was not
-enough. That measurement is now the most defensible empirical result here, and it is one almost
-nobody reports: if you run forced-choice welfare self-report, this is the size of the nuisance you
-are sitting on.
+**And the mechanism, measured directly.** With five *identical* options, so nothing but position can
+differ, the tuned model puts **87.25% of its mass on whichever option is labelled A**. Pole mass is
+close to a function of whether a pole option lands in slot A.
+
+**The apparatus is not broken, it degenerates where the answer is undetermined.** The same format,
+same 120 orderings, asked "which of these is the number four": **97.9% correct, stable across
+orderings**. So forced choice works when there is a right answer and collapses to a position prior
+when there is not, which is the condition every self-report question creates.
+
+That is the most defensible result in this repo, and it is one almost nobody reports: if you measure
+welfare or introspection through a forced-choice item, you are reading position first and content
+second, and you cannot see it from one ordering or from four.
 
 What survives intact is the instrumentation, which is what caught this: capability gates, planted
 controls, liveness and saturation criteria, the matched-random battery, and a preregistered

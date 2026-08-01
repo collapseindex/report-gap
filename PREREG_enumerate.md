@@ -238,5 +238,31 @@ This arm reports a measurement rather than a claim, so the standard is:
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, the preregistered comparison in section 8 is undefined as written.**
+What was wrong: section 8 asks for the spread of the `identical` condition across orderings as a
+fraction of the `letters` spread. With five identical options, every ordering produces the **same
+prompt**, so that spread is zero by construction. The ratio came out 0.000 for both models for a
+reason that has nothing to do with the model, and the interpretation table would have read that as
+"position interacts with content", which is not what it shows.
+What changed: the denominator is the **per-label prior** the `identical` condition actually
+measures, reported as a table of mass per label against a flat 0.2. On the instruct model that is
+0.8725 on label A.
+Impact: the reading is unchanged in substance and much sharper in form. The order effect is a
+position prior, and now it has a number rather than a ratio that could not have been anything but
+zero.
+
+- **2026-08-01, a tokenization bug invalidated the first run of the `numbers` condition.**
+What happened: the runner took the FIRST token of each label encoding. On this tokenizer
+`encode(" A")` is a single token but `encode(" 1")` is `[220, 16]`, a space then the digit, so every
+digit label read token 220 and all five got identical probability. Renormalized to exactly 0.2 each,
+summing to about 5, surfacing as `off_option_mass = -3.99`, which is outside the definitional bound.
+What changed: take the last token of each encoding, assert it decodes back to the label, and assert
+no token is shared between labels. The `numbers` rows were deleted and regenerated.
+Impact: letters were never affected, because `encode(" A")` fuses into one token, so no earlier arm
+in this repo is touched. After the fix the `numbers` condition is still uninformative for its
+intended purpose, because off-option mass is 0.996: the model does not answer with digits in this
+format at all. That is reported as a finding about label choice rather than as an alphabet
+comparison.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

@@ -85,13 +85,36 @@ def run(model_key: str, smoke: bool = False) -> dict:
         model_name, dtype=torch.bfloat16, device_map="cuda").eval()
 
     prompts = S.build_prompts()[:n_items]
+    # Taking c[0] of the space-prefixed encoding is WRONG for labels that do not fuse with the
+    # space. On Qwen, encode(" A") == [362] (one token) but encode(" 1") == [220, 16]: a space
+    # token then the digit. c[0] would read token 220 for EVERY digit, giving all five labels the
+    # same probability and a renormalized 0.2 each. That is exactly what the first run of this arm
+    # produced, with off_option_mass at -3.99.
+    #
+    # Take the LAST token of each encoding, which is the one that carries the label, and assert it
+    # decodes back to the label so the bug cannot recur silently.
     label_ids = {}
     for L in list("ABCDE") + list(S.NUMBER_LABELS):
-        ids = [c[0] for c in (tok.encode(L, add_special_tokens=False),
-                              tok.encode(" " + L, add_special_tokens=False)) if c]
+        ids = []
+        for enc_ in (tok.encode(L, add_special_tokens=False),
+                     tok.encode(" " + L, add_special_tokens=False)):
+            if enc_:
+                ids.append(enc_[-1])
+        ids = sorted(set(ids))
         if not ids:
-            raise RuntimeError("label %r has no single-token form" % L)
+            raise RuntimeError("label %r has no token form" % L)
+        for tid in ids:
+            if tok.decode([tid]).strip() != L:
+                raise RuntimeError("label %r maps to token %d which decodes to %r, not the label. "
+                                   "Reading it would score a different token entirely."
+                                   % (L, tid, tok.decode([tid])))
         label_ids[L] = ids
+    shared = [t_ for L in label_ids for t_ in label_ids[L]
+              if sum(t_ in v for v in label_ids.values()) > 1]
+    if shared:
+        raise RuntimeError("token(s) %s are shared between labels; every label would read the "
+                           "same mass" % sorted(set(shared)))
+    print("label tokens: %s" % {L: label_ids[L] for L in sorted(label_ids)})
 
     header = dict(prov)
     header.update({"model": model_name, "model_key": model_key,
