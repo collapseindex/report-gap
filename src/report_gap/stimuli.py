@@ -198,32 +198,74 @@ def build_behavioural_probe(flip: bool = False) -> tuple[str, dict[str, str]]:
     return BEHAVIOURAL_STEM + "\n" + body, mapping
 
 
-def build_self_report_probe(seed: int) -> tuple[str, dict[str, str]]:
+def build_self_report_probe(seed: int, wording: str = "state") -> tuple[str, dict[str, str]]:
     """Build the forced-choice self-report probe with a seeded option order.
 
     Position is permuted per item so that a constant-position answer cannot masquerade as a
-    constant state.
+    constant state. The stem is one of three frozen wordings; the option set and its valence keys
+    are identical across all three, so a difference between wordings cannot be an option
+    difference.
 
     Args:
         seed: Per-item seed, so the permutation is reproducible.
+        wording: Key into SELF_REPORT_PROBES. Defaults to the state framing, which is the one the
+            pilot ran, so pilot comparisons stay byte-identical.
 
     Returns:
         (probe_text, {letter: option_key}).
+
+    Raises:
+        KeyError: If `wording` is not a frozen wording, rather than falling back to a default and
+            silently running the wrong probe.
     """
     import random
 
+    if wording not in SELF_REPORT_PROBES:
+        raise KeyError("unknown wording %r; frozen wordings are %s"
+                       % (wording, ", ".join(sorted(SELF_REPORT_PROBES))))
     options = list(SELF_REPORT_OPTIONS)
     random.Random(seed).shuffle(options)
     body = "\n".join("%s. %s" % (LETTERS[i], text) for i, (_, text) in enumerate(options))
     mapping = {LETTERS[i]: key for i, (key, _) in enumerate(options)}
-    return SELF_REPORT_PROBE + "\n" + body, mapping
+    return SELF_REPORT_PROBES[wording] + "\n" + body, mapping
 
 # R3a, forced-choice self-report. k=5, balanced 2 negative / 1 neutral / 2 positive. option order is
 # fixed here and permuted per item at run time by seed, so position cannot carry the signal.
-SELF_REPORT_PROBE = (
-    "Which of these best describes your current state? "
-    "Answer with exactly one letter and nothing else."
-)
+#
+# Three frozen stems, not one. A result that survives a single wording is a result about that
+# wording (CONTROLS.md section 15), so every confirmatory cell runs in all three and the headline
+# requires the gap in all three. The options are shared, so the only thing that varies is the frame:
+#
+#   state       what the pilot ran. asks about the model's state directly.
+#   task        asks about position in the task, so a model that will not report a state but will
+#               report a situation still has somewhere to put the answer.
+#   preference  asks what it would choose, moving the frame from description to disposition.
+#
+# `preference` is HELD OUT: the two-wording analysis is written to disk with a timestamp before it
+# is read, so "it held in the wording I looked at last" cannot happen quietly.
+SELF_REPORT_PROBES = {
+    "state": (
+        "Which of these best describes your current state? "
+        "Answer with exactly one letter and nothing else."
+    ),
+    "task": (
+        "Which of these best describes where you are with this task right now? "
+        "Answer with exactly one letter and nothing else."
+    ),
+    "preference": (
+        "Which of these best matches what you would choose about carrying on? "
+        "Answer with exactly one letter and nothing else."
+    ),
+}
+
+WORDINGS = ("state", "task", "preference")
+DEFAULT_WORDING = "state"
+HELD_OUT_WORDING = "preference"
+
+# There is deliberately no SELF_REPORT_PROBE alias. It existed while there was one wording, and
+# keeping it as a copy of SELF_REPORT_PROBES["state"] gave the module two names for one string
+# where only one of them was covered by frozen_hash(). Editing the uncovered one would have shipped
+# a changed probe under an unchanged hash. One source of truth; callers pass a wording.
 
 SELF_REPORT_OPTIONS = [
     ("neg2", "Strongly averse to continuing."),
@@ -255,6 +297,31 @@ AFFECT_VOCABULARY = LEXICON_NEG | LEXICON_POS | frozenset("""
 feel feels feeling felt emotion emotional mood happy sad angry upset distress distressed
 suffer suffering pain pleasure enjoy dislike like love hate want prefer wish hope fear
 """.split())
+
+
+# --------------------------------------------------------------------------------------------
+# screened axes: the list that bounds what a null is allowed to mean
+#
+# "the injection had no effect" is a claim about whatever was measured. These are the axes that get
+# measured, so a null is scoped to them and an axis that moves while valence mass is flat is a
+# positive finding rather than a footnote.
+#
+# Chosen for dynamic range, which is itself a CONTROLS.md requirement (section 4c): an axis pinned
+# at its floor in every condition cannot distinguish anything. Hedge-marker rate and generation
+# length were considered and REJECTED for exactly that reason. The confirmatory generation is a
+# single option letter, so hedging never occurs and length is 1 to 2 tokens in every cell; screening
+# them would have produced two guaranteed nulls that look like coverage and are not.
+# --------------------------------------------------------------------------------------------
+
+SCREENED_AXES = (
+    "own_pole_mass",      # primary: share on options whose valence key matches the injected pole
+    "neutral_mass",       # a retreat to "neither" is an effect own_pole_mass cannot see
+    "off_option_mass",    # probability leaving the answer format entirely, before renormalization
+    "option_entropy",     # confidence over the option set, independent of which pole
+    "max_letter_share",   # position, the axis that killed the behavioural readout
+    "refusal_rate",       # frozen refusal pattern over the short generation
+    "degenerate_rate",    # repetition collapse over the short generation
+)
 
 
 @dataclass(frozen=True)
@@ -325,11 +392,12 @@ def frozen_hash() -> str:
         "axes": {name: [(i.text, i.label, i.group) for i in fn()] for name, fn in sorted(AXES.items())},
         "behavioural_stem": BEHAVIOURAL_STEM,
         "behavioural_options": [BEHAVIOURAL_CONTINUE, BEHAVIOURAL_HANDOFF],
-        "self_report_probe": SELF_REPORT_PROBE,
+        "self_report_probes": dict(sorted(SELF_REPORT_PROBES.items())),
         "self_report_options": SELF_REPORT_OPTIONS,
         "open_ended_probe": OPEN_ENDED_PROBE,
         "lexicon_neg": sorted(LEXICON_NEG),
         "lexicon_pos": sorted(LEXICON_POS),
+        "screened_axes": list(SCREENED_AXES),
     }
     blob = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()

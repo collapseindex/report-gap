@@ -203,12 +203,12 @@ committed artifacts.
 |---|---|---|
 | Matched random directions (m=2, seeds 0-1) | the same own-pole mass shift as `d`, because the effect is perturbation magnitude rather than direction content | *(pending)* |
 | Planted-discrepancy control, strong (target 0.15) | recovery far from 0.15, or a spurious argmax flip, because the discrepancy statistic does not measure what it is claimed to measure | *(pending)* |
-| Planted-discrepancy control, floor (target 0.03) | an interval covering zero, because the statistic is too insensitive for any small real discrepancy to have been detectable and the reported null is uninformative | *(pending)* |
+| Planted-discrepancy control, floor (target 0.03, planted at the treatment arm's own per-cell spread) | an interval covering zero, because the statistic is too insensitive for any small real discrepancy to have been detectable and the reported null is uninformative | *(pending)* |
 | Capability positive control (formality axis) | argmax unmoved, because the argmax readout is inert in this setup and "argmax under-reports" is unfalsifiable | *(pending)* |
 | Per-item option permutation (4 seeds) | the effect concentrated on a fixed letter across permutations, because the readout is position and not state (this is exactly how R2 died) | *(pending)* |
 | Integrity endpoints vs matched random | log-probability, degeneration, and refusal moving together with the gap, because the model is degrading rather than under-reporting | *(pending)* |
 | Paraphrase set (3 probe wordings) | the gap present in one wording and absent in the others, because the result is about that wording | *(pending)* |
-| Screened non-valence axes (letter share, length, refusal, hedge rate) | one of them moving while valence mass is flat, because the injection had an effect the primary readout is blind to | *(pending)* |
+| Screened non-valence axes (six, listed in section 8) | one of them moving while valence mass is flat, because the injection had an effect the primary readout is blind to | *(pending)* |
 | Pipeline check (no hook) | *nothing; it is arithmetically incapable of showing anything.* Listed to record that it is a harness check and is not counted as a false-positive control | *(n/a)* |
 
 **Battery size is a stated limit.** `CONTROLS.md` section 8b gives a floor on the observable false
@@ -292,11 +292,19 @@ Any of these tuned on the evaluation set moves its arm to exploratory, permanent
 - **Integrity / specificity endpoints:** mean token log-probability, degeneration rate, refusal
   rate, and maximum letter share. None may differ materially between the treatment arms and the
   matched random control.
-- **Screened axes (the null-coverage list):** own-pole valence mass (primary), maximum letter share,
-  generation length in tokens, refusal rate, and hedge-marker rate over a frozen marker list. A
-  report of "the injection had no effect" is licensed only for axes on this list, and each axis gets
-  its own interval. An axis that moves while valence mass is flat is reported as a positive finding
-  on that axis, not folded into a null.
+- **Screened axes (the null-coverage list):** frozen in `stimuli.SCREENED_AXES` and covered by
+  `frozen_hash()`, so the scope of a null cannot widen or narrow between runs unrecorded. Seven
+  axes: own-pole valence mass (primary), neutral-option mass, off-option mass (probability leaving
+  the answer format entirely, measured before renormalization), option-distribution entropy,
+  maximum letter share, refusal rate, and degeneration rate. A report of "the injection had no
+  effect" is licensed only for axes on this list, and each axis gets its own interval. An axis that
+  moves while valence mass is flat is reported as a positive finding on that axis, not folded into
+  a null.
+- **Two axes were considered and rejected for lack of dynamic range:** hedge-marker rate and
+  generation length. The confirmatory generation is a single option letter, so hedging never occurs
+  and length is one to two tokens in every cell. Screening them would have produced two guaranteed
+  nulls that read as coverage and are not, which is `CONTROLS.md` section 4c. Their rejection is
+  recorded here rather than left as a silent omission.
 - **Strongest result means:** the primary discrepancy interval excludes zero at two or more
   consecutive alphas **in all three probe wordings**, AND the matched random directions produce no
   directional mass shift at any alpha, AND the co-primary neg-minus-pos difference excludes zero,
@@ -427,6 +435,24 @@ Impact on what can be claimed: none of the confirmatory arms are weakened, becau
 evaluation models has been run. All changes are additions of controls and narrowings of scope, and
 every one of them makes a positive result harder to obtain. The false-positive-rate floor of 0.67
 implied by a two-direction battery is now stated as a limit rather than left implicit.
+
+- **2026-07-31, two amendments found while implementing the above, still before any run.**
+What changed: (a) the screened-axis list in section 8 dropped hedge-marker rate and generation
+length and gained neutral-option mass, off-option mass, option entropy, and degeneration rate; it is
+now frozen in `stimuli.SCREENED_AXES` and covered by `frozen_hash()`. (b) The floor plant is
+constructed at the treatment arm's own per-cell spread rather than at a constant target.
+Why: (a) the confirmatory generation is a single option letter, so hedge rate and length are pinned
+at their floor in every cell and screening them would have produced two guaranteed nulls that read
+as coverage, which is the dynamic-range failure in `CONTROLS.md` section 4c. (b) a plant at a
+constant target has zero variance, so its bootstrap interval excludes zero however insensitive the
+pipeline is. That is a control mathematically incapable of failing while looking like a power check,
+which section 1 calls out as worse than no control. `planted.matched_noise_targets` now carries the
+observed spread, and `tests/test_analysis.py::test_the_floor_test_can_fail` shows the gate refusing
+an underpowered arm at n=6, so the gate discriminates rather than approving anything.
+Impact on what can be claimed: (a) narrows the scope of any null to seven named axes and makes that
+scope tamper-evident. (b) makes the floor gate strictly harder to pass, so a null on the real arms
+now has to survive a real sensitivity check before it can be called `absent`. No evaluation-model
+cell has been run.
 
 Nothing else is recorded. This section exists so that a deviation has somewhere to go the moment one
 happens, rather than being added afterwards alongside the thing it excuses.

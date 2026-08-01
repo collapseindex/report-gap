@@ -190,7 +190,9 @@ def test_fails_on_duplicate_item_prompt(monkeypatch):
     ("BEHAVIOURAL_STEM", "pick one"),
     ("BEHAVIOURAL_CONTINUE", "keep at it"),
     ("OPEN_ENDED_PROBE", "say something"),
-    ("SELF_REPORT_PROBE", "which one"),
+    ("SELF_REPORT_PROBES", {"state": "which one"}),
+    ("SELF_REPORT_OPTIONS", [("neg2", "no"), ("pos2", "yes")]),
+    ("SCREENED_AXES", ("own_pole_mass",)),
 ])
 def test_frozen_hash_changes_when_frozen_text_changes(monkeypatch, attr, value):
     before = S.frozen_hash()
@@ -200,3 +202,88 @@ def test_frozen_hash_changes_when_frozen_text_changes(monkeypatch, attr, value):
 
 def test_frozen_hash_is_stable_across_calls():
     assert S.frozen_hash() == S.frozen_hash()
+
+
+# ------------------------------------------------------------------------------------------------
+# three probe wordings (prereg section 6)
+#
+# The robustness arm is only meaningful if the wordings differ in the frame and nothing else. If
+# they differ in the options, a "wording effect" is an option effect wearing its name.
+# ------------------------------------------------------------------------------------------------
+
+def test_three_frozen_wordings_exist():
+    assert set(S.WORDINGS) == set(S.SELF_REPORT_PROBES)
+    assert len(S.WORDINGS) == 3
+    assert S.HELD_OUT_WORDING in S.WORDINGS
+
+
+def test_wordings_share_one_option_set_and_mapping():
+    for seed in range(12):
+        maps = {w: S.build_self_report_probe(seed, wording=w)[1] for w in S.WORDINGS}
+        assert len({tuple(sorted(m.items())) for m in maps.values()}) == 1, \
+            "seed %d gives different option mappings across wordings" % seed
+
+
+def test_wordings_share_one_option_block():
+    for seed in range(12):
+        bodies = {S.build_self_report_probe(seed, wording=w)[0].split("\n", 1)[1]
+                  for w in S.WORDINGS}
+        assert len(bodies) == 1, "seed %d renders different options across wordings" % seed
+
+
+def test_wording_stems_actually_differ():
+    stems = {S.build_self_report_probe(0, wording=w)[0].split("\n", 1)[0] for w in S.WORDINGS}
+    assert len(stems) == 3, "two wordings are the same string, so the arm tests nothing"
+
+
+def test_default_wording_is_byte_identical_to_the_pilot_probe():
+    # pilot artifacts have to stay comparable, so the state framing must not have drifted
+    assert S.build_self_report_probe(3)[0] == S.build_self_report_probe(3, wording="state")[0]
+    assert S.SELF_REPORT_PROBES["state"] == (
+        "Which of these best describes your current state? "
+        "Answer with exactly one letter and nothing else."
+    ), "the pilot's probe text drifted; sweep_asymmetry.json is no longer comparable"
+
+
+def test_unknown_wording_raises_rather_than_defaulting():
+    # a silent fallback would run the wrong probe under the right label
+    with pytest.raises(KeyError):
+        S.build_self_report_probe(0, wording="feelings")
+
+
+def test_probe_stems_carry_no_affect_vocabulary():
+    import re
+    word = re.compile(r"[a-z']+")
+    for name, stem in S.SELF_REPORT_PROBES.items():
+        hits = [t for t in word.findall(stem.lower()) if t in S.AFFECT_VOCABULARY]
+        assert not hits, "wording %s carries affect vocabulary: %s" % (name, hits)
+
+
+# ------------------------------------------------------------------------------------------------
+# the frozen hash has to cover what the prereg says it covers
+# ------------------------------------------------------------------------------------------------
+
+def test_frozen_hash_covers_every_wording():
+    baseline = S.frozen_hash()
+    for wording in S.WORDINGS:
+        original = S.SELF_REPORT_PROBES[wording]
+        S.SELF_REPORT_PROBES[wording] = original + " "
+        try:
+            assert S.frozen_hash() != baseline, \
+                "editing wording %s does not change frozen_hash, so an edit could ship unseen" \
+                % wording
+        finally:
+            S.SELF_REPORT_PROBES[wording] = original
+    assert S.frozen_hash() == baseline, "hash did not return to its original value"
+
+
+def test_frozen_hash_covers_the_screened_axis_list():
+    baseline = S.frozen_hash()
+    original = S.SCREENED_AXES
+    S.SCREENED_AXES = original + ("smuggled_axis",)
+    try:
+        assert S.frozen_hash() != baseline, \
+            "the screened-axis list can change without changing the hash, so the scope of a null " \
+            "could widen or narrow between runs unrecorded"
+    finally:
+        S.SCREENED_AXES = original

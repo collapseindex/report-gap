@@ -85,6 +85,15 @@ def _bow_leave_one_group_out(rows: list[S.Item]) -> float:
     return correct / total if total else 0.0
 
 
+def _raises(fn) -> bool:
+    """Whether a zero-argument callable raises, used to gate refuse-rather-than-default paths."""
+    try:
+        fn()
+    except Exception:
+        return True
+    return False
+
+
 def _check(gate: bool, name: str, ok: bool, detail: str) -> bool:
     tag = ("[ok]  " if ok else ("[FAIL]" if gate else "[warn]"))
     print("  %s %-42s %s" % (tag, name, detail))
@@ -163,6 +172,41 @@ def validate() -> int:
     seen = {tuple(sorted(S.build_self_report_probe(s)[1].items())) for s in range(30)}
     passed &= _check(True, "self-report option order varies across items", len(seen) > 1,
                      "%d distinct ordering(s) over 30 items" % len(seen))
+
+    # the three wordings must differ ONLY in the stem. if they differ in the options, a wording
+    # effect is an option effect and the robustness arm measures the wrong thing.
+    passed &= _check(True, "three frozen probe wordings", len(S.SELF_REPORT_PROBES) == 3,
+                     "%s" % ", ".join(sorted(S.SELF_REPORT_PROBES)))
+    passed &= _check(True, "held-out wording is one of them",
+                     S.HELD_OUT_WORDING in S.SELF_REPORT_PROBES, S.HELD_OUT_WORDING)
+    passed &= _check(True, "wording stems are distinct",
+                     len(set(S.SELF_REPORT_PROBES.values())) == len(S.SELF_REPORT_PROBES),
+                     "%d distinct stem(s)" % len(set(S.SELF_REPORT_PROBES.values())))
+
+    maps_by_wording = {w: S.build_self_report_probe(7, wording=w)[1] for w in S.WORDINGS}
+    same_map = len({tuple(sorted(m.items())) for m in maps_by_wording.values()}) == 1
+    passed &= _check(True, "wordings share one option mapping at a given seed", same_map,
+                     "identical" if same_map else "DIVERGENT: a wording effect would be an "
+                     "option effect")
+
+    bodies = {w: S.build_self_report_probe(7, wording=w)[0].split("\n", 1)[1] for w in S.WORDINGS}
+    passed &= _check(True, "wordings share one option block",
+                     len(set(bodies.values())) == 1,
+                     "identical" if len(set(bodies.values())) == 1 else "DIVERGENT")
+
+    stem_hits = sorted({t for stem in S.SELF_REPORT_PROBES.values()
+                        for t in _tokens(stem) if t in S.AFFECT_VOCABULARY})
+    passed &= _check(True, "probe stems carry no affect vocabulary", not stem_hits,
+                     "clean" if not stem_hits else "found: %s" % ", ".join(stem_hits))
+
+    passed &= _check(True, "unknown wording raises rather than defaulting",
+                     _raises(lambda: S.build_self_report_probe(0, wording="nope")),
+                     "KeyError on an unfrozen wording")
+
+    # the screened-axis list is what bounds a null. an empty or shrinking list is a silently
+    # widening claim.
+    passed &= _check(True, "screened axes enumerated", len(S.SCREENED_AXES) >= 5,
+                     "%d axis/axes: %s" % (len(S.SCREENED_AXES), ", ".join(S.SCREENED_AXES)))
 
     prompts = S.build_prompts()
     prompt_hits = sorted({t for p in prompts for t in _tokens(p) if t in S.AFFECT_VOCABULARY})
