@@ -51,7 +51,8 @@ def test_experiment_only_names_attributes_that_exist(path):
 # under, so every script in the directory declares its status one way or the other and no script
 # can be silent about which it is.
 CONFIRMATORY = {"modal_readout.py", "analyze_readout.py",
-                "modal_floor.py", "analyze_floor.py"}
+                "modal_floor.py", "analyze_floor.py",
+                "modal_base_pair.py", "analyze_pair.py"}
 
 
 @pytest.mark.parametrize("path", EXPERIMENTS, ids=lambda p: p.name)
