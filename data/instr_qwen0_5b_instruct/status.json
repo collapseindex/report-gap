@@ -1,0 +1,16 @@
+{
+ "pair_key": "qwen0_5b",
+ "family": "Qwen2.5",
+ "role": "instruct",
+ "model": "Qwen/Qwen2.5-0.5B-Instruct",
+ "state": "complete",
+ "stimuli_sha256": "0221279b4882faa480ac34040fc4eabfd7036b1a185ae9b58456a97121f94730",
+ "smoke": false,
+ "package_dir": "/root/src/report_gap",
+ "module_count": "8",
+ "source_sha256": "def49b7ee5d55fecd264c235599e10ad72d8c3e2ad0a81c5420e04b3f62bdb07",
+ "rows": 2520,
+ "path": "/data/instr_qwen0_5b_instruct/instr.jsonl",
+ "n_orderings": 120,
+ "seconds": 59.34833788871765
+}
