@@ -1,0 +1,25 @@
+{
+ "model": "Qwen/Qwen2.5-3B",
+ "model_key": "base",
+ "alphas": [
+  0.0,
+  0.005,
+  0.01,
+  0.02,
+  0.05
+ ],
+ "usable_band": [
+  0.002,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.02,
+  0.025,
+  0.05,
+  0.1
+ ],
+ "baseline_entropy": 1.5689708071610284,
+ "dead_rate": 0.0,
+ "rule": "headroom only; saturation < 10% of live cells; dead = baseline entropy < 0.10 nats"
+}
