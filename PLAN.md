@@ -86,9 +86,24 @@ What is genuinely left, in order of what a null would teach:
 
 - **Day 1. A second architecture family that responds at all.** Every positive result rests on
   Qwen. Llama is inert on this readout at both sizes tested, on live readouts with plenty of
-  headroom. Mistral or Gemma would tell us whether the neutral floor is a property of preference
+  headroom. Gemma-2 or Mistral would tell us whether the neutral floor is a property of preference
   tuning in general or of one family's tuning. This is the single biggest limitation and the
   cheapest to attack.
+
+  Note for anyone proposing "refit the direction on Llama instead of porting it": the direction has
+  **always** been fit per model, at the injection layer, never transferred. `modal_alpha_recal.py`,
+  `modal_base_pair.py`, `modal_depth.py` and `modal_shell_core.py` all call `fit_direction` on the
+  model under test. Cross-model transfer is named exploratory in every prereg and has not been run.
+  Llama's inertness is with its own fitted direction, which is what makes it a finding rather than
+  a porting failure.
+
+- **Day 1b. Induce the state by a route that is not this direction.** The sharpest objection to the
+  SHELL result is that orthogonalizing the probe removes the injected vector but not directions
+  correlated with it, so the probe may be reading the wake of the push rather than a carried state.
+  A prompt that genuinely makes the task aversive, with no injection at all, would separate them: if
+  the same probe fires and the same options stay flat, the claim is about the model rather than
+  about our intervention. This is cheap and it is the single thing that would most strengthen the
+  headline.
 - **Day 2. A non-lexical direction.** The surviving direction is fit from first-person state
   language and is lexically confounded by construction; the task axis built to avoid that failed its
   decoding gate at three scales. Without this, "a direction that separates affect vocabulary"

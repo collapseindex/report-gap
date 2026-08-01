@@ -73,10 +73,21 @@ Five preregistrations, each answering the objection the last one raised. Full nu
 | 4 | is that null just the wrong injection depth? (raised by arXiv:2605.05653) | **DEPTH-ROBUST.** Null at all 7 gate-clean depths from 14% to 80%, including the band where the effect was predicted | [RESULTS_depth.md](RESULTS_depth.md) |
 | 5 | does the tuned model *represent* the state it will not report? | **SHELL.** It carries it downstream at -1.07 SD, orthogonalized, while its option mass moves +0.0006 | [RESULTS_shell.md](RESULTS_shell.md) |
 
-The through-line: **the floor is in the expression, not in the representation.** A preference-tuned
-model given a valence direction at matched norm will report "drawn to continuing" at one sign and
-"neither drawn nor averse" at the other, while a probe orthogonal to the injected vector shows the
-negative state present in the residual stream that feeds the answer.
+The through-line, and the sentence the write-up should open with:
+
+> A preference-tuned model given a valence direction at matched norm reports "drawn to continuing"
+> at one sign and "neither drawn nor averse" at the other, while a probe orthogonal to the injected
+> vector reads the negative state at -1.07 SD in the residual stream that feeds the answer.
+
+The negative option's relative logit does not rise sub-threshold either: it moves *away* from
+negative (log-odds -0.086 against matched random) while the probe moves toward it. So this is not a
+small effect failing to clear a decision boundary. See the addendum in
+[RESULTS_shell.md](RESULTS_shell.md), which tested that objection directly.
+
+What the word "shell" does **not** buy: orthogonalizing the probe removes the vector we injected, not
+directions correlated with it, so "the model carries the state" is not yet separable from "the model
+carries the wake of what we pushed". The experiment that would separate them is named in that file's
+caveats and has not been run.
 
 Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. That valence is linearly
 represented and steerable is established prior art and is not our contribution; what a *self-report

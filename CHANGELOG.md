@@ -40,6 +40,23 @@ endpoints were computed.
 - A preregistered contrast with an inverted sign, disclosed in `RESULTS_shell.md` because
   correcting it changed a verdict in our favour.
 
+## v0.4.1 (2026-08-01)
+
+**Added**
+- Addendum to `RESULTS_shell.md` testing the boundary-geometry objection to the SHELL result, on
+  committed artifacts and labelled exploratory. The negative option's within-set log-odds do not
+  rise sub-threshold under negative injection; they move slightly away (-0.086 against matched
+  random, odds x0.918). The apparent rise in raw negative mass is a renormalization artifact of
+  positive mass collapsing into neutral. This sharpens the dissociation to opposite signs.
+
+**Changed**
+- The correlated-feature caveat on SHELL is now stated as the weakest joint in the argument rather
+  than a footnote: orthogonality removes the injected vector, not directions correlated with it, so
+  "carries the state" is not yet separable from "carries the wake of the push". The experiment that
+  would separate them is named in `PLAN.md` day 1b.
+- `PLAN.md` records that directions have always been fit per model and never transferred, so
+  Llama's inertness is not a porting failure.
+
 ## v0.1.0 (2026-07-31)
 
 Instrument construction before the sprint window: frozen preregistration, stimuli, injection hooks,

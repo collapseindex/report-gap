@@ -87,14 +87,56 @@ The prereg's section 0 is binding and this is the result most likely to be over-
   own computation reads it for anything is a separate question, and the option readout is precisely
   a case where it does not.
 
+## Addendum, 2026-08-01: the boundary-geometry objection, tested
+
+**Exploratory. Not preregistered.** Computed on committed artifacts in response to a reviewer
+objection, and labelled as post hoc because that is what it is.
+
+**The objection.** SHELL implies a gate. A duller explanation exists: the tuned model's decision
+geometry may simply not map that region of the residual stream onto the negative option token. On
+that story the negative option's logit *does* move toward negative, just not far enough to surface
+in mass or argmax, because the option starts at 0.47% of the distribution. Boundary geometry plus a
+low prior, no gate required.
+
+**The test.** The renormalized option mass is a softmax over the five letters, so within-set
+log-odds recover the relative logits exactly. If the objection holds, log-odds of the negative
+options should rise under negative injection even where mass does not.
+
+| artifact | negative mass vs random | log-odds(neg / neut) vs random |
+|---|---|---|
+| pair, n=120, alpha 0.05 | +0.0002 [-0.0001, +0.0004] | **-0.0857** [-0.1234, -0.0506], odds x0.918 |
+| shell L24, n=60, alpha 0.05 | +0.0006 [+0.0003, +0.0009] | -0.0443 [-0.1025, +0.0144] |
+
+**It does not hold.** The negative option's logit relative to the neutral option does not rise under
+negative injection. It moves slightly *down* in the better-powered artifact and is flat in the
+smaller one. The raw baseline-to-treatment rise in negative mass, 0.0047 to 0.0072, is a
+renormalization artifact of positive mass collapsing (0.2346 to 0.1340) while neutral absorbs it
+(0.7607 to 0.8588), not a push toward the negative option.
+
+**What that does to the claim.** It sharpens the dissociation rather than softening it. The probe
+reads -1.07 SD *toward* negative while the negative option's relative logit moves -0.086 *away* from
+it. Those are opposite signs, which is a stronger statement than "representation moves and options
+do not". The neutral option is not merely where leftover mass lands; it is the option the readout
+moves toward under a negative push.
+
+It does not license the word "gate" any more than before. Ruling out one mechanism is not
+identifying another, and this design still does not show what blocks the expression.
+
 ## Caveats
 
-- **Residual circularity is reduced, not eliminated.** `p_orth` is exactly orthogonal to the
-  injected direction `d`, so the literal vector contributes zero. But `p` and `d` are fit from the
-  same lexical contrast set at different layers, and a downstream nonlinear transform of `d` could
-  produce components along `p_orth`. Whether "the network's transform of the injected vector" counts
-  as "the model representing the state" is a genuine interpretive question this design does not
-  settle. The 0.59 to 1.00 orthogonalized/raw ratios are reported so a reader can judge.
+- **Residual circularity is reduced, not eliminated, and this is the weakest joint in the argument.**
+  `p_orth` is exactly orthogonal to the injected direction `d`, so the literal vector contributes
+  zero. That is all orthogonality buys. It does **not** remove directions *correlated* with `d`, and
+  steering at a meaningful norm drags correlated features along with it, so a probe orthogonal to
+  the injected vector can be reading the drag rather than a carried state. `p` and `d` are also fit
+  from the same lexical contrast set at different layers, which makes such correlation likely rather
+  than hypothetical. Nothing in this run distinguishes "the model carries the state" from "the model
+  carries the wake of the vector we added". The 0.59 to 1.00 orthogonalized/raw ratios are reported
+  so a reader can judge how much the control removed, but they do not settle this. The design that
+  would: induce the negative state by a route that is not this direction, for instance a prompt that
+  genuinely makes the task aversive, and ask whether the same probe fires while the same options
+  stay flat. Until that is run, SHELL is a claim about what a probe recovers after we push, not a
+  demonstration that the model independently holds the state.
 - **The representation is asymmetric too.** Positive injection moves the probe +2.36 SD on the
   instruct model, negative moves it -1.07, a 2.2x gap. On the base model it is +1.91 against -2.15,
   roughly symmetric. So preference tuning attenuates the downstream negative correlate as well as
