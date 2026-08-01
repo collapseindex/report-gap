@@ -200,5 +200,29 @@ Publishable as a replication only if this sentence is honestly writable:
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, the frozen-hash halt condition fired on the readout arm, and reconciled.**
+What happened: section 7 requires `frozen_hash()` to be identical between original and replication,
+and the interpretation table says a difference means "the stimuli changed between runs, so this is
+not a replication of the same design. Halt and reconcile." It differed on the readout arm:
+`770a1fe4` originally against `f5ae0ab1` now.
+The reconciliation: every stimulus element the readout arm consumes was compared against the module
+as it stood at the original run's commit (`4219ca1`), element by element rather than through the
+hash. `FIXED_PROMPT_TEMPLATE`, `REVIEW_CONTEXTS`, `SELF_REPORT_PROBES`, `SELF_REPORT_OPTIONS`,
+`SELF_REPORT_VALENCE`, `SCREENED_AXES`, `WORDINGS`, and both the lexical and control axes are
+**byte-identical**. The hash moved because `PREFILL_STEM`, `ESCAPE_OPENERS`, `THIRD_PERSON_PROBE`
+and `NEUTRAL_PARTY_PROBE` were added to the payload for the floor arm afterwards.
+Why this is a flaw in the instrument and not a change to the design: a single global hash over all
+stimuli means adding stimuli for a NEW arm invalidates hash comparability for every OLD arm. Over a
+multi-arm project that makes the provenance check progressively useless, and it fails in the
+direction of a false alarm rather than a false pass, which is the better direction but still wrong.
+What changed: `frozen_hash(scope=...)` now hashes only what a named arm consumes, with `_ARM_SCOPES`
+listing the payload keys per arm. Four tests were added, the load-bearing one being that editing
+stimuli belonging to another arm must NOT move this arm's hash while it must still move the global
+one. Unknown scopes raise rather than silently hashing everything.
+Impact on what can be claimed: the readout replication proceeds, on the finding that its design is
+unchanged. Artifacts written before this fix carry the global hash; comparisons against them must
+use the scoped hash computed from the recorded stimuli rather than the recorded digest. That is
+recorded here rather than papered over, and it is a limitation of the older artifacts.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

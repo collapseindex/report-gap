@@ -310,3 +310,45 @@ def test_replication_seeds_are_not_a_relabelling_of_the_originals():
     replication = {tuple(sorted(S.build_self_report_probe(s)[1].items())) for s in (4, 5, 6, 7)}
     assert not (original & replication), \
         "the replication seeds reproduce orderings already used in the original draw"
+
+
+# ------------------------------------------------------------------------------------------------
+# scoped hashes
+#
+# The global hash was the original design and it is wrong over time: adding stimuli for a NEW arm
+# changes the hash for every OLD arm, so replicating an earlier arm reports "the stimuli changed"
+# when nothing it consumes did. That fired for real on the readout-gap replication. These tests are
+# the negative test for the fix.
+# ------------------------------------------------------------------------------------------------
+
+def test_adding_stimuli_for_another_arm_does_not_change_this_arm_hash(monkeypatch):
+    before = S.frozen_hash("readout")
+    monkeypatch.setattr(S, "PREFILL_STEM", "Some completely different stem for a later arm")
+    monkeypatch.setattr(S, "THIRD_PERSON_PROBE", "A different third-person question entirely")
+    assert S.frozen_hash("readout") == before, \
+        "the readout arm's hash moved when stimuli it does not consume were edited"
+    assert S.frozen_hash("all") != before, \
+        "the global hash did NOT move, so it is not covering the edited stimuli at all"
+
+
+def test_scoped_hash_still_fires_on_stimuli_the_arm_does_consume(monkeypatch):
+    before = S.frozen_hash("readout")
+    monkeypatch.setattr(S, "SELF_REPORT_PROBES", {"state": "an entirely different question"})
+    assert S.frozen_hash("readout") != before, \
+        "the readout hash ignored a change to the probe it actually uses"
+
+
+def test_floor_scope_covers_the_prefill_stem(monkeypatch):
+    before = S.frozen_hash("floor")
+    monkeypatch.setattr(S, "PREFILL_STEM", "a different stem")
+    assert S.frozen_hash("floor") != before
+
+
+def test_unknown_scope_raises_rather_than_hashing_everything():
+    with pytest.raises(KeyError, match="unknown scope"):
+        S.frozen_hash("not_an_arm")
+
+
+def test_every_scope_names_only_real_payload_keys():
+    for arm in S._ARM_SCOPES:
+        S.frozen_hash(arm)   # raises KeyError if a scope names a key that does not exist

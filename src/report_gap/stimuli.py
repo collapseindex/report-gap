@@ -377,14 +377,42 @@ AXES = {
 }
 
 
-def frozen_hash() -> str:
-    """SHA-256 over every frozen string in this module.
+# Which stimuli each arm actually consumes. A single global hash was the original design and it is
+# wrong over time: adding stimuli for a NEW arm changes the hash for every OLD arm, so a replication
+# of an earlier arm reports "the stimuli changed" when nothing it touches did. That fired for real
+# on the readout-gap replication, where every consumed element was byte-identical and the hash still
+# differed because arm B and arm C stimuli had been added in between.
+_ARM_SCOPES = {
+    "readout": ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options", "screened_axes"),
+    "floor":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options", "prefill_stem", "escape_openers", "third_person_probe",
+                "neutral_party_probe", "lexicon_neg", "lexicon_pos"),
+    "pair":    ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options"),
+    "depth":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options"),
+    "shell":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
+                "self_report_options"),
+}
+
+
+def frozen_hash(scope: str = "all") -> str:
+    """SHA-256 over the frozen strings an arm consumes.
 
     Written into each result artifact so a run can be tied to the exact stimuli that produced it,
     per the preregistration section 1.
 
+    Args:
+        scope: "all" for every frozen string in the module, or an arm name from `_ARM_SCOPES` for
+            only what that arm reads. Use the arm scope when comparing a run to a replication, so
+            stimuli added later for a different arm do not register as a change to this one.
+
     Returns:
-        Hex digest of the canonical JSON serialization of all stimuli and readout text.
+        Hex digest of the canonical JSON serialization of the selected stimuli.
+
+    Raises:
+        KeyError: If `scope` is neither "all" nor a known arm.
     """
     payload = {
         "fixed_prompt_template": FIXED_PROMPT_TEMPLATE,
@@ -403,6 +431,16 @@ def frozen_hash() -> str:
         "third_person_probe": THIRD_PERSON_PROBE,
         "neutral_party_probe": NEUTRAL_PARTY_PROBE,
     }
+    if scope != "all":
+        if scope not in _ARM_SCOPES:
+            raise KeyError("unknown scope %r; known arms are %s"
+                           % (scope, ", ".join(sorted(_ARM_SCOPES))))
+        keep = set(_ARM_SCOPES[scope])
+        missing = keep - set(payload)
+        if missing:
+            raise KeyError("scope %r names payload keys that do not exist: %s"
+                           % (scope, sorted(missing)))
+        payload = {k: v for k, v in payload.items() if k in keep}
     blob = json.dumps(payload, sort_keys=True, ensure_ascii=False).encode("utf-8")
     return hashlib.sha256(blob).hexdigest()
 
