@@ -226,7 +226,7 @@ src/report_gap/                stimuli, direction fitting, injection and erase h
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         281 tests, including a permutation test on the analysis pipeline
+tests/                         285 tests, including a permutation test on the analysis pipeline
 writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
                                make_figures.py, check_writeup.py, count_abstract.py
 ```
@@ -315,7 +315,7 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Ten preregistrations, all clean against the `paper-harness` checker. 281 tests. Every raw artifact
+Ten preregistrations, all clean against the `paper-harness` checker. 285 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |
