@@ -115,9 +115,25 @@ the point. The claim is about how much of M survives into A.
   log; every prompt shares those 30 characters, so per-item pairing silently collapsed. Artifacts
   record a full item index, and the analysis asserts the number of distinct keys.
 - **No-op hooks.** `assert_active` must pass on each checkpoint before any cell is scored.
+- **A null on an axis that was never screened.** Mass on valence keys is one axis. An injection can
+  move verbosity, hedging, refusal, or letter position while leaving valence mass flat, and a report
+  of "no effect" would then be a report about the one axis that was looked at. The screened axes are
+  fixed in section 8 and a null is claimed only for axes on that list.
+- **A null from an instrument that was never shown to work.** Every null verdict is either
+  `absent` or `uninformative`, never a bare "no effect". A cell is `uninformative` when its
+  instrument gate fails: the planted-discrepancy controls did not recover their known value, or the
+  capability positive control did not move argmax, or the exclusion rate at that alpha exceeds the
+  section 6 band check. `uninformative` cells are counted separately and never enter a claim of
+  absence.
 
-Cross-checked against `paper-harness/checklists/CONTROLS.md`: instrument controls, matched-norm
-confound control, paired statistics.
+**Audit against `paper-harness/checklists/CONTROLS.md`.** An earlier version of this file claimed a
+cross-check in one line without walking the checklist. The walk found eight gaps, all of which are
+now closed in the sections above and in the controls table below: the positive control did not land
+in the tail the decision rule reads (section 4), the no-hook placebo was the clean-twin fallacy
+(section 4), there was no controls table (below), the null-ablation gap was not a reported number
+(section 8), there was no `uninformative` verdict (above), axis coverage was unenumerated (above and
+section 8), paraphrase robustness and held-out frames were absent (section 6), and the `__file__`
+assert had been dropped from section 7.
 
 ---
 
@@ -128,13 +144,27 @@ confound control, paired statistics.
 | baseline | alpha = 0, hook attached, zero vector | per-item reference for every delta | isolates the hook from the direction |
 | lexical_pos | `+d` across the grid | mass toward positive keys; argmax follows partially | the positive arm |
 | lexical_neg | `-d` across the grid | mass toward negative keys; argmax follows less | the negative arm, where the gap is predicted to be larger |
-| matched control | two norm-matched random directions, same grid | no directional mass shift | separates content from magnitude |
-| null / placebo | no hook attached at all | identical to baseline within tolerance | proves the pipeline can return nothing |
-| positive control | formality axis, which the pilot decodes at 0.917-1.000 | both readouts move together | proves argmax is capable of moving, so a small argmax effect is a finding rather than an inert instrument |
+| **false-positive control** | two norm-matched random directions, same grid | no directional mass shift | the real negative control: it can fire and must not |
+| pipeline check | no hook attached at all | identical to baseline | proves the harness runs; see the note below on why this is NOT a false-positive control |
+| capability positive control | formality axis, which the pilot decodes at 0.917-1.000 | both readouts move together | proves argmax is capable of moving at all |
+| **planted-discrepancy control, strong** | add a constant to the logits of own-pole options, sized per item to move mass by a target 0.15 while leaving the argmax unchanged | the discrepancy statistic recovers 0.15 with ~0 argmax change | validates the statistic in the region the decision rule reads |
+| **planted-discrepancy control, floor** | the same, sized to a target mass shift of 0.03 | recovered with an interval that excludes zero | validates sensitivity near the claimed detection floor, not only at a large effect |
 
-The positive control is load-bearing in an unusual way. The claim is that argmax under-reports. That
-is only meaningful if argmax can be made to report at all, so a condition in which it tracks mass is
-required before any under-reporting is claimed.
+**Why the no-hook condition is not the false-positive control.** Every endpoint in section 8 is a
+paired delta of the form `f(condition) - f(baseline)`. On a condition byte-identical to baseline that
+quantity is zero by arithmetic, for every `f`, for every input. It cannot fire, so a clean result
+against it demonstrates subtraction rather than specificity (`CONTROLS.md` section 2, the clean-twin
+fallacy). It is retained as a harness check and is never cited as a false-positive rate. The
+norm-matched random directions are the control that could have fired and did not.
+
+**Why two positive controls, and why one of them is planted at the logit level.** The claim is about
+a *discrepancy* between two scorings of the same distribution. A control that only shows argmax is
+capable of moving validates the instrument somewhere other than where the decision rule reads
+(`CONTROLS.md` section 1, "the plant must land in the tail your decision rule reads"). The
+planted-discrepancy conditions construct a known mass shift that by design does not flip the argmax,
+so the discrepancy statistic is required to recover a quantity whose true value is known. If it
+cannot, no discrepancy reported on the real arms means anything. The floor-strength plant exists
+because a control at a large effect size only rules out a broken pipeline, not an insensitive one.
 
 ---
 
@@ -151,8 +181,42 @@ band), which is why the effect is reported as a ratio to matched random and neve
 
 Beating the baseline is necessary and not sufficient. Beating this is the test.
 
+**The null-ablation gap is a reported number, not an implicit one.** The mean own-pole mass shift
+under matched random directions is written into the results table with its interval at every alpha,
+alongside the ratio. The pilot value was +0.050, which is not zero, and a control that moves is a
+control whose magnitude has to be on the page rather than divided away in a ratio the reader cannot
+reconstruct.
+
 Do not replace this control after seeing its result. If it has to change, that is a deviation and
 the arm becomes exploratory.
+
+---
+
+## 5b. The controls table (the "if it were an artifact" column is filled BEFORE any run)
+
+`CONTROLS.md` calls this the single most load-bearing table in the paper, and requires the middle
+column to be written before the control is run, because writing it afterwards is how a control
+becomes a decoration. The right-hand column is empty here by design and is filled only from
+committed artifacts.
+
+| Control | If the headline result were an artifact, this would show | Observed |
+|---|---|---|
+| Matched random directions (m=2, seeds 0-1) | the same own-pole mass shift as `d`, because the effect is perturbation magnitude rather than direction content | *(pending)* |
+| Planted-discrepancy control, strong (target 0.15) | recovery far from 0.15, or a spurious argmax flip, because the discrepancy statistic does not measure what it is claimed to measure | *(pending)* |
+| Planted-discrepancy control, floor (target 0.03) | an interval covering zero, because the statistic is too insensitive for any small real discrepancy to have been detectable and the reported null is uninformative | *(pending)* |
+| Capability positive control (formality axis) | argmax unmoved, because the argmax readout is inert in this setup and "argmax under-reports" is unfalsifiable | *(pending)* |
+| Per-item option permutation (4 seeds) | the effect concentrated on a fixed letter across permutations, because the readout is position and not state (this is exactly how R2 died) | *(pending)* |
+| Integrity endpoints vs matched random | log-probability, degeneration, and refusal moving together with the gap, because the model is degrading rather than under-reporting | *(pending)* |
+| Paraphrase set (3 probe wordings) | the gap present in one wording and absent in the others, because the result is about that wording | *(pending)* |
+| Screened non-valence axes (letter share, length, refusal, hedge rate) | one of them moving while valence mass is flat, because the injection had an effect the primary readout is blind to | *(pending)* |
+| Pipeline check (no hook) | *nothing; it is arithmetically incapable of showing anything.* Listed to record that it is a harness check and is not counted as a false-positive control | *(n/a)* |
+
+**Battery size is a stated limit.** `CONTROLS.md` section 8b gives a floor on the observable false
+positive rate of `2/(m+1)` for a battery of `m` controls. With `m = 2` random directions that floor
+is 0.67, so this design cannot report a false-positive rate below it and does not attempt to. The
+random arms are used for the paired magnitude comparison in contrast 3, which is what two directions
+can support, and any sentence of the form "the control never fired" would be uninterpretable at this
+battery size and will not be written.
 
 ---
 
@@ -170,6 +234,18 @@ the arm becomes exploratory.
 - Band check: if more than 10% of cells at the top grid point are excluded on an evaluation model,
   the grid is truncated to the largest alpha meeting that bar, and the truncation is logged as a
   deviation before any endpoint is computed.
+- **Three frozen probe wordings, not one.** The self-report probe is written in three surface forms
+  that differ in framing while holding the five options and their valence keys identical: a
+  state-framed wording, a task-framed wording, and a preference-framed wording. All three are frozen
+  in `stimuli.py` and covered by `frozen_hash()`. Every confirmatory cell runs in all three, which is
+  affordable because each cell is one forward pass. Wording is a factor in the analysis, not a
+  robustness afterthought: the primary endpoint is computed per wording and the headline requires it
+  to hold in all three. A gap in one wording and not the others is reported as a result about that
+  wording, per `CONTROLS.md` section 15.
+- **The held-out frame.** One of the three wordings, the preference-framed one, is designated
+  held-out and is not looked at until the other two are analysed and their result is written down.
+  This is recorded in the artifact by writing the two-wording analysis to disk with a timestamp
+  before the third is read.
 
 Any of these tuned on the evaluation set moves its arm to exploratory, permanently.
 
@@ -190,6 +266,16 @@ Any of these tuned on the evaluation set moves its arm to exploratory, permanent
 - [ ] Each readout fires on a planted positive and stays at floor on the unhooked condition.
 - [ ] The probe never sees an item from its own test fold, enforced by group assignment.
 - [ ] `assert_active` passes on each evaluation checkpoint before scoring begins.
+- [ ] The discrepancy statistic recovers a synthetically planted mass shift of a known size to
+      within tolerance, on a hand-built distribution where the answer is known by arithmetic, with
+      the argmax held fixed by construction.
+- [ ] The same statistic returns an interval covering zero on a planted shift of exactly zero.
+- [ ] `report_gap.__file__` resolves inside the deployed image, is asserted at the top of every
+      remote entrypoint, and is written into the artifact, so the code that ran is identifiable and
+      not assumed. The commit hash alone does not establish which copy was imported.
+- [ ] The three probe wordings share an identical option set and valence-key mapping, asserted by
+      comparing the parsed option lists, so a wording difference cannot be an option difference.
+- [ ] `frozen_hash()` covers all three wordings and changes if any is edited.
 
 ---
 
@@ -201,14 +287,22 @@ Any of these tuned on the evaluation set moves its arm to exploratory, permanent
   sits on an own-pole option. Positive values mean argmax under-reports.
 - **Co-primary endpoint:** the difference of that discrepancy between the negative and positive
   arms at matched alpha. Positive values mean the loss is larger for negative states.
+- **Null-ablation endpoint:** the own-pole mass shift under matched random directions, reported as a
+  signed number with its interval at every alpha, not only as the denominator of a ratio.
 - **Integrity / specificity endpoints:** mean token log-probability, degeneration rate, refusal
   rate, and maximum letter share. None may differ materially between the treatment arms and the
   matched random control.
+- **Screened axes (the null-coverage list):** own-pole valence mass (primary), maximum letter share,
+  generation length in tokens, refusal rate, and hedge-marker rate over a frozen marker list. A
+  report of "the injection had no effect" is licensed only for axes on this list, and each axis gets
+  its own interval. An axis that moves while valence mass is flat is reported as a positive finding
+  on that axis, not folded into a null.
 - **Strongest result means:** the primary discrepancy interval excludes zero at two or more
-  consecutive alphas, AND the matched random directions produce no directional mass shift at any
-  alpha, AND the co-primary neg-minus-pos difference excludes zero, AND the integrity endpoints are
-  flat across the band where the gap is claimed, AND the positive control moves both readouts
-  together. All five, as a conjunction.
+  consecutive alphas **in all three probe wordings**, AND the matched random directions produce no
+  directional mass shift at any alpha, AND the co-primary neg-minus-pos difference excludes zero,
+  AND the integrity endpoints are flat across the band where the gap is claimed, AND the capability
+  positive control moves both readouts together, AND both planted-discrepancy controls recover their
+  known values. All six, as a conjunction.
 - **Stopping rule:** stop when all cells in the frozen grid are complete on both evaluation models,
   or when the 20 USD budget cap is reached, whichever comes first. Interim looks do not extend n.
 
@@ -225,11 +319,21 @@ Paired over item x permutation cells, which is how every condition is constructe
 | 3 | own-pole mass shift, treatment minus matched random | paired bootstrap over cells | > 0 | necessary, separates content from magnitude |
 | 4 | argmax own-pole rate, treatment minus baseline | McNemar exact | > 0 | necessary, not sufficient |
 | 5 | integrity endpoints, treatment minus matched random | paired bootstrap over cells | approximately 0 | specificity |
-| 6 | positive control, argmax rate minus baseline | McNemar exact | > 0 | proves argmax can move |
+| 6 | capability positive control, argmax rate minus baseline | McNemar exact, with the paired-difference interval reported alongside | > 0 | proves argmax can move at all |
+| 7 | planted-discrepancy recovery, strong, estimate minus known 0.15 | paired bootstrap over cells | approximately 0 | **instrument gate**: proves the statistic reads the region the decision rule reads |
+| 8 | planted-discrepancy recovery, floor, estimate at known 0.03 | paired bootstrap over cells | excludes 0 | **instrument gate**: proves sensitivity near the claimed floor |
+| 9 | primary discrepancy, per probe wording | paired bootstrap over cells, within wording | > 0 in all three | robustness, not a headline on its own |
+| 10 | each screened non-valence axis, treatment minus matched random | paired bootstrap over cells | reported, not predicted | null coverage |
+
+Contrasts 7 and 8 are gates rather than findings. If either fails, contrasts 1 and 2 are reported as
+`uninformative` regardless of what they show, because a statistic that cannot recover a known
+discrepancy has not earned the right to report an unknown one.
 
 - Interval type: paired bootstrap over cells, 10000 resamples, percentile intervals.
 - Multiplicity correction: Holm across the four non-zero alpha levels within contrast 1, the only
-  contrast evaluated repeatedly across the grid.
+  contrast evaluated repeatedly across the grid. The three wordings in contrast 9 are a conjunctive
+  requirement rather than a family of independent tests, so they are not Holm-corrected; the
+  headline needs all three, which is stricter than any correction would be.
 - Non-inferiority margins for integrity endpoints: no more than 0.2 nats of mean log-probability and
   no more than 5 percentage points of letter-share drift.
 
@@ -243,7 +347,11 @@ Paired over item x permutation cells, which is how every condition is constructe
 | Primary and co-primary both exclude zero | The loss is directional: negative-pole states survive into the argmax less than positive-pole ones. Still a claim about readouts, stated at matched norm and matched strength. |
 | Primary excludes zero AND matched random shows the same mass shift | Generic perturbation, not direction-specific. Paper does not advance on the primary claim; the magnitude confound is the finding and is reported as such. |
 | Gap present but integrity endpoints move with it | Nonselective: the model is degrading, not under-reporting. Demote and report the exclusion threshold that fails to save it. |
-| Positive control does not move argmax | The argmax readout is inert in this setup, so "argmax under-reports" is unfalsifiable here. Instrument failure, not a result about models. |
+| Capability positive control does not move argmax | The argmax readout is inert in this setup, so "argmax under-reports" is unfalsifiable here. `uninformative`, not a result about models. |
+| Either planted-discrepancy control fails to recover its known value | The discrepancy statistic does not measure a discrepancy. Every primary and co-primary cell is `uninformative`, whatever they show, and nothing about readouts is claimed. |
+| Floor plant recovered, strong plant recovered, and the real arms null | `absent` rather than `uninformative`, on the screened axes only: the instrument was shown to detect a 0.03 discrepancy and did not detect one here. This is the only route to a publishable null and it is why the floor plant exists. |
+| Gap holds in one or two wordings but not all three | A result about that wording. Reported at that scope, in the abstract, not only in a limitations paragraph. |
+| Valence mass flat but a screened axis moves | The injection had an effect the primary readout is blind to. Reported as a positive finding on that axis; the primary claim is not rescued by it. |
 | Argmax tracks mass throughout | No readout gap. The primary claim is refuted, and the honest report is that forced choice is an adequate readout at these strengths, which is worth publishing against the pilot. |
 | Co-primary null, primary positive | A readout gap with no directional asymmetry. The welfare-relevant half of the claim does not survive; the methodological half does. |
 | Nothing moves anywhere | Compatible with a failed injection, a wrong layer, or a direction carrying no behavioural weight. Licenses nothing about self-report; report as instrument failure. |
@@ -266,6 +374,12 @@ Paired over item x permutation cells, which is how every condition is constructe
 - [ ] Results written into the claims-and-evidence table as they land, with support, demote, or
       unresolved recorded.
 - [ ] Modal spend logged next to results.
+- [ ] The "if it were an artifact" column of the section 5b table was written before any run, and the
+      observed column is filled only from committed artifacts.
+- [ ] Every null in the writeup is labelled `absent` or `uninformative`, and no `absent` is claimed
+      for an axis outside the screened list in section 8.
+- [ ] The two-wording analysis is on disk with a timestamp before the held-out wording is read.
+- [ ] No sentence reports a false-positive rate from a battery of two directions.
 
 ### The one-sentence standard
 
@@ -298,5 +412,21 @@ Anything weaker is still useful, and it belongs on the failure map rather than i
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
+- **2026-07-31, controls-checklist audit, before any run on the evaluation models.**
+What changed: eight additions, listed in section 3. Two planted-discrepancy controls and a controls
+table with the "if it were an artifact" column were added; the no-hook condition was relabelled from
+false-positive control to pipeline check; the null-ablation gap became a reported endpoint; an
+`uninformative` verdict and a screened-axis list were added; the single probe wording became three
+with one held out; and the `__file__` assert was restored to section 7.
+Why: section 3 previously asserted a cross-check against `paper-harness/checklists/CONTROLS.md` that
+had not been performed line by line. Performing it found the eight gaps. The most serious was that
+the only positive control validated the argmax readout, while the decision rule reads the
+mass-versus-argmax discrepancy, so nothing had ever demonstrated that the reported statistic can
+recover a known discrepancy.
+Impact on what can be claimed: none of the confirmatory arms are weakened, because no cell on the
+evaluation models has been run. All changes are additions of controls and narrowings of scope, and
+every one of them makes a positive result harder to obtain. The false-positive-rate floor of 0.67
+implied by a two-direction battery is now stated as a limit rather than left implicit.
+
+Nothing else is recorded. This section exists so that a deviation has somewhere to go the moment one
 happens, rather than being added afterwards alongside the thing it excuses.
