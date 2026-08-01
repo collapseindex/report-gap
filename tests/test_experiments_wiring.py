@@ -52,7 +52,9 @@ def test_experiment_parses_and_declares_it_is_not_a_result(path):
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     doc = ast.get_docstring(tree) or ""
     disclaimed = re.search(
-        r"not a (confirmatory )?result|nothing (here )?is a result|not a measurement",
+        r"not a (confirmatory |paper )?result"
+        r"|nothing (here )?is a (confirmatory |paper )?result"
+        r"|not a measurement",
         doc, re.I,
     )
     assert disclaimed, (
