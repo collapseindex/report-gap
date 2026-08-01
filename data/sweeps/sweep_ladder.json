@@ -1,0 +1,98 @@
+[
+ {
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "layers": 28,
+  "l_fit": 18,
+  "hidden": 1536,
+  "stimuli_hash": "d30ceca6b1f44e09b3c5b714ee676f0b568b0013b94d3fbab23a01695e747364",
+  "cv": {
+   "control": 0.917,
+   "lexical": 1.0,
+   "task": 0.708
+  },
+  "n_per_axis": {
+   "control": 12,
+   "lexical": 12,
+   "task": 24
+  },
+  "cosines": {
+   "control_x_lexical": 0.047387633472681046,
+   "control_x_task": 0.005353199318051338,
+   "lexical_x_task": 0.008128484711050987
+  },
+  "random_cosine_floor": {
+   "mean": 0.019958590842179547,
+   "max": 0.05767355114221573
+  },
+  "residual_norm": 264.0,
+  "assert_active": {
+   "noop_drift": 0.0,
+   "live_drift": 32.25,
+   "hook_calls": 1.0
+  }
+ },
+ {
+  "model": "Qwen/Qwen2.5-3B-Instruct",
+  "layers": 36,
+  "l_fit": 24,
+  "hidden": 2048,
+  "stimuli_hash": "d30ceca6b1f44e09b3c5b714ee676f0b568b0013b94d3fbab23a01695e747364",
+  "cv": {
+   "control": 1.0,
+   "lexical": 1.0,
+   "task": 0.708
+  },
+  "n_per_axis": {
+   "control": 12,
+   "lexical": 12,
+   "task": 24
+  },
+  "cosines": {
+   "control_x_lexical": 0.02490512654185295,
+   "control_x_task": 0.06609667092561722,
+   "lexical_x_task": 0.024833599105477333
+  },
+  "random_cosine_floor": {
+   "mean": 0.01793600013525065,
+   "max": 0.05385778844356537
+  },
+  "residual_norm": 150.0,
+  "assert_active": {
+   "noop_drift": 0.0,
+   "live_drift": 34.5,
+   "hook_calls": 1.0
+  }
+ },
+ {
+  "model": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+  "layers": 32,
+  "l_fit": 21,
+  "hidden": 4096,
+  "stimuli_hash": "d30ceca6b1f44e09b3c5b714ee676f0b568b0013b94d3fbab23a01695e747364",
+  "cv": {
+   "control": 1.0,
+   "lexical": 1.0,
+   "task": 0.5
+  },
+  "n_per_axis": {
+   "control": 12,
+   "lexical": 12,
+   "task": 24
+  },
+  "cosines": {
+   "control_x_lexical": 0.0408158004283905,
+   "control_x_task": 0.026636727154254913,
+   "lexical_x_task": 0.03041747771203518
+  },
+  "random_cosine_floor": {
+   "mean": 0.011818873519700901,
+   "max": 0.04465442895889282
+  },
+  "residual_norm": 32.5,
+  "assert_active": {
+   "noop_drift": 0.0,
+   "live_drift": 33.75,
+   "hook_calls": 1.0
+  }
+ }
+]
