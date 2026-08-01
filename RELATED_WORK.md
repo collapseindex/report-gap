@@ -172,6 +172,28 @@ machinery fills, and it is the most defensible methods contribution we have.
 
 ---
 
+## 6. Where this project's rig comes from
+
+- **Kwon, "They Infer What You Meant: Models Represent Communicative Intent More Reliably Than
+  They Act On It", [arXiv:2607.03598](https://arxiv.org/abs/2607.03598), July 2026 [full].**
+  Our own prior paper, and the source of most of the machinery here rather than a neighbour to it:
+  the steering rig and its dose-response protocol, the leave-phrasing-out probe with a bag-of-words
+  baseline and permutation test, and the norm-matched random-direction control battery. It
+  establishes *represents, discards, recovers* on six models across four families, and that how
+  much of a represented quantity reaches behaviour depends on the readout, which is the
+  represent-versus-act framing this project applies to self-report. Its crossed 2x2
+  (`modal_valence.py`) also showed the valence axis we inject decodable at 0.90 on Qwen2.5-3B and
+  0.92 on Llama-3.1-8B, near-orthogonal to the intent axis (cosine 0.083 and 0.156).
+
+  Two things follow that are not flattering. That prior valence axis is a property of the
+  *stimulus*, not a state of the model, which is exactly the confound the byte-identical-prompt
+  design here removes. And [RESULTS_binary.md](RESULTS_binary.md) is a **correction to the control
+  battery we inherited**: norm-matched random is matched on magnitude and not on subspace, so
+  effects in the 0.01-0.05 band scored against it, in that paper and in this one, have not been
+  shown to be about their direction's content.
+
+---
+
 ## What survives the lit check, honestly
 
 | our claim | status after lit check |

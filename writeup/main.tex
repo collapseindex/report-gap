@@ -118,8 +118,10 @@ it is suffering \citep{eleos2025}. The instrument is used because there is nothi
 has never been calibrated.
 
 It can fail in two opposite directions. A model that describes distress it does not act on
-inflates concern; a model that acts on a state it does not describe deflates it. We set out to
-build a per-condition map of which failure a given elicitation is sitting in, by holding the
+inflates concern; a model that acts on a state it does not describe deflates it. The second is not
+hypothetical: \citet{kwon2026recipientprobe} find across six models that communicative intent is
+decodable from the residual stream more reliably than it is acted on, and that how much reaches
+behaviour depends on the readout. We set out to build the same map for self-report, by holding the
 prompt byte-identical, injecting a valence direction into the residual stream, and reading the
 model's forced-choice report of its own state.
 
@@ -254,6 +256,12 @@ $\alpha \cdot \lVert h \rVert \cdot d$ at the output of the injection layer at e
 position, where $\lVert h \rVert$ is that item's own mean residual norm at that layer under no
 injection. The negative pole is the same operation with $-d$. The direction is fit \emph{per
 model}, never transferred.
+
+\paragraph{Provenance of the rig.} The steering setup, the orthogonalized probe, and the
+norm-matched random-direction control battery are ported from \citet{kwon2026recipientprobe} rather
+than built here; that work also established this valence axis as decodable at $0.90$ on
+Qwen2.5-3B. New here is the readout under test and the enumeration of its nuisance, and
+\S\ref{sec:shuffled} is a correction to the control battery.
 
 \paragraph{The control battery.} Every endpoint is treatment minus its own norm-matched random
 direction, paired per cell. Every arm carries a \textbf{capability gate}: a condition that must
@@ -599,12 +607,11 @@ rate is reported anywhere. The enumeration is a census over orderings and still 
 items, models and formats. And the erase arm's profile rests on two gate-clean points.
 
 \paragraph{When this work was done.} Every confirmatory arm reported here was run on 2026-08-01,
-before the sprint window opened. This is completed work brought to the sprint rather than work
-produced inside it, and we state it here as well as in the footnote because a reader assessing
-sprint output should not have to reconstruct it from commit timestamps. What the sprint window
-contains is this write-up, its figures and the checks that verify them. The preregistrations,
-runners, analyzers and artifacts all carry their own dates in the repository, and the commit history
-is the record we would want anyone to check this against rather than our description of it.
+before the sprint window opened; what the window contains is this write-up, its figures and the
+checks that verify them. This is completed work brought to the sprint rather than produced inside
+it, and it belongs in the body as well as the footnote, because a reader assessing sprint output
+should not have to reconstruct it from commit timestamps. The repository's history is the record we
+would want this checked against rather than our description of it.
 
 \paragraph{Future work.} Three things, in order of what a null would teach. A second architecture
 family where the direction is not inert, which would tell us whether the position prior generalizes.
@@ -620,16 +627,18 @@ under-powered: option order, sampled four times when it could have been enumerat
 Measured over its complete population it is a factor of $986$, and its mechanism is an $87\%$
 position prior visible with five identical options.
 
-The two results that survive are both about instruments rather than about models. The field's
-standard specificity control, the norm-matched random direction, is matched on magnitude and not on
-subspace, and a direction fit on shuffled labels moves the readout an order of magnitude more.
-And an injected state survives projecting the injecting direction out of the residual stream,
-more of it the later the projection is applied.
+The two results that survive are both about instruments rather than models. The field's standard
+specificity control, the norm-matched random direction, is matched on magnitude and not on subspace,
+and a direction fit on shuffled labels moves the readout an order of magnitude more. And an injected
+state survives projecting the injecting direction out of the residual stream, more of it the later
+the projection.
 
 We would rather have had a finding. What we have instead is a measurement of why the finding we
 thought we had was not one, and the machinery that made that visible before publication rather
 than after.
 
+% natbib's default inter-entry spacing spills the last three references onto a page of their own.
+\setlength{\bibsep}{2.5pt plus 0.4ex}
 \bibliographystyle{plainnat}
 \bibliography{refs}
 
