@@ -245,5 +245,27 @@ Publishable as the strong claim only if this sentence is honestly writable:
 Append only. Never rewrite. Each entry: date, what changed, why, and the impact on what can be
 claimed.
 
-No deviations recorded. This section exists so that a deviation has somewhere to go the moment one
-happens, rather than being added afterwards alongside the thing it excuses.
+- **2026-08-01, the profile clause was computed over a gate-failed layer, corrected.**
+What was wrong: section 8 specifies the profile as "`E = 25` strictly smaller than `E = 30`", and
+`analyze_erase.py` implemented exactly that. But `E = 25` fails its own erase-artifact gate on both
+models, and section 8 also says a gate-failed layer's primary is `uninformative`. A quantity that is
+uninformative cannot carry a profile. The two clauses contradicted each other and the code followed
+the wrong one.
+What changed: the profile is now computed over gate-clean layers only, which on the instruct model
+means E = 26 to E = 30 rather than 25 to 30.
+Impact: the profile shrinks from +0.5755 to +0.2599 and now rests on two points instead of four.
+The direction is unchanged and the verdict is unchanged, but the evidence for it is weaker than the
+first printing suggested, and `RESULTS_erase.md` says so in its caveats.
+
+- **2026-08-01, an exploratory diagnostic added after seeing that the preregistered profile was
+confounded.**
+What: the ratio of the primary to the erase-artifact per layer, reported alongside the profile.
+Why: erasing earlier perturbs more, so a primary growing with erase depth is partly a shrinking
+perturbation, and the preregistered profile cannot separate those. If the profile were pure
+perturbation the ratio would be flat; it runs 6.1 at E=26 to 20.9 at E=30.
+Impact: this is **post hoc** and is labelled so wherever it appears. The preregistered verdict does
+not formally depend on it. It is reported because without it a reader cannot tell whether the
+profile means anything, and omitting it would leave the confound unaddressed rather than answered.
+
+This section exists so that a deviation has somewhere to go the moment one happens, rather than
+being added afterwards alongside the thing it excuses.

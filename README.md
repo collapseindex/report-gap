@@ -74,6 +74,7 @@ notices.
 | 3 | is the floor a property of the direction or of tuning? | TUNING-LOCALIZED | **FORMAT-DEPENDENT** |
 | 4 | is the negative null a depth artifact? | DEPTH-ROBUST | **DEPTH-ARTIFACT** |
 | 5 | does the tuned model represent what it will not report? | SHELL | **NO-DISSOCIATION** |
+| 6 | does the state survive erasing the vector that caused it? | run *after* the replication | **TRANSFORMED**, 86% survives the erase |
 
 Every one of those rested on one quantity being null: the tuned model's negative-option mass. It is
 not null at a different draw of four permutations. It moves +0.1126 in the pair arm and +0.1684 at
@@ -96,6 +97,14 @@ are sitting on.
 What survives intact is the instrumentation, which is what caught this: capability gates, planted
 controls, liveness and saturation criteria, the matched-random battery, and a preregistered
 replication clause that made the failure detectable rather than invisible.
+
+**One substantive claim also survives**, from the arm run after the replication
+([RESULTS_erase.md](RESULTS_erase.md)). Inject a valence direction at layer 24, then *project that
+direction out of the residual stream* at layer 30, and a probe orthogonal to it still reads **86% of
+the un-erased effect**, while the same projection with no injection moves the probe by 0.04 SD. The
+model transforms the injection into something not along it. That is a claim about representation
+geometry, it says nothing about experience or concealment, and unlike everything above it does not
+route through the option readout that ordering noise destroyed.
 
 Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. The ordering sensitivity is the
 selection bias Zheng et al. (arXiv:2309.03882) document, met from the other side.

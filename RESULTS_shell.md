@@ -6,6 +6,13 @@
 > mass varies 14.6x between the two four-seed draws and 20x across individual orderings,
 > so the quantity every claim here rests on is dominated by which letters the options land
 > on. Read the numbers below as correct measurements of an under-controlled quantity.
+>
+> **PARTIALLY ANSWERED, 2026-08-01, by `RESULTS_erase.md`.** This document's own weakest joint,
+> that orthogonalizing the probe removes the injected vector from the measurement but not from
+> the stream, has been tested by projecting the direction out of the stream. 86% of the probe
+> effect survives that erase at layer 30. So the representational half stands: the model does
+> transform the injection into something not along it. The DISSOCIATION half remains dead, since
+> the option readout moves at other orderings.
 
 **Run 2026-08-01.** 4080 rows, artifacts committed unscored before any endpoint was computed.
 Scored against `PREREG_shell_core.md`.

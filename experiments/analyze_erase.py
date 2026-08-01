@@ -136,16 +136,35 @@ def main(argv):
         print("  gate-clean erase layers: %s" % (clean or "NONE"))
         print("  layers where the probe SURVIVED the erase (Holm): %s" % (survived or "NONE"))
 
+        # The profile may only use GATE-CLEAN layers. The first version compared E=30 to E=25, and
+        # E=25 fails its erase-artifact gate on both models: its primary is `uninformative` per the
+        # prereg, so it cannot carry a profile either.
         profile = None
-        if 25 in per_layer and 30 in per_layer and per_layer[25]["primary_point"] is not None \
-                and per_layer[30]["primary_point"] is not None:
-            early, late = abs(per_layer[25]["primary_point"]), abs(per_layer[30]["primary_point"])
-            profile = late - early
-            print("  profile: |effect| at E=30 minus at E=25 = %+.4f  (%s)"
-                  % (profile, "later erase leaves more, as TRANSFORMED predicts"
-                     if profile > 0 else "flat or inverted"))
+        if len(clean) >= 2:
+            early, late = min(clean), max(clean)
+            profile = abs(per_layer[late]["primary_point"]) - abs(per_layer[early]["primary_point"])
+            print("  profile over GATE-CLEAN layers only, E=%d to E=%d: %+.4f  (%s)"
+                  % (early, late, profile,
+                     "later erase leaves more" if profile > 0 else "flat or inverted"))
+        else:
+            print("  profile: not computable, fewer than two gate-clean layers")
+
+        # The confound the profile cannot escape on its own: erasing earlier perturbs MORE, so a
+        # growing primary is partly just a shrinking perturbation. Report the erase_only artifact
+        # beside it. If the profile were pure perturbation, this ratio would be FLAT.
+        # Exploratory, computed after seeing the data.
+        print("  %-7s %12s %12s %10s" % ("erase L", "|primary|", "erase_only", "ratio"))
+        ratios = {}
+        for L in sorted(per_layer):
+            art = per_layer[L]["erase_artifact"]
+            art_pt = abs(float(art.split()[0])) if art and art != "None" else float("nan")
+            pri = abs(per_layer[L]["primary_point"] or float("nan"))
+            ratios[L] = pri / art_pt if art_pt else float("nan")
+            print("  %-7d %12.4f %12.4f %10.1f%s"
+                  % (L, pri, art_pt, ratios[L], "" if L in clean else "   (gate failed)"))
 
         report[key] = {"layers": per_layer, "gate_clean": clean, "survived": survived,
+                       "primary_to_artifact_ratio": ratios,
                        "profile_late_minus_early": profile, "baseline_probe_sd": sd,
                        "sd_across_orderings": var["sd_across_orderings"],
                        "neg_no_erase_vs_baseline": str(neg_plain),
