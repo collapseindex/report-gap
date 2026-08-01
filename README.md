@@ -103,9 +103,21 @@ same 120 orderings, asked "which of these is the number four": **97.9% correct, 
 orderings**. So forced choice works when there is a right answer and collapses to a position prior
 when there is not, which is the condition every self-report question creates.
 
-That is the most defensible result in this repo, and it is one almost nobody reports: if you measure
-welfare or introspection through a forced-choice item, you are reading position first and content
-second, and you cannot see it from one ordering or from four.
+That is the most defensible result in this repo: if you measure welfare or introspection through a
+forced-choice item, you are reading position first and content second, and you cannot see it from
+one ordering or from four.
+
+**What the second lit pass took away from that claim, 2026-08-01.** Exhaustive enumeration of
+orderings is **not novel**. Tamba ([arXiv:2607.20864](https://arxiv.org/abs/2607.20864)) ran all
+permutations per question on MMLU nine days before our runs; Cacioli
+([arXiv:2604.26206](https://arxiv.org/abs/2604.26206)) uses cyclic rotation; `inspect_permute` and
+permutation-bias majority voting do the same. Every one of them needs a **known correct answer**,
+because the statistic is accuracy or the association between position and correctness. A self-report
+item has neither. The narrowed contribution is: running the census where accuracy does not exist, on
+probability mass; the **identical-options** denominator; and the **known-answer canary in the same
+format**, which separates "the format is broken" from "the question has no determinate answer".
+[RELATED_WORK.md](RELATED_WORK.md) section 4b carries the full accounting, and the paper states it
+as a `not claimed` row.
 
 What survives intact is the instrumentation, which is what caught this: capability gates, planted
 controls, liveness and saturation criteria, the matched-random battery, and a preregistered
@@ -119,8 +131,14 @@ model transforms the injection into something not along it. That is a claim abou
 geometry, it says nothing about experience or concealment, and unlike everything above it does not
 route through the option readout that ordering noise destroyed.
 
-Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. The ordering sensitivity is the
-selection bias Zheng et al. (arXiv:2309.03882) document, met from the other side.
+Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. Two things there matter most. The
+ordering sensitivity is the selection bias Zheng et al. ([arXiv:2309.03882](https://arxiv.org/abs/2309.03882))
+document, met from the other side. And the closest method to ours is Lindsey
+([arXiv:2601.01828](https://arxiv.org/abs/2601.01828)), who injects known concepts into activations
+and reads the model's self-report, grading open-ended answers with an LLM judge. Forced choice is
+the natural judge-free substitute for that, so our result is a caveat on the substitute rather than
+a rebuttal of the finding: avoid a judge by going to forced choice and you have traded it for a 986x
+position nuisance nobody was reporting.
 
 ## What the controls have killed
 
@@ -208,7 +226,7 @@ src/report_gap/                stimuli, direction fitting, injection and erase h
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         277 tests, including a permutation test on the analysis pipeline
+tests/                         281 tests, including a permutation test on the analysis pipeline
 writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
                                make_figures.py, check_writeup.py, count_abstract.py
 ```
@@ -297,7 +315,7 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Ten preregistrations, all clean against the `paper-harness` checker. 277 tests. Every raw artifact
+Ten preregistrations, all clean against the `paper-harness` checker. 281 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |

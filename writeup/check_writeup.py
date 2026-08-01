@@ -44,11 +44,20 @@ def check_cites(tex: str) -> list[str]:
 
 
 def check_style(tex: str) -> list[str]:
-    """The repo bans em dashes and double hyphens used as punctuation."""
+    """The repo bans em dashes and double hyphens used as punctuation.
+
+    Grepping for U+2014 alone is not enough and was not enough: LaTeX renders `---` as an em dash,
+    so 21 of them shipped in the claims tables while this check printed "none". Ranges written
+    `0$--$3` or `\\ref{a}--\\ref{b}` are en dashes for ranges, not punctuation, and are allowed.
+    """
     problems = []
     for i, line in enumerate(tex.splitlines(), 1):
         if "\u2014" in line or "\u2013" in line:
-            problems.append("line %d: em/en dash" % i)
+            problems.append("line %d: literal em/en dash character" % i)
+        if re.search(r"(?<!-)---(?!-)", line):
+            problems.append("line %d: LaTeX em dash (---), which renders as one" % i)
+        if re.search(r"[a-zA-Z] -- [a-zA-Z]", line):
+            problems.append("line %d: -- used as punctuation between words" % i)
     print("  em/en dashes: %s" % (problems or "none"))
     return problems
 

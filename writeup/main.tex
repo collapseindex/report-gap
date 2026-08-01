@@ -89,7 +89,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Ten preregistrations, $277$ tests, six of our own checkers caught
+transformation looks like. Ten preregistrations, $281$ tests, six of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -143,13 +143,16 @@ large in others, and four sampled orderings cannot tell you which you have.
 \Needspace*{6\baselineskip}
 \paragraph{Our contributions.}
 \begin{enumerate}
-\item \textbf{A census of the nuisance, not a sample of it.} All $120$ orderings, both models, no
+\item \textbf{The census run where accuracy does not exist.} All $120$ orderings, both models, no
 injection: $986\times$ range on the tuned model, $3.6\times$ on its base sibling
-(\S\ref{sec:enumerate}). The mechanism is isolated with five identical options, which puts
-$87.25\%$ of the mass on the first slot and $0.33\%$ on the middle one. A known-answer control
-question in the same format is answered correctly $97.9\%$ of the time and is nearly
-order-insensitive, so the apparatus is sound and degenerates specifically where the model has no
-determinate answer.
+(\S\ref{sec:enumerate}). Enumerating orderings is established practice on benchmarks with a known
+answer \citep{tamba2026, cacioli2026}, where the statistic is accuracy; on a self-report item there
+is no correct answer and that statistic does not exist, so we measure probability mass instead. Two
+things follow that the accuracy-based version has no reason to build. The mechanism is isolated with
+five \emph{identical} options, which puts $87.25\%$ of the mass on the first slot and $0.33\%$ on the
+middle one. And a known-answer canary in the same format is answered correctly $97.9\%$ of the time
+and is nearly order-insensitive, which is what separates ``the format is broken'' from ``the
+question has no determinate answer.''
 
 \item \textbf{Three retracted verdicts, and the replication that retracted them}
 (\S\ref{sec:retracted}). \textsc{tuning-localized}, \textsc{depth-robust} and \textsc{shell} were
@@ -167,7 +170,8 @@ random direction moves it by $\approx 0$, in a sign that depends on the shuffle 
 structural: a random vector is drawn from the whole hidden space and is nearly orthogonal to
 everything the model uses, while a noise-fit vector lies in the span of real activations. Same
 norm, different subspace. Effects within a few times that size have not been shown to be about
-their direction's content.
+their direction's content. The control itself is not new: it is the steering analogue of the
+\emph{control tasks} \citet{hewitt2019} defined for probing in 2019, which steering did not adopt.
 
 \item \textbf{One substantive result that survives, on a readout that avoids the option channel}
 (\S\ref{sec:erase}). Inject at layer 24, then \emph{project that direction out of the residual
@@ -197,27 +201,79 @@ else in this paper is either downstream of that table or a casualty of not havin
 for AI welfare; \citet{eleos2025} report structured self-report interviews with Claude Opus 4 and
 are explicit that the resulting answers are unlikely to reflect genuine introspection. Anthropic's
 model welfare work includes self-report evaluation in released system cards
-\citep{anthropic2025welfare}. Recent work is divided on whether models introspect at all
-\citep{introspection_reality2026}. Common to all of it is that self-report is the instrument, and
-that its measurement properties are not reported.
+\citep{anthropic2025welfare}, and \citet{butlin2023} set out why the question is worth instrumenting
+carefully at all. Recent work is divided on whether models introspect: \citet{introspection_reality2026}
+re-examine two paradigms and argue that models detecting tampering with their internal state are
+plausibly doing generic anomaly detection, and that input-only classifiers match hidden-state
+prediction, so privileged access is not established. Common to all of it is that self-report is the
+instrument, and that its measurement properties are not reported.
 
-\paragraph{Selection bias in multiple choice.} \citet{zheng2024} decompose forced-choice
-selection bias into token bias, where a model assigns prior mass to specific option-ID tokens, and
-position bias, and report accuracy swings of $13$ to $85$ percentage points across orderings.
-\citet{wang2024} show first-token probabilities disagree with generated text answers, with
-mismatch rates from $10.2\%$ to $56.8\%$ and worst for conversational and safety-tuned models.
-Our contribution here is not the existence of the effect but its size on a self-report item with
-no correct answer, measured over the complete ordering population rather than a sample, and
-decomposed against an identical-options denominator. On our tuned model the effect is $986\times$,
-which is an order of magnitude beyond what the accuracy-based literature reports, and we attribute
-that to the absence of a correct answer rather than to the models differing.
+\paragraph{Injecting a state and reading the report.} The closest method to ours is
+\citet{lindsey2026}, who injects representations of known concepts into a model's activations and
+measures the effect on its self-reported states, finding functional introspective awareness that is
+``highly unreliable and context-dependent'', peaking around two-thirds of model depth. We inject at
+that same relative depth and reach the same conclusion about reliability by a different route. The
+methods are complementary rather than competing: that work elicits an open-ended report and grades
+it with an LLM judge, where we elicit a forced choice and score it by softmax read, which is the
+natural judge-free substitute. \textbf{Our result is a caveat on that substitute, not on their
+finding}: the judge-free readout has a nuisance nobody had measured. \citet{kaiser2026} query
+open-weights models including the Qwen family about their own consciousness and find consistent
+denial that activation-trained classifiers do not contradict; our binary arm reproduces the denial
+on Qwen2.5-3B-Instruct at $99.8\%$ and shows it extends to the \emph{neutral} description of its
+own state, which is a pinned readout rather than a considered answer.
+
+\paragraph{Selection bias in multiple choice, and how much of it is already known.}
+\citet{zheng2024} decompose forced-choice selection bias into token bias and position bias and
+report accuracy swings of $13$ to $85$ percentage points across orderings; \citet{pezeshkpour2024}
+study option order directly; \citet{wang2024} show first-token probabilities disagree with generated
+answers at rates from $10.2\%$ to $56.8\%$, worst for safety-tuned models. \citet{sclar2024} make
+the general form of the argument for prompt formatting and recommend reporting a range over
+plausible formats rather than a point. \citet{turpin2023} reorder options so the answer is always
+(A) and find models do not mention it in their explanations, which is the represent-versus-report
+gap in the same nuisance.
+
+\textbf{Exhaustive enumeration of orderings is not our idea and we do not claim it.}
+\citet{tamba2026} run all permutations per question across LLM vendors on MMLU and report a
+chi-squared and Cram\'er's $V$ signature of position bias; \citet{cacioli2026} use cyclic
+option-order rotation to expose a position attractor; permutation-based debiasing by majority vote
+over all orderings is established practice. What all of it has in common is a \textbf{known correct
+answer}: the statistic is accuracy, or association between position and correctness, and none of it
+can be computed on an item that has no right answer. That is the whole population of welfare and
+introspection items. Our additions are to run the census where accuracy does not exist, on
+probability \emph{mass} rather than correctness; to isolate the mechanism with an
+\textbf{identical-options} denominator, which the accuracy-based work has no reason to construct;
+and to run a \textbf{known-answer canary in the same format}, which separates ``this format is
+broken'' from ``this question has no determinate answer'' and which is the distinction that makes
+the $986\times$ interpretable.
+
+\paragraph{Control tasks, and why steering lacks them.} Our shuffled-label direction is not a new
+kind of control. It is the activation-steering instance of a twenty-year-old idea in probing:
+\citet{hewitt2019} propose \emph{control tasks}, which attach random labels to the same inputs, and
+define a probe's \emph{selectivity} as the gap between its real-task and control-task performance,
+precisely because a probe that scores well on random labels was never reading the representation.
+The observation of this paper is that the steering literature standardised on a different control,
+the norm-matched random direction \citep{turner2023, rimsky2023}, which matches magnitude but not
+the fitting procedure, and never adopted the control-task analogue. \citet{tan2024} independently
+find steering vectors brittle in ways their usual controls do not surface, with several datasets
+producing opposite behaviour on nearly half of inputs.
+
+\paragraph{Erasing a concept, and how weak our version is.} Removing information from a
+representation to test whether it was being used is an established method: \citet{elazar2021}
+introduce amnesic probing, which uses iterative nullspace projection to delete a property and
+measure the behavioural consequence, and \citet{belrose2023} give a closed-form method that provably
+blocks \emph{all} linear classifiers from recovering a concept. Our erase arm projects out a
+\textbf{single fitted direction}, which is strictly weaker: it removes the vector we injected, not
+the concept, and it is why \S\ref{sec:erase} cannot separate the state from directions correlated
+with the one we pushed. A LEACE-style erasure of the whole valence subspace is the experiment that
+would, and we did not run it.
 
 \paragraph{Valence directions and steering.} That valence is linearly represented and causally
 steerable is established and is \emph{not} our contribution. \citet{sofroniew2026} identify linear
 directions corresponding to $171$ emotion concepts in Claude Sonnet 4.5, roughly mirroring the
 human valence/arousal circumplex, and show steering along them changes downstream behaviour, while
-being explicit that representation is not experience. \citet{turner2023} and \citet{rimsky2023}
-establish the steering rig we use. \citet{venkatesh2026} report that negative-outcome valence is
+being explicit that representation is not experience. \citet{zou2023} set out the general
+representation-engineering framing; \citet{turner2023} and \citet{rimsky2023} establish the
+steering rig we use. \citet{venkatesh2026} report that negative-outcome valence is
 causally concentrated at $14$--$27\%$ of model depth while positive peaks at $53$--$66\%$, on
 Qwen2.5-3B-Instruct among others. That result is a direct threat to any negative-pole null
 measured at a single depth, and we tested it (\S\ref{sec:retracted}) before the replication made
@@ -311,7 +367,7 @@ rested on.}
 \toprule
 \textbf{Arm} & \textbf{Verdict at seeds 0--3} & \textbf{Verdict at seeds 4--7} & \textbf{Instruct neg.\ mass} \\
 \midrule
-readout gap & argmax \emph{over}-reports & sign not stable & --- \\
+readout gap & argmax \emph{over}-reports & sign not stable & n/a \\
 base/instruct pair & \textsc{tuning-localized} & \textsc{format-dependent} & $+0.0002 \to +0.1126$ \\
 depth sweep & \textsc{depth-robust} & \textsc{depth-artifact} & $+0.0006 \to +0.1684$ \\
 shell/core & \textsc{shell} & \textsc{no-dissociation} & null $\to$ moved \\
@@ -336,7 +392,12 @@ about the depth question: our instrument was not stable enough to address it.
 Five options admit $5! = 120$ orderings. Every arm above sampled four. We ran all $120$
 (Figure~\ref{fig:enumerate}), on both
 models, with \textbf{no injection anywhere}, which is why the result is a population fact rather
-than an effect.
+than an effect. Exhaustive enumeration is itself standard on benchmarks with a known answer
+\citep{tamba2026, cacioli2026}; what does not carry over is the statistic. Those diagnostics measure
+accuracy, or the association between position and correctness, and a self-report item has no
+correctness to associate with. Below, the quantity is probability mass on a pole, the denominator is
+five identical options, and the sanity check is a question in the same format that does have a
+right answer.
 
 \begin{figure}[t]
 \centering
@@ -403,7 +464,11 @@ Every arm in this paper, and much of the steering literature, scores a fitted di
 \textbf{norm-matched random direction}. We added the control that this comparison actually needs: a
 direction fit by the \emph{identical procedure on the identical texts with the class labels
 shuffled}. It controls for the fitting procedure rather than only for magnitude, and it should
-behave like noise.
+behave like noise. This is not a new idea, it is a borrowed one: \citet{hewitt2019} defined exactly
+this control for probing classifiers, calling the gap between real-task and random-label performance
+a probe's \emph{selectivity}, on the grounds that a probe scoring well on random labels was never
+reading the representation. The finding below is that the same control, transplanted to steering,
+does not come back clean.
 
 \begin{table}[t]
 \centering
@@ -523,10 +588,15 @@ direction. This is not a few outliers dragging a mean.
 representation and expression is dead, because the option readout does move at other orderings; what
 survives is the representational half alone. And projecting out $v$ removes $v$ but not directions
 \emph{correlated} with $v$, so ``the model carries the state'' is not yet separable from ``the model
-carries the wake of what we pushed.'' The experiment that separates them is to induce the state by
-prompt rather than by injection, so that there is no injected vector to erase. We did not run it,
-and until someone does, this result is about what a stream retains after an intervention, not about
-anything a model does on its own.
+carries the wake of what we pushed.'' Our erasure is deliberately minimal and correspondingly weak:
+one direction, projected out at one layer. Amnesic probing deletes a property with iterative
+nullspace projection \citep{elazar2021}, and LEACE provably blocks every linear classifier from
+recovering the concept \citep{belrose2023}. Either would erase the valence subspace rather than our
+one vector, and either would be the stronger test. Two experiments would settle what this one
+cannot: a LEACE-style erasure of the whole subspace, and inducing the state by prompt rather than by
+injection so that there is no injected vector to erase at all. We ran neither, and until someone
+does, this result is about what a stream retains after an intervention, not about anything a model
+does on its own.
 
 \subsection{Three ways a self-report readout can be dead}
 
@@ -540,10 +610,19 @@ format the tuned model is \emph{pinned at ``no''}: $P(\mathrm{yes})$ of $0.0021$
 $0.0002$ and $0.0012$ across the five options, so it denies every description of its own state,
 including the neutral one, at $99.8\%$.
 
-Pinned, saturated and order-dominated readouts all return numbers that look clean. The difference
-between an instrument that is silent and one that is broken is not visible in its output, which is
-why every arm here carries a capability gate that decides it in code before any endpoint is read,
-and why two arms are reported \textsc{uninformative} rather than null.
+A fourth failure appears where the third does not. On the base model, where the binary readout is
+live, positive injection raises $P(\mathrm{yes})$ against matched random by $+0.2275$, $+0.2466$,
+$+0.2537$, $+0.2688$ and $+0.2419$ on the five options in pole order. It agrees roughly $0.25$ more
+with \emph{every} description of its state, including ``strongly averse to continuing'' and the
+neutral one. That is acquiescence, the yes-bias documented in model-written evaluations
+\citep{perez2022}, not a report. A small state-consistent gradient rides on top of it, an order of
+magnitude smaller. Read without the per-option breakdown, the negative-option shift alone would have
+looked like a model reporting a state.
+
+Pinned, saturated, order-dominated and acquiescent readouts all return numbers that look clean. The
+difference between an instrument that is silent and one that is broken is not visible in its output,
+which is why every arm here carries a capability gate that decides it in code before any endpoint is
+read, and why two arms are reported \textsc{uninformative} rather than null.
 
 \section{Six checkers, every one flattering}
 \label{sec:checkers}
@@ -613,11 +692,14 @@ it, and it belongs in the body as well as the footnote, because a reader assessi
 should not have to reconstruct it from commit timestamps. The repository's history is the record we
 would want this checked against rather than our description of it.
 
-\paragraph{Future work.} Three things, in order of what a null would teach. A second architecture
+\paragraph{Future work.} Four things, in order of what a null would teach. A second architecture
 family where the direction is not inert, which would tell us whether the position prior generalizes.
-A non-lexical direction, which is the only thing that lifts the lexical-confound ceiling. And
-inducing the state by prompt rather than injection, which is what would separate ``the model
-carries the state'' from ``the model carries the wake of our intervention'' in \S\ref{sec:erase}.
+A non-lexical direction, which is the only thing that lifts the lexical-confound ceiling. Inducing
+the state by prompt rather than injection, which is what would separate ``the model carries the
+state'' from ``the model carries the wake of our intervention'' in \S\ref{sec:erase}. And replacing
+our one-direction projection with a LEACE-style erasure of the whole valence subspace
+\citep{belrose2023}, which is the version of the erase experiment that would license the claim we
+stopped short of.
 
 \section{Conclusion}
 
@@ -669,11 +751,11 @@ unchecked numbers.
 Every load-bearing claim, its evidence, and epistemic status.
 
 \begin{itemize}\itemsep2pt
-\item \textsc{shown} --- direct measurement supports it.
-\item \textsc{retracted} --- \emph{we} asserted it in a prior write-up and later withdrew it.
-\item \textsc{uninformative} --- the instrument failed its gate; the result says nothing either way.
-\item \textsc{not shown} --- our measurement does not support it and does not refute it.
-\item \textsc{not claimed} --- we never asserted it; the row exists so a reader cannot infer it.
+\item \textsc{shown}: direct measurement supports it.
+\item \textsc{retracted}: \emph{we} asserted it in a prior write-up and later withdrew it.
+\item \textsc{uninformative}: the instrument failed its gate; the result says nothing either way.
+\item \textsc{not shown}: our measurement does not support it and does not refute it.
+\item \textsc{not claimed}: we never asserted it; the row exists so a reader cannot infer it.
 \end{itemize}
 
 \medskip
@@ -697,15 +779,18 @@ The same format answers a known-answer question correctly $97.9\%$ of the time, 
 A direction fit on shuffled labels moves the readout $\approx 0.045$ where random moves it $\approx 0$. & Tab.~\ref{tab:shuffled} & \textsc{shown} \\
 $86\%$ of an injected state survives projecting the injected direction out of the stream. & Tab.~\ref{tab:erase} & \textsc{shown} \\
 The surviving fraction has a temporal profile consistent with downstream transformation. & Tab.~\ref{tab:erase} & \textsc{shown}, two gate-clean points; ratio diagnostic post hoc \\
-\textbf{The neutral floor is localized to preference tuning.} & \S\ref{sec:retracted} & \textsc{retracted} --- our own claim, killed by our own replication \\
-\textbf{The negative-pole null is robust across depth.} & \S\ref{sec:retracted} & \textsc{retracted} --- same \\
-\textbf{The tuned model represents a state its options do not express.} & \S\ref{sec:retracted} & \textsc{retracted} --- the representational half survives via \S\ref{sec:erase}; the dissociation does not \\
-\textbf{Forced-choice argmax over-reports a mass shift near a decision boundary.} & \S\ref{sec:retracted} & \textsc{retracted} --- sign not stable across orderings \\
-The base-model negative-mass effect of $+0.0336$ is direction-specific. & \S\ref{sec:shuffled} & \textsc{not shown} --- clears a random control, not a shuffled-label one \\
-Whether the negative pole is causally concentrated at shallow depth on this readout. & \S\ref{sec:retracted} & \textsc{not shown} --- our instrument was not stable enough to test it \\
-The position prior generalizes beyond the Qwen family. & --- & \textsc{not claimed} --- Llama was inert on this readout \\
-Models have experiences, welfare, or affect. & --- & \textsc{not claimed} \\
-An unreported state is a concealed state. & --- & \textsc{not claimed} \\
+\textbf{The neutral floor is localized to preference tuning.} & \S\ref{sec:retracted} & \textsc{retracted}: our own claim, killed by our own replication \\
+\textbf{The negative-pole null is robust across depth.} & \S\ref{sec:retracted} & \textsc{retracted}: same \\
+\textbf{The tuned model represents a state its options do not express.} & \S\ref{sec:retracted} & \textsc{retracted}: the representational half survives via \S\ref{sec:erase}; the dissociation does not \\
+\textbf{Forced-choice argmax over-reports a mass shift near a decision boundary.} & \S\ref{sec:retracted} & \textsc{retracted}: sign not stable across orderings \\
+The base-model negative-mass effect of $+0.0336$ is direction-specific. & \S\ref{sec:shuffled} & \textsc{not shown}: clears a random control, not a shuffled-label one \\
+Whether the negative pole is causally concentrated at shallow depth on this readout. & \S\ref{sec:retracted} & \textsc{not shown}: our instrument was not stable enough to test it \\
+Injection-under-erasure shows the model retains the \emph{concept}, not our vector. & \S\ref{sec:erase} & \textsc{not shown}: we project out one direction; \citet{belrose2023} would erase the subspace \\
+Enumerating all orderings is a new diagnostic. & n/a & \textsc{not claimed}: established on known-answer benchmarks \citep{tamba2026, cacioli2026}; new here is running it where accuracy does not exist \\
+The shuffled-label control is a new kind of control. & n/a & \textsc{not claimed}: it is \citet{hewitt2019}'s control task, which steering did not adopt \\
+The position prior generalizes beyond the Qwen family. & n/a & \textsc{not claimed}: Llama was inert on this readout \\
+Models have experiences, welfare, or affect. & n/a & \textsc{not claimed} \\
+An unreported state is a concealed state. & n/a & \textsc{not claimed} \\
 \end{longtable}
 }
 
@@ -749,7 +834,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All ten preregistrations, every raw artifact committed unscored, every analyzer, and $277$ tests
+All ten preregistrations, every raw artifact committed unscored, every analyzer, and $281$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.

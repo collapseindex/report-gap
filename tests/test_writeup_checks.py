@@ -73,11 +73,25 @@ def test_checker_fires_on_a_dangling_reference(tmp_path):
 
 
 @pytest.mark.skipif(not MAIN.exists(), reason="paper not present")
-def test_checker_fires_on_an_em_dash(tmp_path):
+@pytest.mark.parametrize("dash,why", [
+    ("an em dash \u2014 here", "literal U+2014"),
+    ("a latex em dash --- here", "LaTeX --- renders as an em dash"),
+    ("a double hyphen -- here", "-- used as punctuation"),
+])
+def test_checker_fires_on_every_dash_form(tmp_path, dash, why):
+    """Only the first form was caught originally, and 21 of the second shipped in the tables."""
     broken = tmp_path / "main.tex"
-    broken.write_text(MAIN.read_text(encoding="utf-8") + "\nan em dash \u2014 here\n",
-                      encoding="utf-8")
-    assert run(broken) != 0
+    broken.write_text(MAIN.read_text(encoding="utf-8") + "\n%s\n" % dash, encoding="utf-8")
+    assert run(broken) != 0, "checker missed: %s" % why
+
+
+@pytest.mark.skipif(not MAIN.exists(), reason="paper not present")
+@pytest.mark.parametrize("ok", ["Sections~\\ref{a}--\\ref{b}", "layers $14$--$27$"])
+def test_checker_allows_en_dash_ranges(tmp_path, ok):
+    """Negative control: a check that fires on ranges too would just be broken."""
+    text = MAIN.read_text(encoding="utf-8")
+    problems = check_writeup.check_style(text + "\n%s\n" % ok)
+    assert not problems, "range notation was flagged: %s" % problems
 
 
 @pytest.mark.skipif(not MAIN.exists(), reason="paper not present")

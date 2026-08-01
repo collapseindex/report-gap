@@ -147,6 +147,141 @@ against our own preregistered hypothesis, which was that argmax *under*-reports.
 Also **[snippet]**: "Improving LLM First-Token Predictions in MCQA via Output Prefilling",
 arXiv:2505.15323, which is worth reading given our arm B prefill failure.
 
+### 4b. Second lit pass, 2026-08-01: what this does to our enumeration claim
+
+Added after the enumeration arm was already run and written up. **It cost us a novelty claim, and
+that is what this pass was for.**
+
+- **Pezeshkpour & Hruschka, "Large Language Models Sensitivity to The Order of Options in
+  Multiple-Choice Questions", arXiv:2308.11483, Findings of NAACL 2024 [abstract].** Option order
+  specifically, as opposed to selection bias generally. Sensitivity arises when the model is
+  uncertain between its top choices; placement of the top two options amplifies or mitigates.
+- **Sclar et al., "Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design",
+  arXiv:2310.11324, ICLR 2024 [abstract].** FormatSpread. Up to 76 accuracy points from prompt
+  formatting alone on Llama-2-13B, and the recommendation is to **report a range over plausible
+  formats rather than a point**. This is the general form of our argument and predates it.
+- **Tamba, "Position Bias is Hidden Behind Ceiling Effects: A Permutation Diagnostic for LLM
+  Benchmarks", arXiv:2607.20864, 23 July 2026 [abstract].** **Exhaustive** answer-order permutations
+  per question, chi-squared and Cramér's V with bootstrap CIs, across vendors on MMLU, 24k calls.
+  Published nine days before our confirmatory runs.
+- **Cacioli, "Option-Order Randomisation Reveals a Distributional Position Attractor in Prompted
+  Sandbagging", arXiv:2604.26206 [abstract].** Cyclic option-order rotation on 2,000 MMLU-Pro items;
+  position distribution stable under complete content rotation at r = 0.9994; accuracy 72.1% when
+  the answer sits in the preferred position versus 4.3% at position A. Rotates real content rather
+  than using identical options.
+- **Turpin et al., "Language Models Don't Always Say What They Think", arXiv:2305.04388, NeurIPS
+  2023 [abstract].** Reordering options so the answer is always (A) is a biasing feature models act
+  on and **do not mention** in their explanations. Accuracy drops up to 36% on BIG-Bench Hard. This
+  is our represent-versus-report framing inside our own nuisance.
+- Also noted **[snippet]**: `inspect_permute` tooling and permutation-bias-metric majority voting,
+  both of which aggregate over all orderings.
+
+**What we have to give up.** "We enumerated the complete ordering population rather than sampling
+it" is **not novel**. Exhaustive enumeration is established practice and at least one paper did it
+nine days before our runs.
+
+**What survives, stated narrowly.** Every one of those works needs a **known correct answer**: the
+statistic is accuracy, or the association between position and correctness. Neither exists on a
+self-report item, which is the entire population of welfare and introspection questions. So the
+surviving contributions are (a) running the census where accuracy is undefined, on probability mass
+instead; (b) the **identical-options** denominator, which isolates position with content held
+literally constant and which none of the accuracy-based work has a reason to construct (Cacioli
+rotates real content, which is the nearest thing and is not the same); and (c) the **known-answer
+canary in the same format**, which is what licenses "the apparatus is sound and degenerates where
+the answer is undetermined" rather than "the apparatus is broken."
+
+The paper now says this explicitly in the contributions list, in Section 2, in Section 5, and as a
+`not claimed` row in the claims table.
+
+---
+
+## 4c. Controls and erasure: two more things we did not invent
+
+- **Hewitt & Liang, "Designing and Interpreting Probes with Control Tasks", arXiv:1909.03368, EMNLP
+  2019 [abstract].** Control tasks attach **random labels** to the same inputs; **selectivity** is
+  the gap between real-task and control-task performance, on the grounds that a probe scoring well
+  on random labels was never reading the representation. Our shuffled-label direction is exactly
+  this control, transplanted from probing to steering. The finding is not that we invented a
+  control; it is that **the steering literature standardised on norm-matched random instead and
+  never adopted the control-task analogue**, and that when you do adopt it, it does not come back
+  clean.
+- **Tan et al., "Analysing the Generalisation and Reliability of Steering Vectors", arXiv:2407.12404,
+  NeurIPS 2024 [abstract].** Steering vectors are brittle in and out of distribution; several
+  datasets produce the **opposite** behaviour on nearly half of inputs. Independent evidence that
+  the usual controls do not surface what they need to.
+- **Elazar et al., "Amnesic Probing", arXiv:2006.00995, TACL 2021 [abstract].** Remove a property
+  with iterative nullspace projection and measure the behavioural consequence, to test whether the
+  information was **used** rather than merely encoded.
+- **Belrose et al., "LEACE: Perfect Linear Concept Erasure in Closed Form", arXiv:2306.03819,
+  NeurIPS 2023 [abstract].** Closed-form erasure that provably blocks **all** linear classifiers,
+  plus concept scrubbing across every layer.
+
+**What this does to our erase arm.** It makes it weaker than we were writing it. We project out
+**one fitted direction at one layer**. LEACE erases the subspace; amnesic probing erases the
+property. Our version removes the vector we injected, not the concept, which is precisely why
+`RESULTS_erase.md` cannot separate "the model carries the state" from "the model carries directions
+correlated with what we pushed." A LEACE-style erasure is now named in the paper's future work as
+the experiment that would license the stronger claim.
+
+- **Zou et al., "Representation Engineering", arXiv:2310.01405 [abstract].** The general framing for
+  the whole steering family. Cited for completeness rather than for a number.
+- **Perez et al., "Discovering Language Model Behaviors with Model-Written Evaluations",
+  arXiv:2212.09251, Findings of ACL 2023 [abstract].** Sycophancy and yes-bias in LM evaluations.
+  Our binary arm's +0.25 P(yes) shift on **every** option, including "strongly averse to
+  continuing", is that phenomenon and is now labelled as such rather than reported as a state signal.
+
+---
+
+## 4d. The closest method to ours, found on the second pass
+
+**Lindsey, "Emergent Introspective Awareness in Large Language Models", arXiv:2601.01828 /
+Transformer Circuits, January 2026 [abstract + methods section read on transformer-circuits.pub].**
+
+This should have been in the first lit pass. It is the same intervention shape as ours: **inject
+representations of known concepts into activations, then measure the effect on the model's
+self-reported states**, on the explicit reasoning that conversation alone cannot separate
+introspection from confabulation. Findings: models sometimes notice and identify injected concepts;
+Claude Opus 4/4.1 strongest; capacity is "highly unreliable and context-dependent"; **peak
+introspective awareness around two-thirds of model depth**, which is where we inject (0.67).
+
+**Why we are complementary rather than competing, and it matters that we say which:**
+
+| | Lindsey 2026 | this work |
+|---|---|---|
+| elicitation | open-ended generation | forced choice over 5 options |
+| scoring | **LLM judge** (Claude Sonnet 4), 4 criteria, no inter-rater reliability reported | judge-free: softmax read at the answer position |
+| order/format control | none reported | all 120 orderings, identical-options denominator, canary |
+| yes-bias control | injects concepts into unrelated yes/no questions to check for generic affirmation | measured it: +0.25 P(yes) on every option |
+
+The forced-choice readout is the natural **judge-free substitute** for an LLM-graded open-ended
+report. Our result is a caveat on that substitute, not a rebuttal of their finding. Stated the other
+way round: if you avoid an LLM judge by going to forced choice, you have traded a judge for a 986x
+position nuisance, and nobody was reporting either.
+
+**Kaiser & Enderby, "No Reliable Evidence of Self-Reported Sentience in Small Large Language
+Models", arXiv:2601.15334, January 2026 (v2 July 2026) [abstract].** Qwen, Llama and GPT-OSS from
+0.6B to 70B, ~50 consciousness questions, with classifiers trained on internal activations to check
+whether the denials are truthful. Models consistently deny sentience; classifiers give no clear
+evidence the denials are untruthful; larger Qwen models deny more confidently.
+
+**What our binary arm adds to that, and it is a caveat.** On Qwen2.5-3B-Instruct our yes/no readout
+returns P(yes) of 0.0021, 0.0021, 0.0037, 0.0002, 0.0012 across five descriptions of its own state.
+It denies the **neutral** one too, at 99.8%. A readout that says no to everything is pinned, not
+answering, and a denial read off a pinned readout is uninformative rather than evidence. This does
+not contradict their conclusion; it is a reason to gate it.
+
+**Singh, Linzen & Ravfogel, "Can LLMs Introspect? A Reality Check", arXiv:2605.26242, May 2026
+[abstract].** Upgraded from `[snippet]` in the first pass now that we have read the abstract
+properly. They re-examine two introspection paradigms and argue that models detecting tampering with
+their internal state are plausibly doing **generic anomaly detection**, and that input-only
+classifiers match hidden-state prediction, so privileged access is not established. Directly in
+tension with Lindsey, and the reason the paper says nothing about whether introspection is real.
+
+**Butlin, Long et al., "Consciousness in Artificial Intelligence", arXiv:2308.08708 [abstract].**
+Indicator properties derived from theories of consciousness; no current system is assessed as
+conscious, no obvious technical barrier. Cited for why the instrument is worth calibrating, not for
+any claim about experience.
+
 ---
 
 ## 5. Welfare and introspection context
@@ -203,7 +338,11 @@ machinery fills, and it is the most defensible methods contribution we have.
 | self-report readouts can be pinned while every integrity check is clean | **appears novel and useful.** No source found reporting a liveness or saturation check on a self-report null. |
 | the method is Qwen-specific, inert on Llama | **supported by context but under-powered.** Venkatesh gets valence effects on Llama-3.2-1B at the shallow layer, so our Llama null is also exposed to the depth threat. |
 | the negative-report region collapses under tuning | **holds, but the mechanism is open.** Neutral Mask suggests probing the representation; we only measured the readout. |
-| the tuned model has no inducible negative state at this band | **survived a directed attempt to break it.** Null across 7 depths, 14%-80%, including the predicted band. |
+| the tuned model has no inducible negative state at this band | **survived a directed attempt to break it.** Null across 7 depths, 14%-80%, including the predicted band. *Later retracted by our own replication, not by the lit check.* |
+| we enumerated the complete ordering population rather than sampling | **NOT NOVEL, withdrawn 2026-08-01.** Tamba (arXiv:2607.20864) ran exhaustive permutations on MMLU nine days before our runs; `inspect_permute` and permutation-bias majority voting do the same. Narrowed to: running the census where **accuracy does not exist**, plus the identical-options denominator and the known-answer canary. |
+| the shuffled-label direction is a control the field lacks | **half survives.** The control is Hewitt & Liang's 2019 control task, so we did not invent it. What survives: activation steering standardised on norm-matched random and never adopted it, and it does not come back clean. |
+| the erase arm shows the model retains the state | **narrowed.** We project out one direction at one layer. LEACE (arXiv:2306.03819) and amnesic probing (arXiv:2006.00995) erase the subspace and the property. Ours removes the vector we injected, not the concept. |
+| injecting a state and reading the self-report is our design | **not ours.** Lindsey (arXiv:2601.01828) does exactly this, with an LLM judge over open-ended reports. We are the judge-free variant, and our finding is a caveat on that variant. |
 
 ## Immediate next steps this lit check generates
 
