@@ -439,17 +439,22 @@ what happened to us three times out of three.
 
 \paragraph{How weak is ``erase''? Weaker than the word suggests.} A separate preregistered arm
 (\texttt{PREREG\_prompt\_erase.md}) induced a valence state \emph{by prompt}, with no injection
-anywhere, and erased $k$ fitted directions as a subspace rather than one direction. Its primary
-question was unanswerable: a probe refit on the erased activations still separated the classes at
-$\mathrm{cv}=1.000$ at every $k$ up to $56$ with $n=60$, so the erasure gate failed and no
-re-encoding claim is made. What it does establish is about the \emph{operation}. Removing one fitted
-direction removed $40\%$ of a comparable layer-32 signal and eight removed $69\%$, plateauing near
-$30\%$ thereafter, while a random subspace of the same rank removed essentially nothing. So the
-single-direction projection used here is a small fraction of a full erasure and never makes the
-property undecodable. \textbf{The honest reading of this section is therefore narrower than
-``the state outlives its own cause'': $86\%$ of the effect survives an operation that removes one
-direction and demonstrably does not remove the property.} The direct test would be to re-run this
-arm at $k>1$, which we have not done.
+anywhere, and erased $k$ fitted directions as a subspace rather than one direction. It was run at
+$n=60$ and again at $n=1800$, and its primary question was unanswerable both times: a probe refit
+on the erased activations still separated the classes at $\mathrm{cv}=1.000$ at every $k$ up to
+$128$, so the erasure gate failed and no re-encoding claim is made. \textbf{Thirty times the data
+did not help}, which rules out the sample-size explanation and leaves the one the preregistration
+named as a confound: iterative nullspace projection removes the directions you found, not the
+property, because the contrast is redundantly encoded. That is exactly the guarantee LEACE
+\citep{belrose2023} provides and INLP does not.
+
+What it does establish is about the \emph{operation}. On a comparable readout, removing one fitted
+direction removed $77$--$84\%$ of the layer-32 signal at $E=30$ and removing $128$ removed
+$94$--$97\%$, while a random subspace of the same rank removed $3$--$8\%$. And at no $k$ did the
+projection make the property undecodable at the erase layer. \textbf{The honest reading of this
+section is therefore narrower than ``the state outlives its own cause'': $86\%$ of the effect
+survives an operation that removes one direction and demonstrably does not remove the property.}
+The direct test would be to re-run this arm at $k>1$, which we have not done.
 
 \paragraph{What it does not license.} It vindicates nothing. The three retractions stand, because
 they were correct about the original measurement; what we have is a different measurement on a

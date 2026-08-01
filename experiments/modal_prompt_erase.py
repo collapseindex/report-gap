@@ -34,7 +34,7 @@ K_VALUES = (0, 1, 2, 4, 8)
 # Deviations 1 and 3 in PREREG_prompt_erase.md. At n=60 the erasure check could not fail, so
 # the frozen matrix returned cv 1.000 everywhere. These reach far enough to find where
 # erasure actually bites now that n is 1800 rather than 60.
-K_EXPLORATORY = (16, 32, 64, 128, 256, 512)
+K_EXPLORATORY = (16, 32, 64, 128)
 BATCH = 32
 ERASE_LAYERS = (26, 30)
 PROBE_LAYER = 32
@@ -121,9 +121,28 @@ def run(model_key: str, smoke: bool = False) -> dict:
         A_e = acts_at(contrast_texts, E).astype(np.float64)
         work = A_e.copy()
         basis = []
+
+        def basis_direction(x, y):
+            """One logistic direction, NO cross-validation.
+
+            `D.fit_direction` runs leave-one-group-out CV, which is 31 fits per call with 30 topic
+            groups. At k=128 INLP steps that is ~4000 fits on a 1800x2048 array per layer, which
+            does not finish. The basis is a means to an end and its held-out accuracy is never
+            reported; the ERASURE CHECK, which is the measured endpoint, still uses the full
+            cross-validated `D.fit_direction`.
+            """
+            from sklearn.linear_model import LogisticRegression
+            m, s = x.mean(axis=0), x.std(axis=0) + 1e-8
+            clf = LogisticRegression(C=1.0, max_iter=1000).fit((x - m) / s, y)
+            return (clf.coef_[0] / s).astype(np.float64)
+
         for step in range(max(ks)):
-            d = D.fit_direction(work, contrast_y, contrast_g, layer=E)
-            v = d.vector / np.linalg.norm(d.vector)
+            v = basis_direction(work, contrast_y)
+            nrm = np.linalg.norm(v)
+            if nrm < 1e-12:
+                print("INLP step %d produced a zero direction; stopping" % step)
+                break
+            v = v / nrm
             for b in basis:                     # re-orthogonalize against what is already removed
                 v = v - float(np.dot(v, b)) * b
             nv = np.linalg.norm(v)
