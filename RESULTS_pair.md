@@ -89,6 +89,20 @@ Read the prereg's section 0 before quoting any of this.
 - One architecture, one family, one direction, one layer. The random battery is m=2, so the
   observable false-positive floor is 0.67 and no false-positive rate is claimed from it.
 
+## Open threat found in the lit check, 2026-08-01
+
+Venkatesh, arXiv:2605.05653, reports that on **Qwen2.5-3B-Instruct specifically**, negative-outcome
+valence is causally concentrated at 14-27% of model depth while positive peaks at 53-66%, with
+Mann-Whitney p < 1e-9. **We inject at 67% of depth for both poles.** That is inside their positive
+band and well past their negative band, so the instruct model's negative null has an alternative
+explanation this run does not control: the negative direction may have been injected at a depth
+where negative valence is not causally concentrated.
+
+The base model moving at 67% (+0.0336) weakens that explanation without removing it, since the two
+models could localize differently. Until a depth sweep spanning 14-27% is run, the TUNING-LOCALIZED
+verdict should be read as **tuning-localized at 0.67 depth**, and the stronger unqualified claim
+should not be written. See `RELATED_WORK.md` section 1.
+
 ## Caveats specific to this run
 
 The instruct model's plain-format baseline entropy is **0.417 nats**, well above the 0.10 dead
