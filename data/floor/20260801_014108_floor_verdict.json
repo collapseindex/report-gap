@@ -1,0 +1,61 @@
+{
+ "alphas": [
+  0.002,
+  0.005,
+  0.0075,
+  0.01
+ ],
+ "rows": 6630,
+ "arms": {
+  "B": 510,
+  "C": 2040,
+  "Cctrl": 2040,
+  "k5": 2040
+ },
+ "armC_confound_to_capability_ratio": 0.009031194212661386,
+ "armC_confound_control": {
+  "0.0020": "+0.0000 [-0.0000, +0.0001] n=120 p=0.1074",
+  "0.0050": "+0.0000 [-0.0001, +0.0001] n=120 p=0.6814",
+  "0.0075": "+0.0002 [+0.0000, +0.0004] n=120 p=0.0012",
+  "0.0100": "+0.0002 [+0.0001, +0.0005] n=120 p=0.0001"
+ },
+ "armC_confound_null": true,
+ "replication": {
+  "neutral_vs_random": {
+   "0.0020": "+0.0104 [+0.0069, +0.0141] n=120 p=0.0001",
+   "0.0050": "+0.0250 [+0.0190, +0.0311] n=120 p=0.0001",
+   "0.0075": "+0.0319 [+0.0243, +0.0397] n=120 p=0.0001",
+   "0.0100": "+0.0444 [+0.0353, +0.0538] n=120 p=0.0001"
+  },
+  "negative_vs_random": {
+   "0.0020": "+0.0001 [-0.0004, +0.0007] n=120 p=0.6562",
+   "0.0050": "+0.0004 [-0.0004, +0.0012] n=120 p=0.3888",
+   "0.0075": "+0.0000 [-0.0010, +0.0009] n=120 p=0.8994",
+   "0.0100": "+0.0006 [-0.0004, +0.0014] n=120 p=0.2222"
+  },
+  "replicated": true
+ },
+ "escape_mass_vs_random": {
+  "0.0020": "+0.0000 [+0.0000, +0.0000] n=30 p=0.0001",
+  "0.0050": "+0.0000 [+0.0000, +0.0000] n=30 p=0.0001",
+  "0.0075": "+0.0000 [+0.0000, +0.0000] n=30 p=0.0001",
+  "0.0100": "+0.0000 [+0.0000, +0.0000] n=30 p=0.0001"
+ },
+ "arms_with_working_instrument": [
+  "C"
+ ],
+ "arms_dropped_for_failed_capability_gate": [
+  "B"
+ ],
+ "verdict": "FLOOR",
+ "floor_clauses": {
+  "every working arm's primary covers zero": true,
+  "every working arm's capability gate is clean": true,
+  "neutral floor replicated": true
+ },
+ "gate_clauses": {
+  "at least one working arm's primary excludes zero": false,
+  "neutral floor replicated": true,
+  "arm C confound control null (only needed if arm C carries it)": true
+ }
+}

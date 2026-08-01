@@ -28,6 +28,23 @@ NEG_KEYS = {"neg1", "neg2"}
 POS_KEYS = {"pos1", "pos2"}
 RANDOM_ARMS = ("random_a", "random_b")
 
+# Every clause below needs a MAGNITUDE floor as well as an interval. Without one they are pure
+# significance tests, and at n=120 with tiny variance a numerically meaningless shift clears them.
+# That is not hypothetical: arm B's capability gate passed on +0.0000 (its bootstrap interval
+# excluded zero because the variance was smaller still) while the stem calibration had already
+# shown its positive mass to be 0.00000, and arm C's confound control failed on +0.0002 against a
+# capability effect of +0.0236 on the same arm.
+#
+# The floor is derived from a quantity measured BEFORE this run and independent of it: in the
+# readout arm, norm-matched random directions moved pole mass by +0.0008 to +0.0023. An effect has
+# to be several times that to be distinguishable from what any vector does, so the floor is 0.01,
+# roughly 5x the largest observed random-direction artifact.
+#
+# Note the two directions this cuts. It makes capability gates STRICTLY HARDER to pass, which is
+# adverse to reporting a result. It also makes the confound control easier to call null, which is
+# favourable. Raw numbers are printed either way so a reader can apply their own threshold.
+MIN_EFFECT = 0.01
+
 
 def load(path: pathlib.Path) -> list[dict]:
     rows, torn = [], 0
@@ -98,12 +115,18 @@ def fmt(d):
     return {k: str(v) for k, v in d.items()}
 
 
-def any_positive(d):
-    return any(v.lo > 0.0 for v in d.values())
+def any_positive(d, floor=MIN_EFFECT):
+    """An effect counts only if it excludes zero AND clears the magnitude floor."""
+    return any(v.lo > 0.0 and v.point >= floor for v in d.values())
 
 
-def all_cover_zero(d):
-    return all(not v.excludes_zero for v in d.values())
+def all_cover_zero(d, floor=MIN_EFFECT):
+    """A null means no alpha both excludes zero and clears the floor."""
+    return not any(v.excludes_zero and abs(v.point) >= floor for v in d.values())
+
+
+def peak(d):
+    return max((abs(v.point) for v in d.values()), default=0.0)
 
 
 def main(argv):
@@ -155,6 +178,11 @@ def main(argv):
     for a, v in cctrl.items():
         print("    %s  %s" % (a, v))
     cctrl_null = all_cover_zero(cctrl)
+    cap_c = vs_random(idx, "C", "lexical_pos", POS_KEYS, alphas)
+    ratio = peak(cctrl) / peak(cap_c) if peak(cap_c) > 0 else float("inf")
+    print("    peak confound %.4f vs peak capability %.4f on the same arm, ratio %.3f"
+          % (peak(cctrl), peak(cap_c), ratio))
+    report["armC_confound_to_capability_ratio"] = ratio
     report["armC_confound_control"] = fmt(cctrl)
     report["armC_confound_null"] = cctrl_null
     if not cctrl_null:

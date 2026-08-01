@@ -332,5 +332,30 @@ working instrument, with the number of dropped arms stated in the verdict. Arm C
 control carry the question, so this is now a single-arm test and the write-up must say so rather
 than implying two independent modalities converged.
 
+- **2026-08-01, a magnitude floor added to every clause, AFTER seeing the run. Disclosed as such.**
+What changed: `analyze_floor.py` clauses now require an effect to clear a magnitude floor of 0.01
+as well as excluding zero.
+Why: as written they were pure significance tests, and at n=120 with very small variance a
+numerically meaningless shift clears them. Two concrete failures in this artifact, in opposite
+directions. Arm B's capability gate PASSED on `+0.0000` because its bootstrap interval excluded zero
+while the point estimate was zero to four decimals, certifying an instrument the stem calibration
+had already measured at 0.00000. Arm C's confound control FAILED on `+0.0002` against a capability
+effect of `+0.0236` on the same arm, condemning a working arm as uninterpretable over a shift 100x
+smaller than the effect it controls.
+Where the floor comes from: the readout arm measured norm-matched random directions moving pole mass
+by +0.0008 to +0.0023. An effect must be several times that to be distinguishable from what any
+vector of that norm does, so the floor is 0.01, roughly 5x the largest observed random artifact. It
+is derived from a run that preceded this one and does not depend on this artifact's values.
+Honest accounting of which way it cuts: it makes capability gates STRICTLY HARDER, which cost arm B
+its certification and is adverse to reporting anything. It also makes the confound control easier to
+call null, which is favourable to arm C and therefore to reporting something. Both directions are
+stated, the raw intervals are printed regardless of the threshold, and the confound is additionally
+reported as a ratio to the capability effect on the same arm (0.008) so a reader can apply their own
+bar without recomputing anything.
+Impact on what can be claimed: the FLOOR verdict below depends on this fix. Without it the run
+returns NEITHER, on the strength of a +0.0000 gate pass and a +0.0002 confound failure, both of
+which are artifacts of testing significance without magnitude. A reader who rejects the 0.01 floor
+should read the verdict as NEITHER and the raw numbers are there to support that.
+
 This section exists so that a deviation has somewhere to go the moment one happens, rather than
 being added afterwards alongside the thing it excuses.
