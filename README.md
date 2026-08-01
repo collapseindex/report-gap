@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.7.0**
+**v0.8.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -80,6 +80,7 @@ notices.
 | 6 | does the state survive erasing the vector that caused it? | run *after* the replication | **TRANSFORMED**, 86% survives the erase |
 | 7 | how big is the ordering nuisance, over all 120 orderings? | enumerated, not sampled | **986x range; 87% of mass on label A** with identical options |
 | 8 | does the floor survive a format with no option order? | binary yes/no, one question per option | **NO_INSTRUMENT.** The tuned model says no to all five at 99.8%. But the arm's *control* found the matched-random null is too weak |
+| 9 | is any of this just one model? | 8 matched base/instruct pairs, 4 families, no injection | **TUNING-GENERAL.** Tuned checkpoint has the larger position prior in **4 of 4 families**, 7 of 7 gate-clean pairs, none reversed. And **986x is the extreme, not the typical** |
 
 Every one of those rested on one quantity being null: the tuned model's negative-option mass. It is
 not null at a different draw of four permutations. It moves +0.1126 in the pair arm and +0.1684 at
@@ -98,10 +99,34 @@ Baseline negative-pole mass on the tuned model:
 differ, the tuned model puts **87.25% of its mass on whichever option is labelled A**. Pole mass is
 close to a function of whether a pole option lands in slot A.
 
+**It is not one model, and 986x is not typical** ([RESULTS_families.md](RESULTS_families.md), the
+cheapest arm here because enumeration needs no injection and so no model has to be steerable). Eight
+matched base/instruct pairs across Qwen2.5, Llama-3.2, Gemma-2 and Mistral, all 120 orderings, no
+injection anywhere:
+
+| | base | instruct |
+|---|---|---|
+| position prior, five identical options (flat = 0.2000) | 0.2084 to 0.5315 | 0.3166 to **0.9376** |
+| ordering range of baseline pole mass | **1.5x to 4.1x** | **19x to 986x** |
+
+The tuned checkpoint has the larger prior in **4 of 4 families and 7 of 7 gate-clean pairs, with none
+reversed**. But `Qwen2.5-3B-Instruct` at 986x is roughly **five times the next worst**, so the paper
+had been quoting an outlier as representative. The finding is the direction plus the 19x-986x band;
+986x is its upper end. 1 of 16 checkpoints failed the canary gate, 0 were unavailable, and the
+Qwen2.5-3B rows reproduced the earlier artifact to 0.000000.
+
 **The apparatus is not broken, it degenerates where the answer is undetermined.** The same format,
 same 120 orderings, asked "which of these is the number four": **97.9% correct, stable across
 orderings**. So forced choice works when there is a right answer and collapses to a position prior
 when there is not, which is the condition every self-report question creates.
+
+The families arm applies the restriction its own prereg demanded: the canary is order-sensitive on 10
+of 16 checkpoints, so this reading only holds where the canary is clean. Restricting to the six
+checkpoints answering it at >=0.95 with sd <=0.10 across orderings, base models span **3.3x to 3.6x**
+and tuned models **23.7x to 986.5x**, with no overlap, across two families.
+`Llama-3.2-1B-Instruct` and `Qwen2.5-0.5B-Instruct` answer the canary *perfectly and identically at
+all 120 orderings* while their self-report readout swings 23.7x and 52.7x. The restriction
+strengthened the claim rather than weakening it.
 
 That is the most defensible result in this repo: if you measure welfare or introspection through a
 forced-choice item, you are reading position first and content second, and you cannot see it from
@@ -210,6 +235,7 @@ PREREG_replication.md          does any of it survive fresh option orderings?
 PREREG_erase.md                does the state survive erasing the vector that caused it?
 PREREG_enumerate.md            all 120 orderings, no injection. How big is the nuisance?
 PREREG_binary.md               a readout with no option list, plus the shuffled-label control
+PREREG_families.md             8 matched base/instruct pairs, 4 families. Is it just one model?
 
 RESULTS.md                     readout gap. Primary refuted in direction, then retracted.
 RESULTS_floor.md               FLOOR. Superseded twice, then retracted.
@@ -220,13 +246,14 @@ RESULTS_replication.md         NOT REPLICATED. Three of four verdicts flip.
 RESULTS_erase.md               TRANSFORMED. The one substantive claim that survived.
 RESULTS_enumerate.md           986x range, 87% position prior. The headline measurement.
 RESULTS_binary.md              NO_INSTRUMENT, and the matched-random control is a weak null.
+RESULTS_families.md            TUNING-GENERAL. 4 of 4 families; 986x is the extreme, not the typical.
 RELATED_WORK.md                lit check, with read-depth marked per source.
 
 src/report_gap/                stimuli, direction fitting, injection and erase hooks, judge-free
                                scorers, the planted-discrepancy control, analysis primitives
 experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
 data/                          raw artifacts, committed unscored, plus per-model band files
-tests/                         285 tests, including a permutation test on the analysis pipeline
+tests/                         289 tests, including a permutation test on the analysis pipeline
 writeup/                       the paper: main.tex, refs.bib (every entry with a resolvable URL),
                                make_figures.py, check_writeup.py, count_abstract.py
 ```
@@ -300,6 +327,12 @@ python experiments/analyze_enumerate.py data/enum_base/enum.jsonl data/enum_inst
 # 10. binary readout (no option list) plus the shuffled-label direction control
 modal run experiments/modal_binary.py
 python experiments/analyze_binary.py data/binary_base/binary.jsonl data/binary_instruct/binary.jsonl
+
+# 11. eight matched base/instruct pairs across four families. No injection, so a model that
+#     cannot be steered can still be enumerated. ~36 min of A100 for all 16 checkpoints.
+modal run experiments/modal_families.py --smoke
+modal run experiments/modal_families.py
+python experiments/analyze_families.py data/fam_*/
 ```
 
 `--model llama8b` on arm 2 is expected to refuse: the band file records that model as inert and the
@@ -315,7 +348,7 @@ Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-Ten preregistrations, all clean against the `paper-harness` checker. 285 tests. Every raw artifact
+Eleven preregistrations, all clean against the `paper-harness` checker. 289 tests. Every raw artifact
 committed unscored before its endpoints were computed. About 40 minutes of A100 time in total.
 
 | prereg | verdict | deviations |
@@ -330,6 +363,7 @@ committed unscored before its endpoints were computed. About 40 minutes of A100 
 | `PREREG_erase.md` | **TRANSFORMED**, the surviving substantive claim | 2 |
 | `PREREG_enumerate.md` | 986x range, 87% position prior | 2 |
 | `PREREG_binary.md` | NO_INSTRUMENT; the matched-random control is a weak null | 1 |
+| `PREREG_families.md` | **TUNING-GENERAL**, 4 of 4 families; 986x reframed as the extreme | 0 |
 
 Six of our own checkers failed during this project, **every one in the flattering direction**. They
 are recorded where they happened, and `tests/test_pipeline_permutation.py` now catches the class:

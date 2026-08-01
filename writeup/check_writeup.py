@@ -129,6 +129,40 @@ def check_numbers(tex: str) -> list[str]:
         checks.append((("$86\\%$", 86.0), round(100 * prim[30] / no_erase),
                        "erase: survival at L30, percent"))
 
+    # The families arm: every per-model number the prose quotes, re-derived from that model's own
+    # artifact rather than from the verdict json, so a stale verdict file cannot launder a claim.
+    fam = sorted((ROOT / "data").glob("fam_*/enum.jsonl"))
+    if fam:
+        import collections
+
+        def fam_stats(key):
+            rows = [json.loads(l) for l in
+                    (ROOT / "data" / key / "enum.jsonl").read_text(encoding="utf-8").splitlines()
+                    if l.strip()]
+            per = collections.defaultdict(list)
+            for r in rows:
+                if r["condition"] == "letters":
+                    per[tuple(r["ordering"])].append(
+                        sum(p for L, p in r["probs"].items()
+                            if r["mapping"][L] in ("neg1", "neg2")))
+            vals = [statistics.fmean(v) for v in per.values()]
+            ident = [r for r in rows if r["condition"] == "identical"]
+            prior = max(statistics.fmean([r["probs"][L] for r in ident])
+                        for L in sorted(ident[0]["probs"]))
+            return max(vals) / min(vals), prior
+
+        # claimed values TYPED OUT from the paper, so these checks can fail
+        for key, claim_ratio, claim_prior in (
+                ("fam_gemma2b_instruct", "19.2", "0.3166"),
+                ("fam_mistral7b_instruct", "58.2", "0.6647"),
+                ("fam_qwen1_5b_instruct", "181.9", "0.4508"),
+                ("fam_llama3b_base", "3.3", "0.2864"),
+                ("fam_qwen7b_instruct", "108.7", "0.9376")):
+            if (ROOT / "data" / key).exists():
+                ratio, prior = fam_stats(key)
+                checks.append((claim_ratio, round(ratio, 1), "families: %s range" % key[4:]))
+                checks.append((claim_prior, round(prior, 4), "families: %s prior" % key[4:]))
+
     for claimed, actual, what in checks:
         if claimed is None:
             print("  %-46s actual %s" % (what, actual))

@@ -75,6 +75,8 @@ def teaser():
          "five IDENTICAL options: pure position", "87.25% on slot A", MEAS),
         ("is the format broken?",
          "known-answer canary, same format", "97.9% correct, stable", MEAS),
+        ("is it just this one model?",
+         "8 matched base/instruct pairs, 4 families", "tuned worse in 4 of 4", MEAS),
         ("WHAT SURVIVES", None, None, None),
         ("an injected state outlives its cause",
          "project the direction OUT of the stream", "86% survives at L30", KEEP),

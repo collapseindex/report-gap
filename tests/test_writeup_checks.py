@@ -37,6 +37,10 @@ BREAKAGES = [
     ("0.8725", "0.8735", "identical-options mass on slot A"),
     ("0.0009", "0.0019", "minimum ordering mass"),
     ("0.8820", "0.8810", "maximum ordering mass"),
+    ("181.9", "171.9", "qwen1_5b instruct ordering range"),
+    ("0.6647", "0.6547", "mistral7b instruct position prior"),
+    ("19.2", "19.8", "gemma2b instruct ordering range"),
+    ("0.9376", "0.9276", "qwen7b instruct position prior"),
 ]
 
 

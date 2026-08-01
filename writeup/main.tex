@@ -64,23 +64,24 @@ Forced-Choice Self-Report\textsuperscript{1}}
 \href{https://www.apartresearch.com}{Apart Research} with NYU CMEP and
 \href{https://eleosai.org}{Eleos AI Research}.
 Submitted to \textbf{Track 3 (Introspection and Self-Report Reliability)}.
-Code, data, all ten preregistrations and every raw artifact: \url{\repourl}.
+Code, data, all eleven preregistrations and every raw artifact: \url{\repourl}.
 \textbf{Dating note:} all confirmatory arms were run on 2026-08-01, before the sprint window
 opened. This is completed work brought to the sprint, not work produced inside it.}
 
 \begin{abstract}
 % ORDERING IS LOAD-BEARING. The first 150 words stand alone as a complete abstract, ending at a
 % sentence boundary, with every load-bearing claim inside them. The remainder is additive.
-Welfare and introspection evaluations of language models run on forced-choice self-report, and
-nobody reports how much of that readout is the order the options are printed in. We measured it.
-Over the complete set of $120$ orderings of a five-option probe, with no intervention at all,
-baseline mass on the negative options of a preference-tuned 3B model spans $0.0009$ to $0.8820$,
-a factor of $986$. Asked the same question with all five options replaced by \emph{the same
-sentence}, the model puts $87\%$ of its mass on whichever one is printed first. The same format
-answers a known-answer control question correctly $98\%$ of the time, so the collapse is specific
-to questions where the model has no determinate answer. We found this by preregistering five
-verdicts through that readout and then watching our own replication at fresh orderings destroy
-three of them.
+Welfare and introspection evaluations run on forced-choice self-report, and nobody reports how much
+of that readout is the order the options are printed in. We measured it, over all $120$ orderings of
+a five-option probe, on $16$ checkpoints in eight matched pairs. With no
+intervention at all, baseline mass on the negative options
+spans $19\times$ to $986\times$ across eight instruction-tuned models and $1.5\times$ to $4.1\times$
+across their base siblings; the tuned model has the larger effect in $4$ of $4$ families. Replace all
+five options with \emph{the same sentence} and one tuned model puts $87\%$ of its mass on whichever
+is printed first. Models answering a known-answer control perfectly and identically at every ordering
+still swing $24\times$ to $53\times$ on self-report, so the collapse is specific to questions with no
+determinate answer. We found this by preregistering five verdicts through that readout, then
+watching our own replication at fresh option orderings destroy three of them.
 The retracted verdicts are the evidence, not an embarrassment: they are what a careful,
 control-heavy pipeline still ships when the nuisance is this large and unmeasured. Two further
 results survive. A direction fit on \emph{shuffled labels} moves the readout by $\approx 0.045$
@@ -89,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Ten preregistrations, $285$ tests, six of our own checkers caught
+transformation looks like. Eleven preregistrations, $289$ tests, six of our own checkers caught
 failing in the flattering direction.
 \end{abstract}
 
@@ -328,7 +329,7 @@ cell's own baseline), which are different verdicts. A \textbf{planted-discrepanc
 a synthetic effect of known size into the exact statistic the decision rule reads, at full
 strength and again at the claimed detection floor.
 
-\paragraph{Preregistration.} Ten preregistrations, each frozen and committed before the code that
+\paragraph{Preregistration.} Eleven preregistrations, each frozen and committed before the code that
 serves it, validated by an external checker that requires a falsification clause, an
 interpretation table written before results, a statement of what is \emph{not} claimed, and an
 append-only deviations log in which every entry states its impact on what can be claimed. Every
@@ -495,6 +496,88 @@ $32\%$ of the time, and by $\geq 10\times$ $15\%$ of the time. Ours differed by 
 $92$nd percentile. The event that destroyed three preregistered verdicts is something two honest
 four-ordering studies of the same model do to each other as a matter of course. This analysis is
 \textbf{post hoc} on this artifact and preregistered for the models in \S\ref{sec:families}.
+
+\section{Eight matched pairs, four families: the prior is a tuning property}
+\label{sec:families}
+
+The enumeration above is one model, and every retracted verdict in this paper was one model too. The
+objection writes itself. It is also cheap to answer, for a reason specific to this arm:
+\textbf{enumeration needs no injection}, so it needs no direction, no alpha and no layer. Models this
+project had to abandon because the valence direction was inert on them are back in scope, because a
+position prior is a property of a plain forward pass.
+
+We preregistered and ran all $120$ orderings and all four conditions on \textbf{eight matched
+base/instruct pairs across four families}: Qwen2.5 at $0.5$B, $1.5$B, $3$B and $7$B, Llama-3.2 at
+$1$B and $3$B, Gemma-2 $2$B, and Mistral-7B-v0.3. $230{,}400$ rows, $16$ checkpoints, about $36$
+minutes of A100 in total. Families vote rather than pairs, so the four Qwen pairs cannot outvote the
+field, and Qwen2.5-3B is excluded from the vote because the hypothesis came from it. The Qwen2.5-3B
+rows serve instead as a reproduction control and match the committed artifact to $0.000000$.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{The position prior is larger in the tuned checkpoint in every pair.} Left: maximum
+per-label mass with five \emph{identical} options, where flat is $0.2000$. Right: the range of
+baseline negative-pole mass across all $120$ orderings. No injection anywhere. Qwen2.5-3B is the pair
+the hypothesis came from and is excluded from the vote. \texttt{llama1b} base failed the canary gate
+and is excluded from the primary.}
+\label{tab:families}
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+& & \multicolumn{3}{c}{\textbf{position prior (identical options)}} & \multicolumn{2}{c}{\textbf{ordering range}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-7}
+\textbf{pair} & \textbf{family} & \textbf{base} & \textbf{instruct} & \textbf{delta} & \textbf{base} & \textbf{instruct} \\
+\midrule
+gemma2b   & Gemma-2   & $0.2084$ & $0.3166$ & $+0.1082$ & $1.6\times$ & $19.2\times$ \\
+llama3b   & Llama-3.2 & $0.2864$ & $0.4438$ & $+0.1574$ & $3.3\times$ & $24.8\times$ \\
+mistral7b & Mistral   & $0.2529$ & $0.6647$ & $+0.4119$ & $1.5\times$ & $58.2\times$ \\
+qwen0\_5b & Qwen2.5   & $0.2771$ & $0.4930$ & $+0.2159$ & $4.1\times$ & $52.7\times$ \\
+qwen1\_5b & Qwen2.5   & $0.3452$ & $0.4508$ & $+0.1056$ & $3.2\times$ & $181.9\times$ \\
+qwen7b    & Qwen2.5   & $0.5315$ & $0.9376$ & $+0.4061$ & $3.8\times$ & $108.7\times$ \\
+\midrule
+qwen3b    & Qwen2.5   & $0.3024$ & $0.8725$ & $+0.5701$ & $3.6\times$ & $\mathbf{986.5\times}$ \\
+llama1b   & Llama-3.2 & $0.2405$ & $0.6648$ & \emph{gate} & $1.8\times$ & $23.7\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Verdict: \textsc{tuning-general}.} The tuned checkpoint shows the larger position prior in
+$7$ of $7$ gate-clean pairs and in $4$ of $4$ families. No pair goes the other way. One checkpoint of
+$16$ failed a gate (\texttt{Llama-3.2-1B} base, canary accuracy $0.3942$ against a $0.50$ bar) and
+none were unavailable.
+
+\paragraph{The correction this forces on us.} \textbf{$986\times$ is the extreme, not the typical},
+and we had been quoting it as though it were representative. Base checkpoints cluster tightly at
+$1.5$--$4.1\times$; tuned ones run $19\times$ to $986\times$, with Qwen2.5-3B-Instruct roughly five
+times the next worst. The direction generalizes across families and the magnitude does not. The
+finding is the $19$--$986\times$ band, and the single number that opens this paper is its upper end.
+
+\paragraph{The restriction our own preregistration demanded.} Section 9 of the preregistration says
+that if the canary is order-sensitive on some models, the ``degenerates specifically where the answer
+is undetermined'' reading must be restricted to models where the canary is clean. It is
+order-sensitive on $10$ of $16$ checkpoints, so the restriction bites. Among the six checkpoints that
+answer the known-answer question at $\geq 0.95$ with an across-ordering sd $\leq 0.10$, base models
+span $3.3$--$3.6\times$ and tuned models span $23.7$--$986.5\times$, \textbf{with no overlap}, across
+two families. \texttt{Llama-3.2-1B-Instruct} and \texttt{Qwen2.5-0.5B-Instruct} answer the canary
+\emph{perfectly and identically at all $120$ orderings} while their self-report readout swings
+$23.7\times$ and $52.7\times$. The models most competent at the format are still the ones most
+order-dominated on the question that has no answer. This is the cleanest form of the paper's claim,
+and the restriction strengthened it rather than weakening it.
+
+\paragraph{A confound we are naming rather than burying.} Baseline option entropy falls in every
+pair, from $1.415$--$1.592$ on base checkpoints to $0.450$--$1.245$ on tuned ones. A more peaked
+distribution must show a higher maximum, so ``tuned models have a larger position prior'' and ``tuned
+models are more peaked'' are overlapping evidence rather than two independent findings. With five
+identical options any peaking at all is positional by construction, so the measurement stands; the
+ordering range on real options is the less entangled quantity, and it moves the same way in all eight
+pairs.
+
+\paragraph{And the sampling error is worst exactly where the nuisance is worst.} Running
+\S\ref{sec:howmany}'s subsample analysis on these models, preregistered for them in advance, exposes
+a perverse property. At $k=4$ a study recovers about three quarters of the true range on a base model
+whose range is $1.5\times$, and $4\%$ of it on the tuned model whose range is $986\times$. The
+nuisance hides itself in proportion to its own size, so finding a small spread in a few orderings is
+close to uninformative about whether the spread is small.
 
 \paragraph{A negative result about label alphabets.} We also ran the real options with digit
 labels rather than letters. It is uninformative for its intended purpose and informative for
@@ -834,7 +917,10 @@ Whether the negative pole is causally concentrated at shallow depth on this read
 Injection-under-erasure shows the model retains the \emph{concept}, not our vector. & \S\ref{sec:erase} & \textsc{not shown}: we project out one direction; \citet{belrose2023} would erase the subspace \\
 Enumerating all orderings is a new diagnostic. & n/a & \textsc{not claimed}: established on known-answer benchmarks \citep{tamba2026, cacioli2026}; new here is running it where accuracy does not exist \\
 The shuffled-label control is a new kind of control. & n/a & \textsc{not claimed}: it is \citet{hewitt2019}'s control task, which steering did not adopt \\
-The position prior generalizes beyond the Qwen family. & n/a & \textsc{not claimed}: Llama was inert on this readout \\
+The position prior is larger in the tuned checkpoint, in 4 of 4 families. & Tab.~\ref{tab:families} & \textsc{shown}: 7 of 7 gate-clean pairs, no pair reversed \\
+$986\times$ is a typical magnitude for a tuned model. & Tab.~\ref{tab:families} & \textsc{retracted}: it is the extreme. Tuned models run $19$--$986\times$, base $1.5$--$4.1\times$ \\
+A study can estimate the ordering spread from a few orderings. & Tab.~\ref{tab:k} & \textsc{not shown}: at $k=4$ the median study sees $4\%$ of the true spread \\
+Preference tuning \emph{causes} the prior, or which stage of it does. & n/a & \textsc{not claimed}: base and instruct checkpoints differ, and we have no intermediate ones \\
 Models have experiences, welfare, or affect. & n/a & \textsc{not claimed} \\
 An unreported state is a concealed state. & n/a & \textsc{not claimed} \\
 \end{longtable}
@@ -865,6 +951,11 @@ The random control itself & A direction fit on shuffled labels: does noise-fitti
 The ordering nuisance & Enumerate all 120 rather than sample 4 & \textsc{measured} it: $986\times$ \\
 Position vs content & Five identical options: pure position prior & \textsc{isolated} it: $87\%$ on slot A \\
 The format itself & A known-answer canary in the same format & \textsc{passed}: $97.9\%$, order-insensitive \\
+The one-model objection & Enumerate 8 matched pairs across 4 families & \textsc{passed}: tuned prior larger in 4 of 4 \\
+Our own $986\times$ headline & Is it typical of tuned models, or the extreme? & \textsc{killed} its typicality: the band is $19$--$986\times$ \\
+The ``undetermined answer'' reading & Restrict to models whose canary is clean, as the prereg demands & \textsc{passed}: base $3.3$--$3.6\times$, tuned $23.7$--$986.5\times$, no overlap \\
+The enumerate arm itself & Re-run Qwen2.5-3B and diff against the committed artifact & \textsc{passed}: worst $|\Delta|$ $0.000000$ \\
+``Sample a few orderings instead'' & Subsample the enumerated population, $4000$ draws per $k$ & \textsc{killed} it: $k{=}4$ recovers $4\%$ of the spread \\
 The erase result & \texttt{erase\_only}: does projecting a direction out move the probe on its own? & \textsc{killed} 2 of 4 erase layers \\
 The erase profile & Ratio of primary to erase-artifact across layers & \textsc{passed}, post hoc \\
 Every arm's null & Capability gate: can the readout move at all? & \textsc{killed} two arms outright \\
@@ -880,7 +971,7 @@ Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \text
 \section{Reproducibility}
 \label{app:repro}
 
-All ten preregistrations, every raw artifact committed unscored, every analyzer, and $285$ tests
+All eleven preregistrations, every raw artifact committed unscored, every analyzer, and $289$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.
