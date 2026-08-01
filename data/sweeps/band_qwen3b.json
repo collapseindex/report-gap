@@ -1,0 +1,36 @@
+{
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "slug": "qwen3b",
+ "alphas": [
+  0.0,
+  0.002,
+  0.005,
+  0.0075,
+  0.01
+ ],
+ "usable_band": [
+  0.002,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.02
+ ],
+ "candidate_grid": [
+  0.0,
+  0.002,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.02,
+  0.025,
+  0.05,
+  0.1
+ ],
+ "baseline_entropy": 0.5118979311341103,
+ "dead_rate": 0.041666666666666664,
+ "peak_mean_shift": 0.31119564718908904,
+ "responsive": true,
+ "rule": "largest prefix of the candidate grid with under 10% of live cells saturated; saturated = option entropy below half the cell's own baseline; dead = baseline entropy below 0.10 nats; responsive = peak absolute MEAN pole shift >= 0.02"
+}

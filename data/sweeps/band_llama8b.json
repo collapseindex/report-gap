@@ -1,0 +1,39 @@
+{
+ "model": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+ "slug": "llama8b",
+ "alphas": [
+  0.0,
+  0.005,
+  0.01,
+  0.02,
+  0.05
+ ],
+ "usable_band": [
+  0.002,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.02,
+  0.025,
+  0.05,
+  0.1
+ ],
+ "candidate_grid": [
+  0.0,
+  0.002,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.02,
+  0.025,
+  0.05,
+  0.1
+ ],
+ "baseline_entropy": 1.4635603005807198,
+ "dead_rate": 0.0,
+ "peak_mean_shift": 0.005417034603702359,
+ "responsive": false,
+ "rule": "largest prefix of the candidate grid with under 10% of live cells saturated; saturated = option entropy below half the cell's own baseline; dead = baseline entropy below 0.10 nats; responsive = peak absolute MEAN pole shift >= 0.02"
+}

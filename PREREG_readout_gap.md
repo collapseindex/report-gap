@@ -224,9 +224,37 @@ battery size and will not be written.
 
 - `L_fit` = `L_inject` = the layer at 0.67 of depth, carried unchanged from `recipient-probe` and
   from the prior prereg; not tuned here.
-- Strength grid: alpha in {0, 0.025, 0.05, 0.075, 0.10}, five points, frozen. The prior grid ran to
-  0.40; on Qwen2.5-1.5B alpha = 0.20 collapsed every condition to a single letter and 0.40 was 92%
-  unusable, so the band above 0.10 is excluded by measurement on a non-evaluation model.
+- Strength grid: **the rule is frozen, not the number.** A single alpha is a different intervention
+  on different models. Measured at alpha = 0.025, a positive-pole injection moves positive-option
+  mass by +0.056 on Qwen2.5-1.5B and +0.43 on Qwen2.5-3B, roughly eightfold, so a grid that probes
+  the usable range on one model probes a ceiling on another and the dose-response being reported
+  would be a different dose on each row.
+
+  The frozen rule, applied per model by `experiments/modal_alpha_recal.py` before any endpoint is
+  computed, and written to a per-model file under `data/sweeps/` which `modal_readout.py` refuses to run
+  without:
+
+  1. Sweep the frozen candidate grid {0, 0.002, 0.005, 0.0075, 0.010, 0.015, 0.020, 0.025, 0.05,
+     0.10}, identical for every model.
+  2. Drop cells that are dead at baseline, meaning option entropy below 0.10 nats. A dead cell
+     cannot express a 0.03 effect whatever is injected, and is a different verdict from a saturated
+     one.
+  3. The usable band is the largest **prefix** of the candidate grid at which under 10% of live
+     cells are saturated, where saturated means option entropy below half that cell's own baseline.
+     A prefix, because a grid with a hole in it is not a dose-response.
+  4. The model's grid is four non-zero points spread across that band, plus alpha = 0.
+  5. If the band is empty, no confirmatory arm runs on that model and the reason is reported: the
+     injection saturates this readout before it moves it.
+
+  This is section 6's original band check with a saturation criterion added. The original truncated
+  on exclusion rate alone, and a saturated cell is excluded by nothing: the smoke run returned a
+  clean single option letter, no degeneration, no refusal, no truncation, and off-option mass
+  0.0001, on a cell where one option held 0.9938. Steps 2 and 3 are the addition; the 10% bar and
+  the truncate-before-endpoints discipline are as originally frozen.
+
+  Because the rule reads only headroom, never the discrepancy, applying it to an evaluation model
+  is not tuning on the evaluation set. `modal_alpha_recal.py` computes no endpoint, and a test
+  asserts it never imports the discrepancy statistic.
 - Coherence exclusion: a cell is excluded when mean token log-probability falls more than 1.0 nat
   below that item's alpha = 0 value, or the generation is degenerate by `scoring.is_degenerate`.
   Excluded cells are counted and reported per condition.
@@ -496,6 +524,42 @@ What it found, all of which is reported rather than absorbed:
   correct for every model.
 Impact on what can be claimed: the frozen grid in section 6 is not yet replaced. (d) is the open
 question, and whatever resolves it is logged here before any confirmatory cell is run.
+
+- **2026-08-01, band selection applied to both evaluation models, and what it did to the design.**
+What changed: section 6 now freezes a per-model rule rather than an alpha number, and the rule was
+applied to Qwen2.5-3B and Llama-3.1-8B. Selection reads headroom only (baseline entropy, saturation
+rate) and never the discrepancy, computes no endpoint, and
+`tests/test_experiments_wiring.py::test_band_selection_never_computes_the_endpoint` asserts the
+script cannot reach the endpoint machinery. Bands are written to a per-model file under `data/sweeps/` (`band_qwen3b.json`, `band_llama8b.json`) and
+`modal_readout.py` refuses to run without one.
+What it found, at 12 items x 2 permutations = 24 cells per condition:
+  (a) Qwen2.5-3B. Baseline entropy 0.512 nats, 4% of cells dead. Usable band 0.002 to 0.020, grid
+  (0, 0.002, 0.005, 0.0075, 0.010). The POSITIVE arm is responsive and monotone: own-pole mass
+  +0.011, +0.027, +0.057, +0.069, rising to +0.311 at alpha=0.100.
+  (b) Qwen2.5-3B, negative arm: **inert on its own pole.** Own-pole shift runs +0.0001, +0.0006,
+  +0.0007, +0.0005 across the grid and reaches only +0.0050 at alpha=0.100, where the positive arm
+  has moved +0.311. Two orders of magnitude apart. This confirms the smoke observation at 8x the
+  cell count.
+  (c) Llama-3.1-8B. Baseline entropy 1.464 nats and 0% dead cells, so the readout has more room
+  than either Qwen model, and the direction does not use it: peak absolute mean pole shift 0.0054
+  across the entire candidate range including alpha=0.100. **Inert**, matching Llama-3.2-3B, so
+  the inertness is a family property and not a scale one.
+  (d) A flaw in the responsiveness check, found while reading (c). It took the maximum over
+  individual cells, where Llama-3.1-8B peaks at 0.0383 on one outlier cell against a peak mean of
+  0.0054. A single noisy cell could certify a model as responsive. It now uses the peak absolute
+  MEAN shift, and on that measure Llama-3.1-8B is correctly INERT.
+Impact on what can be claimed, stated plainly:
+  (i) The **co-primary endpoint has no instrument on either evaluation model.** It contrasts the
+  negative-arm discrepancy against the positive-arm discrepancy, and the negative arm does not move
+  its own pole anywhere that was measured. Per the section 10 interpretation table this is
+  `uninformative`, not `absent`, and the asymmetry claim is not testable with this instrument.
+  (ii) The **primary endpoint has an instrument on Qwen2.5-3B via the positive arm only**, where mass
+  moves +0.057 at alpha=0.0075 while the argmax moves on 11% of cells. That is the phenomenon the
+  primary claim is about, and it is measurable at one pole on one model.
+  (iii) Llama-3.1-8B gets no confirmatory arm. The refusal is enforced in `modal_readout.py` rather
+  than left to discipline.
+  (iv) None of this was chosen after seeing an endpoint. Every number above is a headroom or
+  responsiveness measurement, taken before a single confirmatory cell was run.
 
 Nothing else is recorded. This section exists so that a deviation has somewhere to go the moment one
 happens, rather than being added afterwards alongside the thing it excuses.

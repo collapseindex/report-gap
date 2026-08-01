@@ -91,3 +91,21 @@ def test_the_confirmatory_list_is_not_stale():
     names = {p.name for p in EXPERIMENTS}
     missing = CONFIRMATORY - names
     assert not missing, "CONFIRMATORY names scripts that do not exist: %s" % sorted(missing)
+
+
+# The band-selection script may run on the EVALUATION models, which is only defensible because it
+# reads headroom and never the discrepancy the paper reports. That is a claim about the code, so
+# it gets asserted rather than promised.
+def test_band_selection_never_computes_the_endpoint():
+    path = pathlib.Path(__file__).resolve().parents[1] / "experiments" / "modal_alpha_recal.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    forbidden = {"discrepancy_deltas", "paired_bootstrap", "mcnemar_exact", "holm",
+                 "expected_discrepancy", "plant", "plant_arm"}
+    used = {n.attr for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+    used |= {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
+    leaked = sorted(forbidden & used)
+    assert not leaked, (
+        "modal_alpha_recal.py runs on evaluation models and touches endpoint machinery (%s). "
+        "Selecting a scope parameter with the statistic the paper reports IS tuning on the "
+        "evaluation set." % ", ".join(leaked)
+    )

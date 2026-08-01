@@ -24,7 +24,7 @@ already present in the artifact are skipped. Nothing is held in memory to be ret
 because a run that returns its results at the end is a run that loses them.
 
     modal run experiments/modal_readout.py                      # Qwen2.5-3B
-    modal run experiments/modal_readout.py --model llama        # Llama-3.1-8B
+    modal run experiments/modal_readout.py --model llama8b      # Llama-3.1-8B
     modal run experiments/modal_readout.py --smoke              # 3 items, one wording, no cost
 """
 
@@ -44,12 +44,17 @@ data_vol = modal.Volume.from_name("report-gap-data", create_if_missing=True)
 
 MODELS = {
     "qwen3b": "Qwen/Qwen2.5-3B-Instruct",
-    "llama": "NousResearch/Meta-Llama-3.1-8B-Instruct",
+    "llama8b": "NousResearch/Meta-Llama-3.1-8B-Instruct",
 }
 
-# frozen, prereg sections 1 and 6
+# frozen, prereg sections 1 and 6.
+#
+# The alpha grid is NOT hardcoded. Section 6 freezes a per-model RULE, not a number, because a
+# single alpha is a different intervention on different models: at alpha=0.025 a positive injection
+# moves positive-option mass by +0.056 on Qwen2.5-1.5B and +0.43 on Qwen2.5-3B. The grid comes from
+# data/sweeps/band_<slug>.json, written by modal_alpha_recal.py, and this script refuses to run
+# without it so the rule cannot quietly be skipped.
 DEPTH_FIT = 0.67
-ALPHAS = (0.0, 0.025, 0.05, 0.075, 0.10)
 PERM_SEEDS = (0, 1, 2, 3)
 N_ITEMS = 30
 MAX_NEW_TOKENS = 16
@@ -60,7 +65,7 @@ REMOTE_SRC = "/root/src"
 
 @app.function(image=image, gpu="A100-40GB", timeout=14400,
               volumes={"/root/.cache/huggingface": hf_cache, "/data": data_vol})
-def run(model_key: str, smoke: bool = False) -> dict:
+def run(model_key: str, alphas: list, smoke: bool = False) -> dict:
     import json
     import os
     import sys
@@ -82,6 +87,7 @@ def run(model_key: str, smoke: bool = False) -> dict:
     # raises here rather than producing scorable numbers from unknown source.
     prov = report_gap.assert_provenance(expect_dir=os.path.join(REMOTE_SRC, "report_gap"))
 
+    ALPHAS = tuple(alphas)
     model_name = MODELS[model_key]
     wordings = S.WORDINGS[:1] if smoke else S.WORDINGS
     seeds = PERM_SEEDS[:1] if smoke else PERM_SEEDS
@@ -274,9 +280,36 @@ def run(model_key: str, smoke: bool = False) -> dict:
 
 @app.local_entrypoint()
 def main(model: str = "qwen3b", smoke: bool = False):
+    import json
+    import pathlib
+
     if model not in MODELS:
         raise SystemExit("model must be one of %s" % ", ".join(MODELS))
-    res = run.remote(model, smoke)
+
+    band_path = pathlib.Path("data/sweeps/band_%s.json" % model)
+    if not band_path.exists():
+        raise SystemExit(
+            "no band file at %s. Section 6 freezes a per-model RULE, not an alpha number, so "
+            "the grid has to be selected for this model before any confirmatory cell runs: "
+            "modal run experiments/modal_alpha_recal.py --which eval" % band_path)
+    band = json.loads(band_path.read_text(encoding="utf-8"))
+    alphas = band["alphas"]
+    if len(alphas) < 2:
+        raise SystemExit("band for %s is empty: the injection saturates this readout before it "
+                         "moves it, so no confirmatory arm runs here. Report that." % model)
+    if not band.get("responsive", True):
+        raise SystemExit(
+            "band for %s reports the direction as INERT on this model: peak absolute mean pole "
+            "shift %.4f against a %.2f bar, on a readout with %.3f nats of baseline entropy and "
+            "%.0f%% dead cells. The readout has room and the direction does not use it. Running "
+            "the confirmatory matrix here would spend the budget measuring a discrepancy in a "
+            "quantity that does not move. Report the inertness instead."
+            % (model, band.get("peak_mean_shift", float("nan")), 0.02,
+               band.get("baseline_entropy", float("nan")),
+               100 * band.get("dead_rate", float("nan"))))
+    print("band for %s: %s  (rule: %s)" % (model, alphas, band["rule"]))
+
+    res = run.remote(model, alphas, smoke)
     print("\n" + "=" * 78)
     print("CONFIRMATORY READOUT RUN  --  %s%s" % (model, "  [SMOKE]" if smoke else ""))
     print("=" * 78)

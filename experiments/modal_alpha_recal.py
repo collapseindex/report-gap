@@ -26,7 +26,11 @@ fewer than 10% of cells are saturated, which is the same 10% bar section 6 alrea
 Nothing here is a confirmatory result. It selects a scope parameter, on models the paper does not
 report, against a criterion registered before the run.
 
-    modal run experiments/modal_alpha_recal.py
+    modal run experiments/modal_alpha_recal.py                  # the two calibrators
+    modal run experiments/modal_alpha_recal.py --which eval      # band selection per eval model
+
+Each run writes data/sweeps/band_<slug>.json. `modal_readout.py` reads that file and refuses to
+run without it, so the rule is operative rather than aspirational.
 """
 
 from __future__ import annotations
@@ -47,7 +51,20 @@ cache = modal.Volume.from_name("hf-cache", create_if_missing=True)
 # ~99.7% before any injection, d_neg exactly +0.0000 at every alpha. A model whose readout is dead
 # at baseline cannot say where a live readout stops being usable. Llama-3.2-3B replaces it and also
 # brackets the Llama evaluation model by family.
-MODELS = ("Qwen/Qwen2.5-1.5B-Instruct", "unsloth/Llama-3.2-3B-Instruct")
+CALIBRATORS = ("Qwen/Qwen2.5-1.5B-Instruct", "unsloth/Llama-3.2-3B-Instruct")
+
+# The evaluation models. Applying the band rule to these is NOT tuning on the evaluation set: the
+# rule reads headroom (baseline entropy, saturation) and never the discrepancy the paper reports.
+# This script computes no endpoint, and tests/test_experiments_wiring.py asserts it never imports
+# the discrepancy statistic.
+EVALUATION = ("Qwen/Qwen2.5-3B-Instruct", "NousResearch/Meta-Llama-3.1-8B-Instruct")
+
+SLUG = {
+    "Qwen/Qwen2.5-1.5B-Instruct": "qwen1_5b",
+    "unsloth/Llama-3.2-3B-Instruct": "llama3_2_3b",
+    "Qwen/Qwen2.5-3B-Instruct": "qwen3b",
+    "NousResearch/Meta-Llama-3.1-8B-Instruct": "llama8b",
+}
 
 # deliberately finer at the bottom than the frozen grid: 0.025 was already most of the way to
 # saturation on 3B, so the interesting region is below the old grid's first non-zero point.
@@ -159,12 +176,36 @@ def run(model_name: str) -> dict:
     return {"model": model_name, "rows": out, "cv": lex.cv_accuracy, "layer": l_fit}
 
 
+def peak_mean_shift(res) -> float:
+    """Largest absolute MEAN pole shift this model shows at any candidate alpha.
+
+    The mean, not the per-cell maximum. Taking the max over cells lets a single noisy cell qualify
+    a model as responsive: Llama-3.1-8B has a per-cell peak of 0.0383 and a peak mean of 0.0054,
+    which is an inert model with an outlier in it.
+    """
+    peak = 0.0
+    for alpha in CANDIDATE_ALPHAS[1:]:
+        for cond, key in (("lexical_neg", "d_neg"), ("lexical_pos", "d_pos")):
+            vals = [r[key] for r in res["rows"]
+                    if r["condition"] == cond and r["alpha"] == alpha]
+            if vals:
+                peak = max(peak, abs(sum(vals) / len(vals)))
+    return peak
+
+
 @app.local_entrypoint()
-def main():
+def main(which: str = "calib"):
     import json
     import pathlib
 
-    results = list(run.map(MODELS))
+    models = {"calib": CALIBRATORS, "eval": EVALUATION}.get(which)
+    if models is None:
+        raise SystemExit("which must be 'calib' or 'eval'")
+    import sys
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "src"))
+    from report_gap.analysis import MIN_BASELINE_ENTROPY as A_MIN_BASELINE_ENTROPY  # noqa: N806
+
+    results = list(run.map(models))
     pathlib.Path("data/sweeps").mkdir(parents=True, exist_ok=True)
     pathlib.Path("data/sweeps/sweep_alpha_recal.json").write_text(
         json.dumps(results, indent=1), encoding="utf-8")
@@ -179,6 +220,18 @@ def main():
     for res in results:
         rows = res["rows"]
         print("\n%s   (lexical cv %.3f, layer %d)" % (res["model"], res["cv"], res["layer"]))
+
+        dead_rate = sum(r["dead"] for r in rows) / len(rows)
+        base_ent = sum(r["base_entropy"] for r in rows) / len(rows)
+        print("  baseline option entropy %.4f nats, %.0f%% of cells dead before injection"
+              % (base_ent, 100 * dead_rate))
+        if dead_rate > 0.5:
+            print("  READOUT DEAD AT BASELINE. No band is selected: this model's forced-choice")
+            print("  self-report is pinned before anything is injected, so it cannot express an")
+            print("  effect and cannot constrain a grid. Report it, do not run a confirmatory arm.")
+            selected[res["model"]] = []
+            continue
+
         print("  %7s %10s %10s %10s %10s %10s"
               % ("alpha", "sat rate", "d_neg", "d_pos", "flips", "entropy"))
         band = []
@@ -205,6 +258,27 @@ def main():
         selected[res["model"]] = band
         print("  usable band: %s" % (["%.4f" % a for a in band] or "NONE"))
 
+        # four non-zero points spread across the band, plus zero: the grid this model will run.
+        step = max(1, len(band) // 4)
+        grid = band[step - 1::step][:4] if len(band) >= 4 else band
+        slug = SLUG.get(res["model"], res["model"].replace("/", "_"))
+        pathlib.Path("data/sweeps").mkdir(parents=True, exist_ok=True)
+        pathlib.Path("data/sweeps/band_%s.json" % slug).write_text(json.dumps({
+            "model": res["model"], "slug": slug,
+            "alphas": [0.0] + list(grid),
+            "usable_band": band,
+            "peak_mean_shift": peak_mean_shift(res),
+            "responsive": peak_mean_shift(res) >= MIN_PEAK_RESPONSE,
+            "candidate_grid": list(CANDIDATE_ALPHAS),
+            "baseline_entropy": base_ent, "dead_rate": dead_rate,
+            "rule": "largest prefix of the candidate grid with under %.0f%% of live cells "
+                    "saturated; saturated = option entropy below half the cell's own baseline; "
+                    "dead = baseline entropy below %.2f nats" % (100 * MAX_SATURATED,
+                                                                 A_MIN_BASELINE_ENTROPY),
+        }, indent=1), encoding="utf-8")
+        print("  WROTE data/sweeps/band_%s.json  grid=(0.0, %s)"
+              % (slug, ", ".join("%.4f" % a for a in grid)))
+
     print("\n" + "-" * 84)
     # A model where the injection does nothing NEVER saturates, so it votes for the widest possible
     # band while carrying no information about where a band should stop. Only models that actually
@@ -214,8 +288,10 @@ def main():
     # inert on it, not that alpha=0.10 is safe.
     responsive = {}
     for res in results:
-        peak = max([abs(r["d_neg"]) for r in res["rows"] if r["condition"] == "lexical_neg"]
-                   + [abs(r["d_pos"]) for r in res["rows"] if r["condition"] == "lexical_pos"])
+        # the peak of the MEAN shift, not the max over individual cells. taking the max over cells
+        # lets one noisy cell qualify a model as responsive: Llama-3.1-8B has a per-cell peak of
+        # 0.0383 and a mean shift of about 0.004, which is inert with an outlier in it.
+        peak = peak_mean_shift(res)
         ok = peak >= MIN_PEAK_RESPONSE
         print("  %-34s peak pole shift %.4f   %s"
               % (res["model"], peak, "responsive" if ok else "INERT, excluded from band selection"))
