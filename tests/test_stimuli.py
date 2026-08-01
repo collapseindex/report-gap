@@ -352,3 +352,48 @@ def test_unknown_scope_raises_rather_than_hashing_everything():
 def test_every_scope_names_only_real_payload_keys():
     for arm in S._ARM_SCOPES:
         S.frozen_hash(arm)   # raises KeyError if a scope names a key that does not exist
+
+
+# ------------------------------------------------------------------------------------------------
+# enumeration arm (PREREG_enumerate.md section 7)
+# ------------------------------------------------------------------------------------------------
+
+def test_enumeration_is_complete_and_distinct():
+    o = S.all_option_orderings()
+    assert len(o) == 120 and len(set(o)) == 120
+    for perm in o:
+        assert sorted(perm) == list(range(len(S.SELF_REPORT_OPTIONS)))
+
+
+def test_identical_condition_options_are_byte_identical():
+    txt, mapping = S.build_enumerated_probe(S.all_option_orderings()[7], "identical")
+    bodies = [l.split(". ", 1)[1] for l in txt.split("\n")[1:]]
+    assert len(bodies) == 5 and len(set(bodies)) == 1, \
+        "the position-prior denominator has options that differ; it measures content, not position"
+
+
+def test_canary_answer_is_locatable_in_every_ordering():
+    for perm in S.all_option_orderings():
+        _, mapping = S.build_enumerated_probe(perm, "canary")
+        correct = [L for L, k in mapping.items() if k == S.CANARY_CORRECT_KEY]
+        assert len(correct) == 1, "the canary's correct answer is not uniquely locatable"
+
+
+def test_numbers_and_letters_differ_only_in_the_label_and_the_noun():
+    perm = S.all_option_orderings()[3]
+    a = S.build_enumerated_probe(perm, "letters")[0]
+    b = S.build_enumerated_probe(perm, "numbers")[0]
+    strip = lambda s: "\n".join(l.split(". ", 1)[1] if ". " in l else l for l in s.split("\n")[1:])
+    assert strip(a) == strip(b), "the option TEXT differs between label conditions"
+    assert a.split("\n")[0].replace("one letter", "X") == b.split("\n")[0].replace("one number", "X"), \
+        "the stems differ by more than the letter/number noun"
+
+
+def test_enumerated_probe_refuses_a_non_permutation():
+    with pytest.raises(ValueError, match="not a permutation"):
+        S.build_enumerated_probe((0, 0, 1, 2, 3), "letters")
+
+
+def test_enumerated_probe_refuses_an_unknown_condition():
+    with pytest.raises(KeyError, match="unknown condition"):
+        S.build_enumerated_probe(S.all_option_orderings()[0], "vibes")

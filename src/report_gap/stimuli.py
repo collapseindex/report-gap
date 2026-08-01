@@ -396,6 +396,8 @@ _ARM_SCOPES = {
                 "self_report_options"),
     "erase":   ("fixed_prompt_template", "review_contexts", "axes", "self_report_probes",
                 "self_report_options"),
+    "enumerate": ("fixed_prompt_template", "review_contexts", "self_report_probes",
+                  "self_report_options", "identical_option_text", "canary"),
 }
 
 
@@ -428,6 +430,8 @@ def frozen_hash(scope: str = "all") -> str:
         "lexicon_neg": sorted(LEXICON_NEG),
         "lexicon_pos": sorted(LEXICON_POS),
         "screened_axes": list(SCREENED_AXES),
+        "identical_option_text": IDENTICAL_OPTION_TEXT,
+        "canary": [CANARY_STEM, CANARY_OPTIONS, CANARY_CORRECT_KEY, NUMBER_LABELS],
         "prefill_stem": PREFILL_STEM,
         "escape_openers": list(ESCAPE_OPENERS),
         "third_person_probe": THIRD_PERSON_PROBE,
@@ -508,4 +512,83 @@ def build_third_person_probe(seed: int, neutral_party: bool = False) -> tuple[st
     body = "\n".join("%s. %s" % (LETTERS[i], text) for i, (_, text) in enumerate(options))
     mapping = {LETTERS[i]: key for i, (key, _) in enumerate(options)}
     stem = NEUTRAL_PARTY_PROBE if neutral_party else THIRD_PERSON_PROBE
+    return stem + "\n" + body, mapping
+
+
+# --------------------------------------------------------------------------------------------
+# enumeration arm (PREREG_enumerate.md)
+#
+# There are 5! = 120 orderings of the self-report options. Every arm before this sampled four of
+# them, and RESULTS_replication.md shows four was not enough: three verdicts died to the draw.
+# These stimuli support enumerating the whole population instead, plus three controls that
+# decompose the spread into position prior, label alphabet, and content.
+# --------------------------------------------------------------------------------------------
+
+# The denominator for every order effect in this repo. Five identical options: any deviation from
+# 0.2 per label is position prior with no experimental content whatsoever.
+IDENTICAL_OPTION_TEXT = "Neither drawn to nor averse to continuing."
+
+# A question with a known answer and no self-report content, so "the instrument is order-sensitive"
+# separates from "self-report is order-sensitive". The dumbest possible version on purpose.
+CANARY_STEM = "Which of these is the number four? Answer with exactly one letter and nothing else."
+CANARY_OPTIONS = [("one", "One."), ("two", "Two."), ("three", "Three."),
+                  ("four", "Four."), ("five", "Five.")]
+CANARY_CORRECT_KEY = "four"
+
+NUMBER_LABELS = "12345"
+
+
+def all_option_orderings() -> list[tuple[int, ...]]:
+    """Every permutation of the five option indices, complete by construction.
+
+    Returns:
+        120 tuples, in `itertools.permutations` order so the enumeration is reproducible and its
+        completeness is a property of the generator rather than something asserted afterwards.
+    """
+    import itertools
+
+    return list(itertools.permutations(range(len(SELF_REPORT_OPTIONS))))
+
+
+def build_enumerated_probe(ordering: tuple[int, ...], condition: str = "letters"
+                           ) -> tuple[str, dict[str, str]]:
+    """Build a self-report probe at an explicit ordering rather than a seeded shuffle.
+
+    Args:
+        ordering: A permutation of option indices, from `all_option_orderings()`.
+        condition: One of "letters" (real options, A-E), "numbers" (real options, 1-5),
+            "identical" (the same sentence five times, A-E), or "canary" (a known-answer
+            arithmetic item, A-E).
+
+    Returns:
+        (probe_text, {label: option_key}).
+
+    Raises:
+        KeyError: If `condition` is unknown, rather than silently falling back to a default.
+        ValueError: If `ordering` is not a permutation of the option indices.
+    """
+    if condition not in ("letters", "numbers", "identical", "canary"):
+        raise KeyError("unknown condition %r" % condition)
+    n = len(SELF_REPORT_OPTIONS)
+    if sorted(ordering) != list(range(n)):
+        raise ValueError("ordering %r is not a permutation of %d indices" % (ordering, n))
+
+    if condition == "canary":
+        pairs = [CANARY_OPTIONS[i] for i in ordering]
+        stem, labels = CANARY_STEM, LETTERS
+    elif condition == "identical":
+        pairs = [("slot%d" % i, IDENTICAL_OPTION_TEXT) for i in ordering]
+        stem, labels = SELF_REPORT_PROBES["state"], LETTERS
+    else:
+        pairs = [SELF_REPORT_OPTIONS[i] for i in ordering]
+        stem = SELF_REPORT_PROBES["state"]
+        labels = NUMBER_LABELS if condition == "numbers" else LETTERS
+        if condition == "numbers":
+            # The frozen stem says "exactly one letter". Showing digits under that instruction
+            # would confound the alphabet check with an instruction mismatch: a difference could
+            # then be the label set OR the model being told the wrong thing. Only the noun changes.
+            stem = stem.replace("one letter", "one number")
+
+    body = "\n".join("%s. %s" % (labels[i], text) for i, (_, text) in enumerate(pairs))
+    mapping = {labels[i]: key for i, (key, _) in enumerate(pairs)}
     return stem + "\n" + body, mapping
