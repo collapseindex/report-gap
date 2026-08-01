@@ -1,6 +1,6 @@
 # report-gap
 
-**v0.1.0**
+**v0.4.0**
 
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
@@ -32,33 +32,55 @@ This repo builds the map, and the floor underneath it.
 ## The design in one paragraph
 
 Hold the prompt byte-identical across every condition. Vary only what is added to the residual
-stream. Then read the SAME forward pass two ways: as the probability mass the model puts on
-state-congruent self-report options, and as the single option it would actually have answered. A
-standard forced-choice protocol records only the second. The question is how much of the first
-survives into it.
+stream. Then read what comes out, several ways, and check at every step whether the readout was
+capable of moving at all.
 
-That is a narrower design than this repo started with, and the narrowing was done by controls
-rather than by taste. What they killed is in the next section.
+That last clause is the whole project. The question started as "does forced-choice self-report keep
+up with an injected state", and five preregistrations later the interesting object turned out to be
+the instrument rather than the answer.
 
 The controls are what make it a measurement rather than a demonstration:
 
 - **Norm-matched random direction.** Any large enough vector changes behavior. This is the only
-  thing that separates content from magnitude.
-- **Planted-discrepancy control.** A synthetic mass shift of known size that by construction does
-  not move the argmax. The analysis has to recover a number fixed without it, at full strength and
-  again near the claimed detection floor. Without this, "we found a discrepancy" rests on a
-  statistic nobody made recover a discrepancy.
-- **Capability positive control.** A gap is only interesting if the argmax is capable of moving at
-  all, so one condition must show it moving.
+  thing that separates content from magnitude, and it is subtracted from every endpoint in every
+  arm.
+- **Capability gate.** A null means nothing unless the readout was shown capable of moving. Every
+  arm has one, and a failed gate forces `uninformative` in code rather than in the write-up's good
+  intentions. Two arms died to this.
+- **Planted-discrepancy control.** A synthetic effect of known size planted in the exact statistic
+  the decision rule reads, at full strength and again at the claimed detection floor.
 - **Saturation and liveness criteria.** A readout pinned at one option cannot express an effect. A
   cell is *dead* if it starts pinned and *saturated* if the injection pins it, and the two are
   different verdicts kept apart.
-- **Integrity endpoints.** At high strength the model degrades, and "reports a bad state" stops
-  being distinguishable from "is broken." Coherence, letter share, and refusal rate are frozen
-  endpoints, not afterthoughts.
+- **Orthogonalization.** When probing for a state we injected, the probe is made exactly orthogonal
+  to the injected direction, so the vector we added contributes zero to the number we report.
+- **Integrity endpoints.** Coherence, letter share, refusal and degeneration are frozen endpoints,
+  not afterthoughts.
 
-Nothing in the confirmatory matrix is scored by a language model. Every rate is exact-match, a
-softmax read, or a frozen lexicon count.
+Nothing in any confirmatory matrix is scored by a language model. Every number is an exact match, a
+softmax read, a dot product, or a frozen lexicon count.
+
+## What we found
+
+Five preregistrations, each answering the objection the last one raised. Full numbers in the
+`RESULTS_*.md` files; every raw artifact is committed unscored before its endpoints were computed.
+
+| # | question | verdict | where |
+|---|---|---|---|
+| 1 | does forced-choice argmax under-report an injected state? | **refuted, and refuted in direction.** It *over*-reports: a threshold near a decision boundary amplifies. Mass moved +0.0625 while the argmax indicator moved +0.0875 | [RESULTS.md](RESULTS.md) |
+| 2 | the negative pole moves mass to *neutral*, not to negative. Absence or gate? | FLOOR, on one arm **(later overturned by #5)** | [RESULTS_floor.md](RESULTS_floor.md) |
+| 3 | is the floor a property of the direction or of preference tuning? | **TUNING-LOCALIZED.** Base moves negative-option mass +0.0336; its tuned sibling +0.0002 while being 3x more responsive on the capability gate | [RESULTS_pair.md](RESULTS_pair.md) |
+| 4 | is that null just the wrong injection depth? (raised by arXiv:2605.05653) | **DEPTH-ROBUST.** Null at all 7 gate-clean depths from 14% to 80%, including the band where the effect was predicted | [RESULTS_depth.md](RESULTS_depth.md) |
+| 5 | does the tuned model *represent* the state it will not report? | **SHELL.** It carries it downstream at -1.07 SD, orthogonalized, while its option mass moves +0.0006 | [RESULTS_shell.md](RESULTS_shell.md) |
+
+The through-line: **the floor is in the expression, not in the representation.** A preference-tuned
+model given a valence direction at matched norm will report "drawn to continuing" at one sign and
+"neither drawn nor averse" at the other, while a probe orthogonal to the injected vector shows the
+negative state present in the residual stream that feeds the answer.
+
+Read [RELATED_WORK.md](RELATED_WORK.md) before quoting any of it. That valence is linearly
+represented and steerable is established prior art and is not our contribution; what a *self-report
+readout* does with one is.
 
 ## What the controls have killed
 
@@ -74,7 +96,16 @@ one of these was caught by something that existed before the run it killed.
 | Qwen2.5-7B as a calibrator | readout **dead at baseline**: 0.014 nats, one option at ~99.7% before anything is injected | `data/sweeps/sweep_alpha_recal.json` |
 | Llama-3.1-8B, the second evaluation model | direction **inert**: peak mean pole shift 0.0054 up to alpha=0.10, on a readout with *more* room than either Qwen (1.464 nats, 0% dead) | `data/sweeps/band_llama8b.json` |
 | the negative pole on Qwen2.5-3B | **inert on its own pole**: +0.0005 at the grid top where the positive arm moves +0.069 | `data/sweeps/sweep_alpha_recal.json` |
-| R3 probability mass, positive pole, Qwen2.5-3B | **survives.** Mass +0.057 at alpha=0.0075 while the argmax moves on 11% of cells | the confirmatory arm |
+| the headline hypothesis itself | **refuted in direction.** Argmax over-reports rather than under-reports | [RESULTS.md](RESULTS.md) |
+| arm B, prefilled continuation | capability gate 0.00000 across five stems. The model reroutes to "I don't have access to the document" every time; prefilling moves the disclaimer one clause later rather than blocking it | `data/sweeps/sweep_stem_calib.json` |
+| the FLOOR conclusion | **overturned by our own follow-up.** The state is represented, just not expressed | [RESULTS_shell.md](RESULTS_shell.md) |
+| the depth objection from the literature | tested directly and **survived**: null at 7 depths | [RESULTS_depth.md](RESULTS_depth.md) |
+
+Three of our own checkers also failed, each in the flattering direction, and each is recorded where
+it happened: a headline check that printed "write the sentence" on a refuted claim, a capability
+gate that passed on `+0.0000`, and a preregistered contrast with an inverted sign. The last one is
+disclosed in [RESULTS_shell.md](RESULTS_shell.md) because correcting it changed a verdict in our
+favour.
 
 The co-primary endpoint, whether the readout loses more of a negative state than a positive one,
 has **no instrument** on either evaluation model: the negative arm does not move the quantity that
@@ -110,71 +141,93 @@ Paper discipline, prereg format, and the runnable checks come from `paper-harnes
 ## Layout
 
 ```
-PREREG_gap_map.md      the first design, retained unedited. Its own controls killed it.
-PREREG_readout_gap.md  the current design, frozen. What the confirmatory run answers to.
-src/report_gap/        stimuli, direction fitting, injection hooks, judge-free scorers,
-                       the planted-discrepancy control, and the analysis primitives
-experiments/           the Modal runs, the confirmatory runner, and the CPU selftest
-results/               recorded outputs, including the nulls
-data/sweeps/           raw sweep json
-tests/                 pipeline guards and the negative tests for every scorer
-paper/                 the report
+PREREG_gap_map.md              the first design. Its own controls killed it; retained unedited.
+PREREG_readout_gap.md          does argmax under-report an injected state?
+PREREG_floor_vs_suppression.md is the neutral floor an absence or a gate?
+PREREG_base_pair.md            direction-limited or tuning-localized?
+PREREG_depth.md                is the negative null a depth artifact?
+PREREG_shell_core.md           does the tuned model represent what it will not report?
+
+RESULTS.md                     readout gap. Primary refuted in direction.
+RESULTS_floor.md               FLOOR. Superseded twice; supersede notices at the top.
+RESULTS_pair.md                TUNING-LOCALIZED.
+RESULTS_depth.md               DEPTH-ROBUST.
+RESULTS_shell.md               SHELL. The strongest result.
+RELATED_WORK.md                lit check, with read-depth marked per source.
+
+src/report_gap/                stimuli, direction fitting, injection hooks, judge-free scorers,
+                               the planted-discrepancy control, analysis primitives, provenance
+experiments/                   one modal_*.py runner and one analyze_*.py scorer per arm
+data/                          raw artifacts, committed unscored, plus per-model band files
+tests/                         224 tests: pipeline guards and a negative test for every scorer
+paper/                         the report
 ```
 
-## Running the confirmatory arm
+## Running it
+
+Each arm depends on the band files the arm before it wrote, so the order matters.
 
 ```bash
-# 1. select each model's alpha band. section 6 freezes a RULE, not a number, because a single
-#    alpha is a different intervention on different models: at 0.025 a positive injection moves
-#    positive-option mass +0.056 on Qwen2.5-1.5B and +0.43 on Qwen2.5-3B.
-modal run experiments/modal_alpha_recal.py                  # the two non-eval calibrators
+# 1. select each model's alpha band. section 6 of PREREG_readout_gap.md freezes a RULE, not a
+#    number, because one alpha is an 8x different intervention across models.
+modal run experiments/modal_alpha_recal.py                  # non-eval calibrators
 modal run experiments/modal_alpha_recal.py --which eval     # writes data/sweeps/band_*.json
 
-# 2. the confirmatory arm. refuses to start without a band file, and refuses a model the band
-#    file marks inert.
-modal run experiments/modal_readout.py --smoke              # 3 items, one wording, wiring check
-modal run experiments/modal_readout.py --model qwen3b       # full frozen matrix
-
-# 3. score it
+# 2. the readout gap. refuses to start without a band file, and refuses a model marked inert.
+modal run experiments/modal_readout.py --smoke              # wiring check, no cost
+modal run experiments/modal_readout.py --model qwen3b
 modal volume get report-gap-data qwen3b ./data/
 python experiments/analyze_readout.py data/qwen3b/readout.jsonl
+
+# 3. floor vs gate
+modal run experiments/modal_stem_calib.py                   # arm B stem, capability criterion only
+modal run experiments/modal_floor.py
+python experiments/analyze_floor.py data/floor/floor.jsonl
+
+# 4. base vs instruct pair
+modal run experiments/modal_base_pair.py
+python experiments/analyze_pair.py data/pair_base/pair.jsonl data/pair_instruct/pair.jsonl
+
+# 5. depth sweep. also writes the per-layer bands arm 6 reuses.
+modal run experiments/modal_depth.py
+python experiments/analyze_depth.py data/depth_base/depth.jsonl data/depth_instruct/depth.jsonl
+
+# 6. shell vs core
+modal run experiments/modal_shell_core.py
+python experiments/analyze_shell_core.py data/shell_base/shell.jsonl data/shell_instruct/shell.jsonl
 ```
 
-`--model llama8b` is expected to refuse. The band file records that model as inert and the runner
-stops with the numbers in the message, rather than spending the budget measuring a discrepancy in
-a quantity that does not move.
+`--model llama8b` on arm 2 is expected to refuse: the band file records that model as inert and the
+runner stops with the numbers in the message rather than spending the budget measuring a
+discrepancy in a quantity that does not move.
 
-The run streams to a Modal volume and commits after every batch, so an interrupt costs one batch
-and a rerun resumes from what is already there. `modal_readout.py` computes nothing;
-`analyze_readout.py` holds every endpoint and both instrument gates. That split is the prereg's
-rather than a convenience: a runner that also decides is a runner that can decide differently once
-it has seen the numbers.
+Every runner streams to a Modal volume and commits after each batch, so an interrupt costs one batch
+and a rerun resumes. Every runner computes nothing; the `analyze_*` scripts hold all endpoints and
+gates. That split is the preregs', not a convenience: a runner that also decides is a runner that
+can decide differently once it has seen the numbers.
 
-Two things `analyze_readout.py` refuses to do. It will not score a torn artifact, because an
-interrupted run is resumable and scoring the fragment is a choice about which cells to keep. And it
-will not read the held-out probe wording until the two-wording result is on disk with a timestamp.
+Total compute for everything above is about 40 minutes of A100 time.
 
 ## Status
 
-`PREREG_readout_gap.md` frozen 2026-07-31, five deviations logged, `PREREG CLEAN` against the
-`paper-harness` checker. 202 tests pass.
+Five preregistrations, all clean against the `paper-harness` checker. 224 tests. Every raw artifact
+committed unscored before its endpoints were computed.
 
-The design has narrowed from two models and two poles to **one model, one pole**, and every step of
-that narrowing came from a headroom or responsiveness measurement taken before a confirmatory cell
-was run:
+| prereg | verdict | deviations |
+|---|---|---|
+| `PREREG_gap_map.md` | superseded; its own controls killed three of five instruments | 6 |
+| `PREREG_readout_gap.md` | primary refuted in direction, co-primary uninformative | 5 |
+| `PREREG_floor_vs_suppression.md` | FLOOR, later overturned by the shell/core arm | 2 |
+| `PREREG_base_pair.md` | TUNING-LOCALIZED | 0 |
+| `PREREG_depth.md` | DEPTH-ROBUST | 0 |
+| `PREREG_shell_core.md` | SHELL | 1, disclosed as self-serving |
 
-- **Qwen2.5-3B, positive pole** is the one arm with an instrument. Band 0.002 to 0.020, grid
-  (0, 0.002, 0.005, 0.0075, 0.010), own-pole mass rising +0.011, +0.027, +0.057, +0.069.
-- **Qwen2.5-3B, negative pole** is inert on its own pole, so the co-primary is `uninformative`.
-- **Llama-3.1-8B** is inert entirely and gets no confirmatory arm.
+Known limits carried by every positive result: one architecture family, a lexically confounded
+direction by construction, `m = 2` random battery so no false-positive rate is claimed, one probe
+method, 3B scale.
 
-The first two deviations came from a line-by-line audit against
-`paper-harness/checklists/CONTROLS.md` that found eight gaps behind a cross-check claim which had
-not actually been performed. The remaining three came from the instrument refusing to behave, which
-is the point of having one.
-
-See [PLAN.md](PLAN.md) for what is built before the window opens and what is deliberately left
-for it.
+See [PLAN.md](PLAN.md) for what was built before the sprint window and what was not, including the
+disclosure that the confirmatory arms were run twelve days early.
 
 ## License
 

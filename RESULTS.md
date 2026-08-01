@@ -1,5 +1,12 @@
 # Results: Qwen2.5-3B, confirmatory arm
 
+> **This is arm 1 of 5.** Its conclusions stand as written and were not overturned, but the
+> project moved well past it. The neutral floor identified in section 4 below became the subject of
+> `RESULTS_floor.md`, `RESULTS_pair.md`, `RESULTS_depth.md` and `RESULTS_shell.md`, and the current
+> summary of all five is the "What we found" table in [README.md](README.md). In particular, section
+> 4's reading of the neutral floor as possibly an absence was later **overturned**: the state is
+> represented downstream, it is only the option readout that does not express it.
+
 **Run 2026-08-01.** 7560 rows, 360 distinct cells, 0 excluded. Artifact `data/qwen3b/readout.jsonl`
 committed unscored at `4219ca1` before any endpoint was computed. Scored against
 `PREREG_readout_gap.md` sections 8 and 9.

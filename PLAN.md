@@ -1,6 +1,8 @@
 # Plan
 
-Sprint opens in 13 days. 3 days inside the window, solo.
+Sprint opens 2026-08-13, twelve days out. 3 days inside the window, solo.
+
+Last updated 2026-08-01, after five preregistered arms were completed pre-window.
 
 ## The line between prep and the window
 
@@ -22,17 +24,18 @@ and negative test.
   test enforces that the selection script cannot reach the endpoint machinery. They are scope
   selection, which prereg section 6 explicitly authorizes and which has to happen before the
   confirmatory arm by construction.
-- *The confirmatory arm on Qwen2.5-3B.* This one does produce the headline number, and it was run on
-  2026-08-01, twelve days before the window. **It is a result, brought rather than made.** Any sprint
-  submission has to say so plainly and date it. The alternative reading, that pre-window instrument
-  work licenses a pre-window result because the same repo produced both, is exactly the elision this
-  section exists to prevent.
+- *All five confirmatory arms.* The readout gap, floor-versus-gate, the base/instruct pair, the
+  depth sweep and the shell/core probe, all run 2026-08-01, twelve days before the window. **These
+  are results, brought rather than made.** Any sprint submission has to say so plainly and date
+  them. The alternative reading, that pre-window instrument work licenses a pre-window result
+  because the same repo produced both, is exactly the elision this section exists to prevent.
 
 What this costs: the sprint contribution is no longer "here is a result produced in 3 days." What it
-buys: the design narrowed from two models and two poles to one model and one pole *before* the
-window, on measurements that would otherwise have eaten day 1 and day 2, and the negative findings
-(inert Llama, inert negative pole, dead 7B readout) are worth more than the headline was likely to
-be.
+buys: a preregistered chain where each arm answers the objection the last one raised, including one
+raised by the literature and one that overturned our own conclusion. That chain could not have been
+built in 3 days, because each link had to be preregistered before the next was designed. The honest
+framing is that this is completed work being brought to a sprint, and the sprint days are for the
+two extensions listed below that would genuinely widen it.
 
 The prereg timestamp check still means what it meant: `check_prereg.py` compares the commit that
 added the prereg against the first results artifact, and the prereg landed first. It certifies
@@ -72,21 +75,31 @@ after the run is how a control becomes a decoration.
 
 ## Inside the window (3 days)
 
-Rewritten now that the pre-window work has changed what is left to do. The Qwen2.5-3B confirmatory
-arm exists and is dated; the window is for what it opened up, not for redoing it.
+Rewritten 2026-08-01. Both extensions this section previously listed for days 1 and 2 have since
+been run, twelve days early, and are disclosed as such at the top of this file.
 
-- **Day 1. Extend the instrument, do not re-run it.** The one live arm is positive-pole mass on one
-  model. The obvious extensions, in order of what a null would teach: a second responsive model
-  family (Mistral, Gemma) to find out whether inertness is a Llama property or a Qwen exception; and
-  a non-lexical direction, since the task axis failed its gate and the surviving direction is
-  lexically confounded by construction.
-- **Day 2. The negative-pole question, properly.** The negative arm is inert on its own pole while
-  removing positive mass onto the neutral option. That is either a floor effect (the model has no
-  negative self-report to lose) or a suppression (it has one and will not emit it). Those are
-  distinguishable: fit the direction on a model without RLHF-style tuning, or read the negative
-  options' mass under a prefill that has already conceded a negative state.
-- **Day 3.** Scoring, intervals, figures, write-up. `run_all.py` from `paper-harness` in the loop.
-  Submit, with the pre-window dating stated in the submission rather than in a footnote.
+**Already done, pre-window:** the base/instruct pair (`RESULTS_pair.md`), the depth sweep answering
+the literature's strongest objection (`RESULTS_depth.md`), and the representation probe that
+overturned our own FLOOR conclusion (`RESULTS_shell.md`).
+
+What is genuinely left, in order of what a null would teach:
+
+- **Day 1. A second architecture family that responds at all.** Every positive result rests on
+  Qwen. Llama is inert on this readout at both sizes tested, on live readouts with plenty of
+  headroom. Mistral or Gemma would tell us whether the neutral floor is a property of preference
+  tuning in general or of one family's tuning. This is the single biggest limitation and the
+  cheapest to attack.
+- **Day 2. A non-lexical direction.** The surviving direction is fit from first-person state
+  language and is lexically confounded by construction; the task axis built to avoid that failed its
+  decoding gate at three scales. Without this, "a direction that separates affect vocabulary"
+  remains the ceiling on what the whole project is about. Options: contrastive prompts holding
+  vocabulary fixed, or an SAE feature selected for valence without lexical supervision.
+- **Day 3.** Figures, write-up, submission, with the pre-window dating stated in the submission
+  rather than in a footnote. `run_all.py` from `paper-harness` in the loop.
+
+If the second family is also inert, that is a better result than another Qwen number: it would mean
+this method of inducing a self-reportable state does not generalize, which the field should know
+before building on it.
 
 ## Risks, ranked
 
@@ -96,16 +109,23 @@ Reordered after the pre-window runs. Risks 1 and 3 have already fired.
    inert entirely and the negative pole is inert on Qwen2.5-3B. The positive control and the
    responsiveness rule are what separated "the instrument is at fault" from "the direction is," and
    both were in place before the runs that needed them.
-2. **The surviving arm is lexically confounded.** Conceded in the prereg from the start: `d` is fit
-   from first-person state language, and the non-lexical alternative failed its gate at three scales.
-   The most this licenses is "a direction that separates affect vocabulary," and the write-up must
-   not upgrade that sentence.
+2. **FIRED, and survived. The depth objection.** The literature puts negative valence at a depth we
+   never injected at. Tested across eight depths; the null held at all seven gate-clean ones.
+   Recorded because a risk that fires and survives is worth as much as one that never fires.
 3. **FIRED, in an unexpected form. Saturation, not coherence collapse.** The expected failure was the
    model degenerating at high alpha. What actually happened is the readout pinning while every
    coherence endpoint stayed clean, which the original band check could not see. Fixed with the
    saturation and liveness criteria.
-4. **Bringing a result to a sprint that is for making them.** Now the live risk. See the section at
-   the top of this file. The mitigation is disclosure, not framing.
-5. **One model, one pole is a thin headline.** Real. The honest framing is that the negative results
-   are the contribution and the surviving positive-pole gap is the existence proof that the
-   instrument works at all.
+4. **Bringing a result to a sprint that is for making them.** The live risk, and it grew: five arms
+   are now complete pre-window, not one. See the section at the top of this file. The mitigation is
+   disclosure, not framing.
+5. **One architecture family carries every positive result.** The sharpest remaining limitation.
+   Llama is inert at two sizes on live readouts, so "the neutral floor" could be a Qwen fact rather
+   than a tuning fact. Day 1 above exists for this.
+6. **The direction is lexically confounded and the non-lexical alternative failed.** Conceded in
+   every prereg from the start. It caps what the entire project is entitled to say, and no amount
+   of downstream rigour lifts that cap. Day 2 above is the only thing that would.
+7. **We overturned our own conclusion once.** FLOOR became SHELL when we probed the representation
+   instead of the readout. That is the process working, but it is also a warning that the current
+   headline is one good follow-up away from moving again, and the write-up should not read as
+   settled.
