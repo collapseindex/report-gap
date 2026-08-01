@@ -99,9 +99,18 @@ explanation this run does not control: the negative direction may have been inje
 where negative valence is not causally concentrated.
 
 The base model moving at 67% (+0.0336) weakens that explanation without removing it, since the two
-models could localize differently. Until a depth sweep spanning 14-27% is run, the TUNING-LOCALIZED
-verdict should be read as **tuning-localized at 0.67 depth**, and the stronger unqualified claim
-should not be written. See `RELATED_WORK.md` section 1.
+models could localize differently.
+
+**RESOLVED, 2026-08-01, by `RESULTS_depth.md`.** The depth sweep ran eight layers per model. On the
+instruct model the negative pole is null at **all seven gate-clean depths**, including layers 5, 7
+and 10 inside the predicted 14-27% band, with capability effects of +0.0391 to +0.1648 at those
+layers. On the base model it moves at three gate-clean depths including layer 10. At layer 10 the
+tuned model's capability is four times the base model's (+0.1388 against +0.0352) while its negative
+mass moves -0.0003 against the base model's +0.0310.
+
+The depth qualifier is therefore **withdrawn**. The TUNING-LOCALIZED verdict stands unqualified, and
+is now stated as null across seven depths spanning 14% to 80% of the network rather than at a single
+layer.
 
 ## Caveats specific to this run
 

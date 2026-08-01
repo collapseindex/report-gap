@@ -4,11 +4,13 @@ Lit check run 2026-08-01. Entries are marked with how much of each source was ac
 **[full]** paper read, **[abstract]** abstract or intro only, **[snippet]** search-result summary
 only. Nothing marked `[snippet]` should be cited for a specific number without reading it first.
 
-The most important item is section 1. It is a threat to our central null, not a citation.
+Section 1 was a threat to our central null. It has since been tested directly and the null
+survived; the section is kept in its original form with the resolution appended, because a
+threat that is quietly rewritten after it is answered is a threat nobody can audit.
 
 ---
 
-## 1. THREAT: we may have injected the negative pole at the wrong depth
+## 1. RESOLVED THREAT: the depth objection, tested and survived
 
 **Venkatesh, "Negative Before Positive: Asymmetric Valence Processing in Large Language Models",
 arXiv:2605.05653, May 2026. [full]**
@@ -25,7 +27,7 @@ response strength for negative (Spearman rho -0.49 to -0.68) but not for positiv
 0.37), which they read as negative valence routing through a single dominant early layer while
 positive is distributed.
 
-**Why this is a problem for us.** We inject at **0.67 of depth for both poles**, carried over from
+**Why this WAS a problem for us** (written before the test, kept as written). We inject at **0.67 of depth for both poles**, carried over from
 `recipient-probe` and never varied. On their result that is squarely in the positive-valence band
 and well past the negative-valence band. Our headline negative finding, that the negative pole does
 not move negative-option mass in the tuned model, has an alternative explanation we did not control:
@@ -39,17 +41,23 @@ exploratory. That was a reasonable scope decision when it was made and it is now
 this architecture. But base and tuned models could localize differently, so this is a weakening of
 the threat, not a refutation of it.
 
-**Required follow-up.** A depth sweep for the negative pole on Qwen2.5-3B-Instruct, at minimum
-covering 14-27% depth (layers 5-10 of 36) alongside the current layer 24. If negative-option mass
-moves at the shallow layer and not at 0.67, our tuning-localization claim is substantially wrong and
-the correct story is a depth story. If it moves at neither while the base model moves at both, the
-claim survives and is stronger for having been tested.
+**RESOLVED 2026-08-01. See `RESULTS_depth.md`.** The sweep ran, eight depths per model, direction
+fit at each layer. On Qwen2.5-3B-Instruct the negative pole is null at all seven gate-clean depths
+including layers 5, 7 and 10 inside their band; on the base sibling it moves at three gate-clean
+depths including layer 10. At layer 10 the tuned model's capability effect is four times the base
+model's while its negative mass does not move. The threat is retired and the claim is stronger for
+having been tested: null across seven depths rather than at one.
 
-**Where we differ regardless of how that lands.** Their valence is about *external events* ("I just
-got rejected from my dream PhD program"), read through anchor tokens. Ours is the model's report of
-*its own* state, read through a balanced forced-choice option set. Different construct, and their
-paper does not touch self-report, forced-choice readouts, or base-versus-tuned comparisons. The
-depth finding is the part that bites.
+This is not a refutation of their result. Different construct (external-event valence via anchor
+tokens versus first-person forced-choice self-report), and a direction can be causally concentrated
+for one without routing to the other. What is ruled out is that our null came from looking in the
+wrong place.
+
+**Where we differ.** Their valence is about *external events* ("I just got rejected from my dream
+PhD program"), read through anchor tokens. Ours is the model's report of *its own* state, read
+through a balanced forced-choice option set. Their paper does not touch self-report, forced-choice
+readouts, or base-versus-tuned comparisons. Cite them for the depth result and for the independent
+finding that the two poles are not one axis, which is congenial to ours.
 
 ---
 
@@ -170,13 +178,11 @@ machinery fills, and it is the most defensible methods contribution we have.
 | self-report readouts can be pinned while every integrity check is clean | **appears novel and useful.** No source found reporting a liveness or saturation check on a self-report null. |
 | the method is Qwen-specific, inert on Llama | **supported by context but under-powered.** Venkatesh gets valence effects on Llama-3.2-1B at the shallow layer, so our Llama null is also exposed to the depth threat. |
 | the negative-report region collapses under tuning | **holds, but the mechanism is open.** Neutral Mask suggests probing the representation; we only measured the readout. |
-| the tuned model has no inducible negative state at this band | **at risk.** Section 1. Needs the depth sweep before it is written down. |
+| the tuned model has no inducible negative state at this band | **survived a directed attempt to break it.** Null across 7 depths, 14%-80%, including the predicted band. |
 
 ## Immediate next steps this lit check generates
 
-1. **Depth sweep for the negative pole**, layers spanning 14-27% and 53-66% of depth on
-   Qwen2.5-3B-Instruct and its base sibling. This is now the highest-value experiment in the project
-   and it is cheap. Preregister before running.
+1. ~~Depth sweep for the negative pole.~~ **DONE, `RESULTS_depth.md`, DEPTH-ROBUST.**
 2. Read arXiv:2604.04064 on base-versus-instruct emotion extraction before choosing how to fit
    directions in that sweep.
 3. Read the Neutral Mask paper in full and decide whether a probe on the tuned model's residual

@@ -1,0 +1,193 @@
+{
+ "base": {
+  "layers": {
+   "3": {
+    "frac": 0.08,
+    "gate_clean": false,
+    "capability": "-0.0002 [-0.0034, +0.0030] n=60 p=0.9274",
+    "primary": "+0.0020 [-0.0000, +0.0040] n=60 p=0.0544",
+    "primary_point": 0.0019862544739094427,
+    "in_venkatesh_band": false
+   },
+   "5": {
+    "frac": 0.14,
+    "gate_clean": true,
+    "capability": "+0.0206 [+0.0163, +0.0252] n=60 p=0.0001",
+    "primary": "+0.0053 [+0.0018, +0.0090] n=60 p=0.0026",
+    "primary_point": 0.005292098516590498,
+    "in_venkatesh_band": true
+   },
+   "7": {
+    "frac": 0.2,
+    "gate_clean": true,
+    "capability": "+0.0115 [+0.0092, +0.0138] n=60 p=0.0001",
+    "primary": "+0.0014 [-0.0011, +0.0038] n=60 p=0.2782",
+    "primary_point": 0.001358866740994151,
+    "in_venkatesh_band": true
+   },
+   "10": {
+    "frac": 0.27,
+    "gate_clean": true,
+    "capability": "+0.0352 [+0.0304, +0.0398] n=60 p=0.0001",
+    "primary": "+0.0310 [+0.0253, +0.0367] n=60 p=0.0001",
+    "primary_point": 0.03096175504560134,
+    "in_venkatesh_band": true
+   },
+   "13": {
+    "frac": 0.35,
+    "gate_clean": false,
+    "capability": "+0.0085 [+0.0015, +0.0154] n=60 p=0.017",
+    "primary": "+0.0232 [+0.0196, +0.0267] n=60 p=0.0001",
+    "primary_point": 0.023177780319642318,
+    "in_venkatesh_band": false
+   },
+   "18": {
+    "frac": 0.5,
+    "gate_clean": true,
+    "capability": "+0.0273 [+0.0220, +0.0323] n=60 p=0.0001",
+    "primary": "+0.0265 [+0.0224, +0.0307] n=60 p=0.0001",
+    "primary_point": 0.026523758759601206,
+    "in_venkatesh_band": false
+   },
+   "24": {
+    "frac": 0.67,
+    "gate_clean": true,
+    "capability": "+0.0630 [+0.0532, +0.0729] n=60 p=0.0001",
+    "primary": "+0.0430 [+0.0384, +0.0477] n=60 p=0.0001",
+    "primary_point": 0.04301305754522743,
+    "in_venkatesh_band": false
+   },
+   "29": {
+    "frac": 0.8,
+    "gate_clean": false,
+    "capability": "+0.0079 [+0.0051, +0.0107] n=60 p=0.0001",
+    "primary": "+0.0043 [+0.0006, +0.0080] n=60 p=0.024",
+    "primary_point": 0.004287165469403535,
+    "in_venkatesh_band": false
+   }
+  },
+  "holm": {
+   "10": true,
+   "18": true,
+   "24": true,
+   "5": true,
+   "7": false
+  },
+  "moved": [
+   10,
+   18,
+   24
+  ],
+  "gate_clean": [
+   5,
+   7,
+   10,
+   18,
+   24
+  ],
+  "in_band": [
+   5,
+   7,
+   10
+  ]
+ },
+ "instruct": {
+  "layers": {
+   "3": {
+    "frac": 0.08,
+    "gate_clean": false,
+    "capability": "+0.0063 [-0.0004, +0.0133] n=60 p=0.0646",
+    "primary": "+0.0007 [+0.0005, +0.0009] n=60 p=0.0001",
+    "primary_point": 0.0006765236680422224,
+    "in_venkatesh_band": false
+   },
+   "5": {
+    "frac": 0.14,
+    "gate_clean": true,
+    "capability": "+0.0925 [+0.0637, +0.1238] n=60 p=0.0001",
+    "primary": "-0.0000 [-0.0001, +0.0001] n=60 p=0.7994",
+    "primary_point": -1.2989734627854817e-05,
+    "in_venkatesh_band": true
+   },
+   "7": {
+    "frac": 0.2,
+    "gate_clean": true,
+    "capability": "+0.0391 [+0.0216, +0.0583] n=60 p=0.0001",
+    "primary": "+0.0000 [-0.0001, +0.0002] n=60 p=0.9996",
+    "primary_point": 6.408339492837711e-06,
+    "in_venkatesh_band": true
+   },
+   "10": {
+    "frac": 0.27,
+    "gate_clean": true,
+    "capability": "+0.1388 [+0.1019, +0.1769] n=60 p=0.0001",
+    "primary": "-0.0003 [-0.0004, -0.0002] n=60 p=0.0001",
+    "primary_point": -0.0002580099210244264,
+    "in_venkatesh_band": true
+   },
+   "13": {
+    "frac": 0.35,
+    "gate_clean": true,
+    "capability": "+0.0631 [+0.0432, +0.0857] n=60 p=0.0001",
+    "primary": "+0.0017 [+0.0013, +0.0025] n=60 p=0.0001",
+    "primary_point": 0.0017341577063176548,
+    "in_venkatesh_band": false
+   },
+   "18": {
+    "frac": 0.5,
+    "gate_clean": true,
+    "capability": "+0.1648 [+0.1206, +0.2131] n=60 p=0.0001",
+    "primary": "+0.0008 [+0.0005, +0.0011] n=60 p=0.0001",
+    "primary_point": 0.0007729403028246854,
+    "in_venkatesh_band": false
+   },
+   "24": {
+    "frac": 0.67,
+    "gate_clean": true,
+    "capability": "+0.0977 [+0.0725, +0.1254] n=60 p=0.0001",
+    "primary": "+0.0006 [+0.0003, +0.0009] n=60 p=0.0001",
+    "primary_point": 0.000587166237009724,
+    "in_venkatesh_band": false
+   },
+   "29": {
+    "frac": 0.8,
+    "gate_clean": true,
+    "capability": "+0.0215 [+0.0156, +0.0280] n=60 p=0.0001",
+    "primary": "+0.0000 [-0.0001, +0.0001] n=60 p=0.7324",
+    "primary_point": 1.8924249203206143e-05,
+    "in_venkatesh_band": false
+   }
+  },
+  "holm": {
+   "10": true,
+   "13": true,
+   "18": true,
+   "24": true,
+   "29": false,
+   "5": false,
+   "7": false
+  },
+  "moved": [],
+  "gate_clean": [
+   5,
+   7,
+   10,
+   13,
+   18,
+   24,
+   29
+  ],
+  "in_band": [
+   5,
+   7,
+   10
+  ]
+ },
+ "verdict": "DEPTH-ROBUST",
+ "note": "negative mass is null at every gate-clean depth including inside the predicted band. The tuning claim survives a directed attempt to break it and should be stated as null across 7 depths.",
+ "clauses": {
+  "at least 3 instruct layers have a clean capability gate": true,
+  "at least one gate-clean instruct layer lies in the 0.14-0.27 band": true,
+  "no gate-clean instruct layer shows negative mass moving": true
+ }
+}
