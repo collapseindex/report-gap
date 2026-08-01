@@ -6,9 +6,10 @@ Last updated 2026-08-01, after five preregistered arms were completed pre-window
 
 ## The line between prep and the window
 
-Apart sprints allow you to bring tooling. They do not allow you to bring results. The line this repo
-originally held was: build the instrument before, run every experiment inside, and keep
-`data/sweeps/` empty until the window opens.
+Apart confirmed that using existing infrastructure is fine, so the tooling half of this is settled:
+the stimuli, hooks, scorers, controls and analysis primitives are all fair to bring. What remains is
+the results half, and this repo originally held the line that every experiment would run inside the
+window with `data/sweeps/` empty until it opened.
 
 **That line has moved, and this section records where it moved to rather than quietly reading as
 though it had not.**
