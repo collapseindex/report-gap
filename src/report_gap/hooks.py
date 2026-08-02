@@ -315,3 +315,53 @@ def project_out_subspace(
         yield state
     finally:
         handle.remove()
+
+
+@contextlib.contextmanager
+def apply_affine(
+    model: torch.nn.Module,
+    layer: int,
+    proj: torch.Tensor,
+    bias: torch.Tensor,
+) -> Iterator[dict]:
+    """Apply `(h - bias) @ proj.T + bias` to the residual stream at `layer`, for the duration.
+
+    `project_out_subspace` is linear and cannot express a LEACE eraser, which is AFFINE: it
+    preserves the overall mean instead of translating everything toward the origin. Using a linear
+    hook for an affine eraser would add a constant shift to every downstream read, confounding the
+    probe measurement with a translation.
+
+    One-shot at a single layer, like the other erase hooks, so the model can re-form the component
+    downstream. A persistent erase would confound "re-encoded" with "continuously suppressed".
+
+    Args:
+        model: The model to hook.
+        layer: Index of the decoder layer whose output is transformed.
+        proj: (hidden, hidden) linear part.
+        bias: (hidden,) the mean added back.
+
+    Yields:
+        A dict with a `calls` counter, so a caller can assert the hook fired.
+
+    Raises:
+        ValueError: On a shape mismatch, where broadcasting would silently do something else.
+    """
+    if proj.ndim != 2 or proj.shape[0] != proj.shape[1]:
+        raise ValueError("proj must be square (hidden, hidden), got %s" % (tuple(proj.shape),))
+    if bias.ndim != 1 or bias.shape[0] != proj.shape[0]:
+        raise ValueError("bias must be (hidden,) matching proj, got %s" % (tuple(bias.shape),))
+
+    state = {"calls": 0}
+
+    def hook(_module, _args, output):
+        state["calls"] += 1
+        hidden, rebuild = _split(output)
+        p = proj.to(hidden.device, hidden.dtype)
+        b = bias.to(hidden.device, hidden.dtype)
+        return rebuild((hidden - b) @ p.T + b)
+
+    handle = layer_module(model, layer).register_forward_hook(hook)
+    try:
+        yield state
+    finally:
+        handle.remove()
