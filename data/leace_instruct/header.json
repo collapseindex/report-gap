@@ -1,0 +1,18 @@
+{
+ "package_dir": "/root/src/report_gap",
+ "module_count": "9",
+ "source_sha256": "93865648177ecabd759ea9068ba9ae216574af97ee930f71e283b6a455b77e05",
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "model_key": "instruct",
+ "erase_layers": [
+  26,
+  30
+ ],
+ "probe_layer": 32,
+ "train_topics": 20,
+ "n_contexts_per_framing": 900,
+ "clean_probe32_cv_train": 1.0,
+ "stimuli_sha256": "b63c55e4af37c49c9a04ddeede52af3954d30014c7f40a7dd9683ae7b028496d",
+ "injection": "none",
+ "smoke": false
+}
