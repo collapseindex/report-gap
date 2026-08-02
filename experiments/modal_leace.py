@@ -133,6 +133,21 @@ def run(model_key: str, smoke: bool = False) -> dict:
               % (time.time() - started, E, er.rank,
                  class_mean_gap(aE[tr], y[tr]), class_mean_gap(er(aE[tr]), y[tr])))
 
+        # Assert the hook reaches the index the erasure check reads. Without this, an off-by-one
+        # makes the gate unfalsifiable, which is exactly what happened before.
+        probe_clean = acts(contrast[:BATCH], E + 1)
+        probe_dirty = acts(contrast[:BATCH], E + 1,
+                           lambda: H.apply_affine(model, E,
+                                                  torch.zeros(hidden, hidden),
+                                                  torch.zeros(hidden)))
+        moved = float(np.abs(probe_clean - probe_dirty).max())
+        if moved < 1e-3:
+            raise RuntimeError(
+                "a hook that zeroes layer %d does not change the erasure-check read; the read "
+                "index is upstream of the hook and the gate cannot fail" % E)
+        print("[%6.1fs] L%d hook reaches the check read (zero-hook moves it by %.1f)"
+              % (time.time() - started, E, moved))
+
         for kind, (proj, bias) in list(erasers.items()) + [("clean", (None, None))]:
             def ctx(proj=proj, bias=bias):
                 return H.apply_affine(model, E,
@@ -140,8 +155,14 @@ def run(model_key: str, smoke: bool = False) -> dict:
                                       torch.tensor(bias, dtype=torch.float32))
             hook = None if kind == "clean" else ctx
 
-            # the erasure check, read on HELD-OUT items
-            eE = acts(contrast, E, hook)
+            # The erasure check, read on HELD-OUT items at E+2.
+            #
+            # E+2, not E+1. Verified empirically on this model: a hook on layer E that ZEROES the
+            # entire stream leaves hidden_states[E] and hidden_states[E+1] untouched and first
+            # changes hidden_states[E+2]. Reading at E+1 reads UPSTREAM of the hook, which is why
+            # this check returned cv 1.000 in every previous arm: it was measuring un-erased
+            # activations and could not fail.
+            eE = acts(contrast, E + 1, hook)
             records.append({
                 "model_key": model_key, "erase_layer": E, "kind": kind, "what": "erasure_check",
                 "gap_heldout": float(class_mean_gap(eE[~tr], y[~tr])),

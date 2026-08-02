@@ -1,4 +1,4 @@
-{"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "erasure_check", "gap_heldout": 9.875836372375488, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "erasure_check", "gap_heldout": 3.197713851928711, "acts_heldout": null, "refit_cv": 0.993}
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 3.389389991760254}
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 4.742067813873291}
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": -1.3512941598892212}
@@ -899,7 +899,7 @@
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -3.9851605892181396}
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -3.7451720237731934}
 {"model_key": "base", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -3.454120635986328}
-{"model_key": "base", "erase_layer": 26, "kind": "random", "what": "erasure_check", "gap_heldout": 9.875836372375488, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 26, "kind": "random", "what": "erasure_check", "gap_heldout": 12.147242546081543, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 6.754842758178711}
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 7.754114151000977}
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 2.6808788776397705}
@@ -1800,7 +1800,7 @@
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -10.725189208984375}
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -10.093976974487305}
 {"model_key": "base", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -10.363349914550781}
-{"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "erasure_check", "gap_heldout": 9.875836372375488, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "erasure_check", "gap_heldout": 12.14179801940918, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 7.061075210571289}
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 8.017111778259277}
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 3.0450401306152344}
@@ -2701,7 +2701,7 @@
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -10.300540924072266}
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -9.770025253295898}
 {"model_key": "base", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -9.975212097167969}
-{"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "erasure_check", "gap_heldout": 20.31923484802246, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "erasure_check", "gap_heldout": 4.387537956237793, "acts_heldout": null, "refit_cv": 0.72}
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": -0.6060404777526855}
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 1.3000041246414185}
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": -5.7594523429870605}
@@ -3602,7 +3602,7 @@
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -2.6713905334472656}
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -1.8656045198440552}
 {"model_key": "base", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": 1.0878487825393677}
-{"model_key": "base", "erase_layer": 30, "kind": "random", "what": "erasure_check", "gap_heldout": 20.31923484802246, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 30, "kind": "random", "what": "erasure_check", "gap_heldout": 24.061548233032227, "acts_heldout": null, "refit_cv": 0.997}
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 7.0627946853637695}
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 7.977787494659424}
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 3.0007853507995605}
@@ -4503,7 +4503,7 @@
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -10.327993392944336}
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -9.76830005645752}
 {"model_key": "base", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -9.980304718017578}
-{"model_key": "base", "erase_layer": 30, "kind": "clean", "what": "erasure_check", "gap_heldout": 20.31923484802246, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "base", "erase_layer": 30, "kind": "clean", "what": "erasure_check", "gap_heldout": 24.10650062561035, "acts_heldout": null, "refit_cv": 0.997}
 {"model_key": "base", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 7.061075210571289}
 {"model_key": "base", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 8.017111778259277}
 {"model_key": "base", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 3.0450401306152344}

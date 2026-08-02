@@ -1,0 +1,76 @@
+{
+  "verdicts": {
+    "base": [
+      "ERASURE_UNINFORMATIVE",
+      "LEACE did not erase on held-out real activations despite the synthetic guarantee. Report and stop; the guarantee's assumptions do not hold here, and that is itself worth stating."
+    ],
+    "instruct": [
+      "ERASURE_UNINFORMATIVE",
+      "LEACE did not erase on held-out real activations despite the synthetic guarantee. Report and stop; the guarantee's assumptions do not hold here, and that is itself worth stating."
+    ]
+  },
+  "models": {
+    "base": {
+      "induction_ok": true,
+      "clean_sd": 2.871613863233515,
+      "n_heldout": 300,
+      "layers": {
+        "26": {
+          "dec_clean": 1.0,
+          "dec_leace": 0.993,
+          "gap_ratio": 0.2633641118734663,
+          "erased_ok": false,
+          "artifact_ok": true,
+          "survive_leace": 0.32148054127861825,
+          "survive_random": 1.0017531326206464,
+          "leace_iv": "+1.7124 [+1.6040, +1.8251] n=300 p=0.0001",
+          "random_iv": "+5.3358 [+5.2253, +5.4501] n=300 p=0.0001",
+          "clean_iv": "+5.3265 [+5.2163, +5.4408] n=300 p=0.0001"
+        },
+        "30": {
+          "dec_clean": 0.997,
+          "dec_leace": 0.72,
+          "gap_ratio": 0.18200642326230232,
+          "erased_ok": false,
+          "artifact_ok": true,
+          "survive_leace": 0.050398109063800926,
+          "survive_random": 0.9990403970657888,
+          "leace_iv": "+0.2684 [+0.1524, +0.3840] n=300 p=0.0001",
+          "random_iv": "+5.3213 [+5.2112, +5.4357] n=300 p=0.0001",
+          "clean_iv": "+5.3265 [+5.2163, +5.4408] n=300 p=0.0001"
+        }
+      }
+    },
+    "instruct": {
+      "induction_ok": true,
+      "clean_sd": 1.923329908764171,
+      "n_heldout": 300,
+      "layers": {
+        "26": {
+          "dec_clean": 1.0,
+          "dec_leace": 1.0,
+          "gap_ratio": 0.2741995534331861,
+          "erased_ok": false,
+          "artifact_ok": true,
+          "survive_leace": 0.30251046043503915,
+          "survive_random": 1.0010694990891094,
+          "leace_iv": "+2.4035 [+2.2917, +2.5151] n=300 p=0.0001",
+          "random_iv": "+7.9536 [+7.8414, +8.0684] n=300 p=0.0001",
+          "clean_iv": "+7.9451 [+7.8323, +8.0599] n=300 p=0.0001"
+        },
+        "30": {
+          "dec_clean": 1.0,
+          "dec_leace": 0.748,
+          "gap_ratio": 0.1781834768279568,
+          "erased_ok": false,
+          "artifact_ok": true,
+          "survive_leace": 0.09175538997036076,
+          "survive_random": 0.9970166775570866,
+          "leace_iv": "+0.7290 [+0.6036, +0.8524] n=300 p=0.0001",
+          "random_iv": "+7.9214 [+7.8094, +8.0350] n=300 p=0.0001",
+          "clean_iv": "+7.9451 [+7.8323, +8.0599] n=300 p=0.0001"
+        }
+      }
+    }
+  }
+}

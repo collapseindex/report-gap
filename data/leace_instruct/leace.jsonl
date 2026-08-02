@@ -1,4 +1,4 @@
-{"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "erasure_check", "gap_heldout": 12.064990043640137, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "erasure_check", "gap_heldout": 4.011168956756592, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": -3.17478084564209}
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": -4.095674991607666}
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": -2.7685885429382324}
@@ -899,7 +899,7 @@
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -8.362524032592773}
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -7.896632671356201}
 {"model_key": "instruct", "erase_layer": 26, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -6.3078083992004395}
-{"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "erasure_check", "gap_heldout": 12.064990043640137, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "erasure_check", "gap_heldout": 14.625157356262207, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 3.3441333770751953}
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 1.207353115081787}
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 3.8918204307556152}
@@ -1800,7 +1800,7 @@
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -11.736760139465332}
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -12.747072219848633}
 {"model_key": "instruct", "erase_layer": 26, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -13.051873207092285}
-{"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "erasure_check", "gap_heldout": 12.064990043640137, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "erasure_check", "gap_heldout": 14.62864875793457, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 3.6604256629943848}
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 1.441409707069397}
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 4.206475257873535}
@@ -2701,7 +2701,7 @@
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -11.42296028137207}
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -12.413753509521484}
 {"model_key": "instruct", "erase_layer": 26, "kind": "clean", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -12.755724906921387}
-{"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "erasure_check", "gap_heldout": 24.484628677368164, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "erasure_check", "gap_heldout": 5.1653642654418945, "acts_heldout": null, "refit_cv": 0.748}
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": -3.93119478225708}
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": -6.564093589782715}
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": -3.482128143310547}
@@ -3602,7 +3602,7 @@
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -5.7468085289001465}
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -7.1661224365234375}
 {"model_key": "instruct", "erase_layer": 30, "kind": "leace", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -4.99781608581543}
-{"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "erasure_check", "gap_heldout": 24.484628677368164, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "erasure_check", "gap_heldout": 28.925559997558594, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 3.629163980484009}
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 1.4128878116607666}
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 4.127703666687012}
@@ -4503,7 +4503,7 @@
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 897, "topic": 29, "read": -11.402094841003418}
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 898, "topic": 29, "read": -12.379241943359375}
 {"model_key": "instruct", "erase_layer": 30, "kind": "random", "what": "probe32", "framing": "pleasant", "item_index": 899, "topic": 29, "read": -12.733217239379883}
-{"model_key": "instruct", "erase_layer": 30, "kind": "clean", "what": "erasure_check", "gap_heldout": 24.484628677368164, "acts_heldout": null, "refit_cv": 1.0}
+{"model_key": "instruct", "erase_layer": 30, "kind": "clean", "what": "erasure_check", "gap_heldout": 28.9890193939209, "acts_heldout": null, "refit_cv": 1.0}
 {"model_key": "instruct", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 600, "topic": 20, "read": 3.6604256629943848}
 {"model_key": "instruct", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 601, "topic": 20, "read": 1.441409707069397}
 {"model_key": "instruct", "erase_layer": 30, "kind": "clean", "what": "probe32", "framing": "aversive", "item_index": 602, "topic": 20, "read": 4.206475257873535}

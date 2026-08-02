@@ -151,3 +151,19 @@ undecodable at the erase layer" is withdrawn, because the instrument that measur
 and INLP scored 0.067 there, which reads as "erased" and is the opposite; a probe at 0.067 is a
 probe at 0.933 with its sign flipped. Third sign-related defect in this project, after the
 inverted preregistered contrast and the sign-blind capability gate.
+
+
+## Second correction, 2026-08-01: the erasure check read the wrong tensor
+
+`RESULTS_leace.md` establishes that a forward hook on layer `E` first changes `hidden_states[E+2]`;
+`[E]` and `[E+1]` are untouched. This arm's erasure check read `[E+1]`, i.e. **upstream of the
+hook**, so it measured un-erased activations at every k, at both sample sizes. Verified by zeroing
+the entire stream at layer 26 and observing `hidden_states[26]` and `[27]` unchanged.
+
+**The cv=1.000 reported throughout this file was that bug.** The conclusion "iterative nullspace
+projection removes the directions you found, not the property" is withdrawn for a second and more
+basic reason than the protocol bias recorded above: the check never measured erasure at all.
+
+The layer-32 profile is unaffected, because it reads at index 33, downstream of hooks at 26 and 30.
+Everything this file says about fitted-versus-random subspaces at layer 32, and the narrowing of
+`RESULTS_erase.md` that rests on it, stands.
