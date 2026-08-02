@@ -115,3 +115,39 @@ Not more items; that was tried and did not help. Two things would:
 2. **A subtler induction.** A contrast that is not lexically obvious, so the property is not
    redundantly encoded everywhere. The non-lexical direction this project already tried to build and
    failed to (it missed its decoding gate at three scales) is the same missing ingredient.
+
+---
+
+## Correction, 2026-08-01: the erasure check's protocol was biased
+
+Found offline, before spending any GPU on the LEACE follow-up, by `tests/test_leace.py`.
+
+**The erasure check fit the eraser on every row and then cross-validated a probe refit on that
+same erased data.** Because the eraser consumed the test rows' labels, the train-fold residual is
+the negative of the test-fold residual: a probe learns one and anti-predicts the other, and
+`max(acc, 1-acc)` records that as decodability. The protocol therefore **over-reports** residual
+decodability.
+
+Measured on synthetic data where the concept is genuinely erased: the honest protocol (eraser fit
+on train only, applied to held-out) reads **0.521**; the all-data protocol used by this arm reads
+**0.728** on the same data.
+
+**What that does to the conclusions above.** The cv=1.000 that this arm reported at every k, and
+the conclusion drawn from it, are **not established**. The claim that "iterative nullspace
+projection removes the directions you found, not the property" rests on a measurement that inflates
+exactly the quantity it reads. It may still be true. It is not shown here.
+
+**What survives unchanged.** The layer-32 profile is unaffected: it compares a fitted subspace
+against a random subspace of the same rank, both applied identically, with the probe fit on clean
+activations and never refit. Fitted removes 94-97% of the separation, random removes 3-8%. That
+comparison never used the erasure check.
+
+**What the paper says now.** The narrowing of `RESULTS_erase.md` also survives, because it rests on
+the layer-32 profile rather than on the erasure gate: one direction removes a minority of a
+comparable signal. But the sentence "at no k does a one-shot projection make the property
+undecodable at the erase layer" is withdrawn, because the instrument that measured it over-reports.
+
+**Also recorded:** a first pass at these tests used raw accuracy rather than distance from chance,
+and INLP scored 0.067 there, which reads as "erased" and is the opposite; a probe at 0.067 is a
+probe at 0.933 with its sign flipped. Third sign-related defect in this project, after the
+inverted preregistered contrast and the sign-blind capability gate.
