@@ -218,3 +218,13 @@ claimed.
 
 This section exists so that a deviation has somewhere to go the moment one happens, rather than
 being added afterwards alongside the thing it excuses.
+
+- **2026-08-01, `check_prereg.py` reports a false ordering failure from a timezone mismatch.**
+What happened: the checker compares the prereg's commit date in UTC against artifact file dates in
+local time. This prereg was committed at 2026-08-01T23:04:54-07:00, which is 2026-08-02 in UTC,
+while the artifacts were written at 23:17 local on 2026-08-01. The checker therefore reports the
+prereg as postdating its own results.
+What changed: nothing in the protocol. The real ordering is verifiable in git: the prereg commit
+(`git log --diff-filter=A -- PREREG_leace.md`) precedes both the runner and the data commit.
+Impact: none on what can be claimed, and recorded here rather than silenced because a reader
+running the checker will see the failure and is entitled to an explanation that is not "ignore it".
