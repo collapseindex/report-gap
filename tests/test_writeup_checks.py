@@ -44,6 +44,17 @@ BREAKAGES = [
     ("0.0486", "0.0496", "readjudicate base negative pole"),
     ("0.0415", "0.0425", "readjudicate instruct negative pole"),
     ("0.9319", "0.9219", "readjudicate instruct probe"),
+    # Added after an audit found the checker verified 23 numbers while this list
+    # pinned 15. Each was confirmed to fire before being added here; the headline
+    # 986 was among the unpinned, which is the one that would have mattered most.
+    ("986", "976", "ordering ratio, the paper's headline number"),
+    ("0.1474", "0.1494", "erase artifact at L25"),
+    ("0.3166", "0.3186", "gemma2b instruct position prior"),
+    ("58.2", "56.2", "mistral7b instruct ordering range"),
+    ("0.4508", "0.4528", "qwen1_5b instruct position prior"),
+    ("3.3", "3.7", "llama3b base ordering range"),
+    ("0.2864", "0.2884", "llama3b base position prior"),
+    ("108.7", "106.7", "qwen7b instruct ordering range"),
 ]
 
 

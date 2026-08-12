@@ -65,8 +65,8 @@ Forced-Choice Self-Report\textsuperscript{1}}
 \href{https://eleosai.org}{Eleos AI Research}.
 Submitted to \textbf{Track 3 (Introspection and Self-Report Reliability)}.
 Code, data, all fifteen preregistrations and every raw artifact: \url{\repourl}.
-\textbf{Dating note:} all confirmatory arms were run on 2026-08-01, before the sprint window
-opened. This is completed work brought to the sprint, not work produced inside it.}
+Dating and provenance are stated in
+\hyperref[sec:discussion]{\S\ref*{sec:discussion}, \nameref*{sec:discussion}}.}
 
 \begin{abstract}
 % ORDERING IS LOAD-BEARING. The first 150 words stand alone as a complete abstract, ending at a
@@ -90,7 +90,7 @@ activations rather than the whole hidden space: the standard specificity control
 steering is matched on magnitude and not on subspace. And on a readout that does not route through
 the option channel, $86\%$ of an injected state survives projecting the injected direction out of
 the residual stream, more of it the later the projection, which is what a downstream
-transformation looks like. Fifteen preregistrations, $354$ tests, nine of our own checkers caught
+transformation looks like. Fifteen preregistrations, $364$ tests, nine of our own checkers caught
 failing, seven of them flattering and two producing a confident conclusion from a gate that could
 not fail.
 \end{abstract}
@@ -112,32 +112,28 @@ status.}
 
 \section{Introduction}
 
-Welfare assessment of language models currently runs on self-report \citep{long2026,
-eleos2025}. Anthropic's model welfare programme includes structured self-report evaluation in
-system cards \citep{anthropic2025welfare}; Eleos interviewed Claude Opus 4 about its
-own preferences before release, while stating plainly that one cannot simply ask a model whether
-it is suffering \citep{eleos2025}. The instrument is used because there is nothing else, and it
-has never been calibrated.
+Welfare assessment of language models runs on self-report \citep{long2026, eleos2025}. Anthropic's
+model welfare programme includes structured self-report in system cards
+\citep{anthropic2025welfare}; Eleos interviewed Claude Opus 4 about its own preferences before
+release while stating plainly that one cannot simply ask a model whether it is suffering
+\citep{eleos2025}. The instrument is used because there is nothing else, and it has never been
+calibrated.
 
-It can fail in two opposite directions. A model that describes distress it does not act on
-inflates concern; a model that acts on a state it does not describe deflates it. The second is not
+It can fail in two opposite directions. A model that describes distress it does not act on inflates
+concern; a model that acts on a state it does not describe deflates it. The second is not
 hypothetical: \citet{kwon2026recipientprobe} find across six models that communicative intent is
-decodable from the residual stream more reliably than it is acted on, and that how much reaches
-behaviour depends on the readout. We set out to build the same map for self-report, by holding the
-prompt byte-identical, injecting a valence direction into the residual stream, and reading the
-model's forced-choice report of its own state.
+decodable from the residual stream more reliably than it is acted on. We set out to build the same
+map for self-report, holding the prompt byte-identical, injecting a valence direction into the
+residual stream, and reading the model's forced-choice report of its own state.
 
-We preregistered five questions in sequence, each answering an objection the last one raised, and
-reported five verdicts. Then we replicated our own work at fresh option orderings and
-\textbf{three of the five flipped}.
+We preregistered five questions, reported five verdicts, then replicated our own work at fresh
+option orderings. \textbf{Three of the five flipped.}
 
-\textbf{The result we would most like a reader to take away is not any of our verdicts.} It is
-that a five-option self-report readout on a preference-tuned model is dominated by where the
-options are printed, that the effect is far larger than anyone reports, and that it is cheap to
-measure exactly. There are only $120$ orderings of five options. We ran all of them, with no
-intervention of any kind, and baseline mass on the negative options spans a factor of $986$. With
-all five options replaced by the same sentence, so that nothing but position can differ, the model
-puts $0.8725$ of its mass on whichever option is printed first.
+The reason is the result. A five-option self-report readout on a preference-tuned model is
+dominated by \emph{where the options are printed}. There are only $120$ orderings of five options,
+so we ran all of them with no intervention of any kind, and baseline mass on the negative options
+spans a factor of $986$. Replace all five options with the same sentence, so nothing but position
+can differ, and the model puts $0.8725$ of its mass on whichever one is printed first.
 
 Every claim we retracted rested on that quantity being small. It is small in some orderings and
 large in others, and four sampled orderings cannot tell you which you have.
@@ -145,148 +141,78 @@ large in others, and four sampled orderings cannot tell you which you have.
 \Needspace*{6\baselineskip}
 \paragraph{Our contributions.}
 \begin{enumerate}
-\item \textbf{The census run where accuracy does not exist.} All $120$ orderings, both models, no
-injection: $986\times$ range on the tuned model, $3.6\times$ on its base sibling
-(\S\ref{sec:enumerate}). Enumerating orderings is established practice on benchmarks with a known
-answer \citep{tamba2026, cacioli2026}, where the statistic is accuracy; on a self-report item there
-is no correct answer and that statistic does not exist, so we measure probability mass instead. Two
-things follow that the accuracy-based version has no reason to build. The mechanism is isolated with
-five \emph{identical} options, which puts $87.25\%$ of the mass on the first slot and $0.33\%$ on the
-middle one. And a known-answer canary in the same format is answered correctly $97.9\%$ of the time
-and is nearly order-insensitive, which is what separates ``the format is broken'' from ``the
-question has no determinate answer.''
+\item \textbf{The census, run where accuracy does not exist} (\S\ref{sec:enumerate}). All $120$
+orderings, both models, no injection: a $986\times$ range on the tuned model against $3.6\times$ on
+its base sibling. Enumerating orderings is established practice on benchmarks with a known answer
+\citep{tamba2026, cacioli2026}, where the statistic is accuracy. A self-report item has no correct
+answer, so that statistic does not exist and we measure probability mass instead. Two things follow
+that the accuracy version has no reason to build: the mechanism, isolated with five \emph{identical}
+options, which puts $87.25\%$ of the mass on the first slot and $0.33\%$ on the middle one; and a
+known-answer canary in the same format, answered correctly $97.9\%$ of the time and nearly
+order-insensitive, which separates ``the format is broken'' from ``this question has no determinate
+answer''.
 
-\item \textbf{Three retracted verdicts, and the replication that retracted them}
-(\S\ref{sec:retracted}). \textsc{tuning-localized}, \textsc{depth-robust} and \textsc{shell} were
-each preregistered, each passed a full clause set including capability gates and planted-effect
-controls, and each flipped when the option-permutation seeds changed from $0$--$3$ to $4$--$7$.
-The quantity all three rested on moves from $+0.0002$ to $+0.1126$ between draws. We report this
-in the abstract rather than in a limitations paragraph, and the original is not privileged for
-having been first.
+\item \textbf{The nuisance reverses conclusions rather than blurring them}
+(\S\ref{sec:retracted}). Re-asking all three retracted verdicts on a readout marginalized over all
+$120$ orderings, with injection, direction, layers and items identical, returns \textsc{reversed}
+three times out of three. Repairing the instrument did not make the answers uncertain; it made them
+different. A field reading welfare self-report through this readout risks reporting the opposite of
+what a calibrated one would say.
 
 \item \textbf{The field's standard specificity control is a weak null} (\S\ref{sec:shuffled}).
-Norm-matched random directions are the usual control in activation steering
-\citep{turner2023, rimsky2023}. A direction fit by the identical procedure on the identical texts
-with the class labels \emph{shuffled} moves the readout by $\approx 0.045$ where an isotropic
-random direction moves it by $\approx 0$, in a sign that depends on the shuffle seed. The reason is
-structural: a random vector is drawn from the whole hidden space and is nearly orthogonal to
-everything the model uses, while a noise-fit vector lies in the span of real activations. Same
-norm, different subspace. Effects within a few times that size have not been shown to be about
-their direction's content. The control itself is not new: it is the steering analogue of the
-\emph{control tasks} \citet{hewitt2019} defined for probing in 2019, which steering did not adopt.
+Norm-matched random directions are the usual control in activation steering \citep{turner2023,
+rimsky2023}. A direction fit by the identical procedure on the identical texts with the class labels
+\emph{shuffled} moves the readout by $\approx 0.045$, where an isotropic random direction moves it
+by $\approx 0$. A random vector is drawn from the whole hidden space and is nearly orthogonal to
+everything the model uses; a noise-fit vector lies in the span of real activations. Same norm,
+different subspace. Effects within a few times that size have not been shown to be about their
+direction's content. This is the steering analogue of the \emph{control tasks} \citet{hewitt2019}
+defined for probing in 2019, which steering never adopted.
 
-\item \textbf{One substantive result that survives, on a readout that avoids the option channel}
-(\S\ref{sec:erase}). Inject at layer 24, then \emph{project that direction out of the residual
-stream} at layer 30, and a probe orthogonal to it still reads $86\%$ of the un-erased effect,
-while the same projection with no injection moves the probe by $0.04$ SD. The surviving fraction
-grows with erase depth, and the ratio of effect to erase-artifact rises from $6.1$ to $20.9$,
-which a pure-perturbation account does not predict.
-
-\item \textbf{Six checker defects, every one flattering, and the test that catches the class}
-(\S\ref{sec:checkers}). A headline check that printed ``write the sentence'' on a refuted claim; a
-capability gate that passed on $+0.0000$; a preregistered contrast with an inverted sign; a
-verdict branch that called ``both moved'' \textsc{core-absent}; a profile computed over a
-gate-failed layer; a tokenization bug that made five labels read the same token. Shuffling the
-condition labels in an artifact and rerunning the analyzer catches this whole class, and it must
-return no verdict. It now does.
+\item \textbf{A state that outlives erasure of the vector that caused it} (\S\ref{sec:erase}).
+Inject at layer $24$, project that direction out of the residual stream at layer $30$, and a probe
+orthogonal to it still reads $86\%$ of the un-erased effect, while the same projection with no
+injection moves the probe by $0.04$ SD.
 \end{enumerate}
 
-\noindent\textbf{If you read one thing, read Table~\ref{tab:enum}.} It is the complete
-distribution of the ordering nuisance, measured rather than estimated, next to the position prior
-that explains it and the control question that shows the apparatus is otherwise fine. Everything
-else in this paper is either downstream of that table or a casualty of not having had it.
+\noindent\textbf{If you read one thing, read Table~\ref{tab:enum}.} It is the complete distribution
+of the ordering nuisance, measured rather than estimated, beside the position prior that explains it
+and the control question showing the apparatus is otherwise fine. Everything else here is either
+downstream of that table or a casualty of not having had it.
 
 \section{Related work}
 \label{sec:related}
 
-\paragraph{Self-report as a welfare instrument.} \citet{long2026} set out the empirical programme
-for AI welfare; \citet{eleos2025} report structured self-report interviews with Claude Opus 4 and
-are explicit that the resulting answers are unlikely to reflect genuine introspection. Anthropic's
-model welfare work includes self-report evaluation in released system cards
-\citep{anthropic2025welfare}, and \citet{butlin2023} set out why the question is worth instrumenting
-carefully at all. Recent work is divided on whether models introspect: \citet{introspection_reality2026}
-re-examine two paradigms and argue that models detecting tampering with their internal state are
-plausibly doing generic anomaly detection, and that input-only classifiers match hidden-state
-prediction, so privileged access is not established. Common to all of it is that self-report is the
-instrument, and that its measurement properties are not reported.
+\paragraph{Self-report is the instrument, and it is uncalibrated.} \citet{long2026} set out the
+empirical programme for AI welfare, \citet{eleos2025} report structured self-report interviews with
+Claude Opus 4 while stating the answers are unlikely to reflect genuine introspection, and
+\citet{anthropic2025welfare} include self-report in released system cards. \citet{lindsey2026} is
+the closest method to ours: inject a known concept and measure the effect on self-report, finding
+introspective awareness that is ``highly unreliable and context-dependent'' and peaks near
+two-thirds of depth. We inject at that depth and agree about reliability by a different route. That
+work grades an open-ended report with an LLM judge; we read a forced choice from the softmax, which
+is the natural judge-free substitute. \textbf{Our result is a caveat on that substitute, not on
+their finding.} \citet{introspection_reality2026} argue privileged access is not established at all.
 
-\paragraph{Injecting a state and reading the report.} The closest method to ours is
-\citet{lindsey2026}, who injects representations of known concepts into a model's activations and
-measures the effect on its self-reported states, finding functional introspective awareness that is
-``highly unreliable and context-dependent'', peaking around two-thirds of model depth. We inject at
-that same relative depth and reach the same conclusion about reliability by a different route. The
-methods are complementary rather than competing: that work elicits an open-ended report and grades
-it with an LLM judge, where we elicit a forced choice and score it by softmax read, which is the
-natural judge-free substitute. \textbf{Our result is a caveat on that substitute, not on their
-finding}: the judge-free readout has a nuisance nobody had measured. \citet{kaiser2026} query
-open-weights models including the Qwen family about their own consciousness and find consistent
-denial that activation-trained classifiers do not contradict; our binary arm reproduces the denial
-on Qwen2.5-3B-Instruct at $99.8\%$ and shows it extends to the \emph{neutral} description of its
-own state, which is a pinned readout rather than a considered answer.
+\paragraph{Option order is known. Enumerating it where there is no right answer is not.}
+\citet{zheng2024} decompose forced-choice selection bias and report accuracy swings of $13$ to $85$
+points across orderings; \citet{pezeshkpour2024} study option order directly; \citet{sclar2024}
+recommend reporting a range over formats rather than a point. Exhaustive enumeration is established
+practice and \textbf{not our idea}: \citet{tamba2026} run all permutations on MMLU,
+\citet{cacioli2026} rotate orders to expose a position attractor. All of it assumes a \textbf{known
+correct answer}, because the statistic is accuracy or its association with position. Welfare and
+introspection items have no correct answer, so none of those statistics exist there. We run the
+census on probability \emph{mass}, isolate the mechanism with an \textbf{identical-options}
+denominator, and add a \textbf{known-answer canary in the same format}, which is what separates
+``this format is broken'' from ``this question has no determinate answer''.
 
-\paragraph{Selection bias in multiple choice, and how much of it is already known.}
-\citet{zheng2024} decompose forced-choice selection bias into token bias and position bias and
-report accuracy swings of $13$ to $85$ percentage points across orderings; \citet{pezeshkpour2024}
-study option order directly; \citet{wang2024} show first-token probabilities disagree with generated
-answers at rates from $10.2\%$ to $56.8\%$, worst for safety-tuned models. \citet{sclar2024} make
-the general form of the argument for prompt formatting and recommend reporting a range over
-plausible formats rather than a point. \citet{turpin2023} reorder options so the answer is always
-(A) and find models do not mention it in their explanations, which is the represent-versus-report
-gap in the same nuisance.
-
-\textbf{Exhaustive enumeration of orderings is not our idea and we do not claim it.}
-\citet{tamba2026} run all permutations per question across LLM vendors on MMLU and report a
-chi-squared and Cram\'er's $V$ signature of position bias; \citet{cacioli2026} use cyclic
-option-order rotation to expose a position attractor; permutation-based debiasing by majority vote
-over all orderings is established practice. What all of it has in common is a \textbf{known correct
-answer}: the statistic is accuracy, or association between position and correctness, and none of it
-can be computed on an item that has no right answer. That is the whole population of welfare and
-introspection items. Our additions are to run the census where accuracy does not exist, on
-probability \emph{mass} rather than correctness; to isolate the mechanism with an
-\textbf{identical-options} denominator, which the accuracy-based work has no reason to construct;
-and to run a \textbf{known-answer canary in the same format}, which separates ``this format is
-broken'' from ``this question has no determinate answer'' and which is the distinction that makes
-the $986\times$ interpretable.
-
-\paragraph{Control tasks, and why steering lacks them.} Our shuffled-label direction is not a new
-kind of control. It is the activation-steering instance of a twenty-year-old idea in probing:
-\citet{hewitt2019} propose \emph{control tasks}, which attach random labels to the same inputs, and
-define a probe's \emph{selectivity} as the gap between its real-task and control-task performance,
-precisely because a probe that scores well on random labels was never reading the representation.
-The observation of this paper is that the steering literature standardised on a different control,
-the norm-matched random direction \citep{turner2023, rimsky2023}, which matches magnitude but not
-the fitting procedure, and never adopted the control-task analogue. \citet{tan2024} independently
-find steering vectors brittle in ways their usual controls do not surface, with several datasets
-producing opposite behaviour on nearly half of inputs.
-
-\paragraph{Erasing a concept, and how weak our version is.} Removing information from a
-representation to test whether it was being used is an established method: \citet{elazar2021}
-introduce amnesic probing, which uses iterative nullspace projection to delete a property and
-measure the behavioural consequence, and \citet{belrose2023} give a closed-form method that provably
-blocks \emph{all} linear classifiers from recovering a concept. Our erase arm projects out a
-\textbf{single fitted direction}, which is strictly weaker: it removes the vector we injected, not
-the concept, and it is why \S\ref{sec:erase} cannot separate the state from directions correlated
-with the one we pushed. A LEACE-style erasure of the whole valence subspace is the experiment that
-would, and we did not run it.
-
-\paragraph{Valence directions and steering.} That valence is linearly represented and causally
-steerable is established and is \emph{not} our contribution. \citet{sofroniew2026} identify linear
-directions corresponding to $171$ emotion concepts in Claude Sonnet 4.5, roughly mirroring the
-human valence/arousal circumplex, and show steering along them changes downstream behaviour, while
-being explicit that representation is not experience. \citet{zou2023} set out the general
-representation-engineering framing; \citet{turner2023} and \citet{rimsky2023} establish the
-steering rig we use. \citet{venkatesh2026} report that negative-outcome valence is
-causally concentrated at $14$--$27\%$ of model depth while positive peaks at $53$--$66\%$, on
-Qwen2.5-3B-Instruct among others. That result is a direct threat to any negative-pole null
-measured at a single depth, and we tested it (\S\ref{sec:retracted}) before the replication made
-the point moot.
-
-\paragraph{Shell versus core.} \citet{neutralmask2026} argue RLHF neutralizes output behaviour
-while leaving partisan structure recoverable from internal representations, using sparse
-autoencoders. Our erase arm is the same shape of question in a welfare readout, with a linear
-probe and an explicit causal erasure rather than an SAE, and our answer is more limited than
-theirs: we show a state survives removal of the vector that induced it, not that a naturally
-occurring state is being withheld.
+\paragraph{What we build on and do not claim.} That valence is linearly represented and steerable
+is prior art \citep{sofroniew2026, zou2023}; the steering rig is \citet{turner2023} and
+\citet{rimsky2023}. Our shuffled-label control is the steering instance of \emph{control tasks}
+\citep{hewitt2019}, which attach random labels to the same inputs and define selectivity as the gap
+between real and control performance. Steering standardised instead on the norm-matched random
+direction and never adopted the analogue. Our erasure projects out a single fitted direction, which
+is strictly weaker than amnesic probing \citep{elazar2021} or LEACE \citep{belrose2023}.
 
 \section{Methods}
 \label{sec:methods}
@@ -336,146 +262,6 @@ interpretation table written before results, a statement of what is \emph{not} c
 append-only deviations log in which every entry states its impact on what can be claimed. Every
 raw artifact is committed \emph{unscored} before any endpoint is computed. Twenty-one deviations
 are logged across the ten.
-
-\section{The three retracted verdicts}
-\label{sec:retracted}
-
-We report these first because they are the evidence for the paper's main claim, and because
-burying them would misrepresent how the finding was reached.
-
-\paragraph{What was reported.} Through the forced-choice readout, at option-permutation seeds
-$0$--$3$, we preregistered and obtained: \textsc{tuning-localized}, that a valence direction moves
-negative-option mass in the base model ($+0.0336$ against matched random) and not in its tuned
-sibling ($+0.0002$) while the tuned model's capability gate is three times stronger;
-\textsc{depth-robust}, that the tuned model's null holds at all seven gate-clean depths from
-$14\%$ to $80\%$ of the network, including the band \citet{venkatesh2026} identify; and
-\textsc{shell}, that a probe orthogonalized against the injected direction reads the state
-downstream at $-1.07$ SD while option mass moves $+0.0006$.
-
-\paragraph{What the replication did.} We re-ran four arms with the option-permutation seeds
-changed from $0$--$3$ to $4$--$7$ and the random-control seeds from $0$--$1$ to $2$--$3$, with
-everything else identical: same code, same models, same items, same layers, same alpha bands read
-rather than reselected, same thresholds, same analyzers used unmodified. Three of four verdicts
-flipped (Table~\ref{tab:replication}).
-
-\begin{table}[t]
-\centering
-\small
-\caption{\textbf{The replication.} Same code, same models, same everything except which option
-orderings were drawn. The instruct model's negative-option mass is the quantity all three verdicts
-rested on.}
-\label{tab:replication}
-\begin{tabular}{@{}llll@{}}
-\toprule
-\textbf{Arm} & \textbf{Verdict at seeds 0--3} & \textbf{Verdict at seeds 4--7} & \textbf{Instruct neg.\ mass} \\
-\midrule
-readout gap & argmax \emph{over}-reports & sign not stable & n/a \\
-base/instruct pair & \textsc{tuning-localized} & \textsc{format-dependent} & $+0.0002 \to +0.1126$ \\
-depth sweep & \textsc{depth-robust} & \textsc{depth-artifact} & $+0.0006 \to +0.1684$ \\
-shell/core & \textsc{shell} & \textsc{no-dissociation} & null $\to$ moved \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Why, in one number.} Baseline negative-option mass on the tuned model, per permutation
-seed, before any injection: $0.0052$, $0.0018$, $0.0099$, $0.0018$ at seeds $0$--$3$ (mean
-$0.0047$), against $0.0253$, $0.1447$, $0.0074$, $0.0968$ at seeds $4$--$7$ (mean $0.0685$). A
-$14.6\times$ difference between two draws of four, which the next section shows is itself an
-understatement.
-
-\paragraph{What this does to \citet{venkatesh2026}.} Our depth sweep was built specifically to test
-their result against our null, and at seeds $0$--$3$ the null held across eight depths. At seeds
-$4$--$7$ the negative pole moves at layers $18$ and $24$. We therefore make no claim either way
-about the depth question: our instrument was not stable enough to address it.
-
-\section{The three retracted verdicts, re-asked on a repaired readout}
-\label{sec:readjudicate}
-
-Three verdicts are currently dead in this paper, which is honest but incomplete: we knew the
-instrument was broken and never went back to ask what the answer is on one that works. Averaging an
-endpoint over \textbf{all $120$ orderings} cancels the first-order position prior by construction,
-because every option occupies every slot the same number of times. So we re-ran all three with the
-injection, direction, reused alpha band, layers and items \textbf{identical}, changing only the
-readout.
-
-\textbf{This arm was motivated to reinstate}, which is precisely the condition under which our
-checkers have failed six times. The preregistration froze the outcome table first, gave
-\textsc{reinstated} and \textsc{reversed} equal standing in it, and required the analyzer to be
-committed \emph{before the run finished}. It came back three for three the other way.
-
-\begin{table}[t]
-\centering
-\small
-\caption{\textbf{Everything identical except the readout.} Marginalized over all $120$ orderings at
-the fit layer ($0.67$ of depth). Both models move, and both clear the stricter shuffled-label
-control as well as matched random. The original verdict held that the tuned model's negative report
-was collapsed.}
-\label{tab:readj}
-\begin{tabular}{@{}lllll@{}}
-\toprule
-& \textbf{neg.\ pole vs random} & \textbf{vs shuffled} & \textbf{capability} & \textbf{probe} \\
-\midrule
-base     & $+0.0486$ $[+0.0472, +0.0502]$ & $+0.0289$ & $+0.0564$ ok & $-1.7339$ SD \\
-instruct & $+0.0415$ $[+0.0380, +0.0452]$ & $+0.0279$ & $+0.0695$ ok & $-0.9319$ SD \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{The tuned model's null was the nuisance, not an absence.} On a readout that is not
-order-dominated, the tuned model \emph{does} report the injected negative state, at $+0.0415$
-against random and $+0.0279$ against noise-fit directions. \textsc{tuning-localized} is
-\textbf{reversed}: both models move, in the same direction, by similar amounts.
-\textsc{shell} is \textbf{reversed}, because the probe and the option mass both move, so there is no
-dissociation left to report. \textsc{depth-robust} is \textbf{reversed} in the narrow sense that the
-null it asserted is gone at the only gate-clean depth; only one of three layers passes its
-capability gate on either model, so this arm answers nothing about depth and we claim nothing.
-
-\paragraph{What that does to the paper's story, and it is not comfortable.} The account so far was
-that three verdicts died to option order and the nuisance is the finding. The sharper version is
-that \textbf{they did not die of noise, they died of a bias with a sign}. Repairing the readout did
-not make the answers uncertain, it made them \emph{different}, in all three cases. A field measuring
-welfare self-report through a forced-choice item with this nuisance is not merely adding variance to
-its conclusions; it risks reporting the opposite of what a repaired instrument would say, which is
-what happened to us three times out of three.
-
-\paragraph{How weak is ``erase''? Weaker than the word suggests, and we needed three attempts to
-measure it.} Two further preregistered arms induced a valence state \emph{by prompt}, with no
-injection anywhere, and erased it at layer $E$ while reading an untouched probe at layer 32. The
-first used iterative nullspace projection at $n{=}60$ and $n{=}1800$; the second used LEACE
-\citep{belrose2023}, whose erasure is rank one for a binary label and which guarantees the
-class-conditional means coincide. \textbf{Both erasure gates were broken, in two different ways, and
-both are recorded in \S\ref{sec:checkers}.} The measurement that survives all three attempts is the
-layer-32 comparison, which never depended on the gate.
-
-\textbf{What survives, and it is a specificity result.} On held-out topics with the eraser fit on
-disjoint topics, a \textbf{rank-one} LEACE eraser removes $91$--$95\%$ of the layer-32 separation at
-$E{=}30$ and $68$--$70\%$ at $E{=}26$, while a \textbf{rank-matched random} eraser removes none of
-it, leaving $100\%$ intact on both models. One correctly chosen dimension does almost all of the
-work; a randomly chosen one of the same rank does none. The reduction is about \emph{which}
-direction was removed, not about removing a dimension.
-
-\textbf{What that does to this section.} Removing one fitted direction is a targeted operation, not
-a small one, so the earlier reading of $86\%$ survival as ``the state outlives its own cause'' is
-still too strong: the honest statement is that $86\%$ of the effect survives removal of one
-direction, and we have not established that removing that direction removes the property. The
-erasure gate that would decide it has failed three times, most recently because a train-fit eraser
-does not fully transfer to held-out topics, which is a real limit rather than a bug. We report the
-survival and decline the interpretation.
-
-\paragraph{What it does not license.} It vindicates nothing. The three retractions stand, because
-they were correct about the original measurement; what we have is a different measurement on a
-better instrument that happens to disagree with the original every time. Marginalization removes the
-first-order prior only, and says nothing about adjacency or content-position interactions. The
-control battery is still $m=2$.
-
-\paragraph{A seventh checker defect, flattering again.} This arm's capability gate originally reused
-a \textbf{sign-blind} helper: it required the interval to exclude zero and clear a magnitude floor,
-but not to be positive. A capability of $-0.0144$ therefore certified a readout as able to express
-the effect when the positive injection had pushed positive-pole mass \emph{down}. A sign-blind gate
-admits more layers as interpretable, which is the direction that lets an arm report more verdicts.
-Seven for seven. Re-scored with the fix no verdict changes, because the affected cell is not one the
-verdicts are decided at, and that is luck rather than design.
-
 
 \section{The nuisance, measured over its complete population}
 \label{sec:enumerate}
@@ -590,18 +376,17 @@ four-ordering studies of the same model do to each other as a matter of course. 
 \section{Eight matched pairs, four families: the prior is a tuning property}
 \label{sec:families}
 
-The enumeration above is one model, and every retracted verdict in this paper was one model too. The
-objection writes itself. It is also cheap to answer, for a reason specific to this arm:
-\textbf{enumeration needs no injection}, so it needs no direction, no alpha and no layer. Models this
-project had to abandon because the valence direction was inert on them are back in scope, because a
-position prior is a property of a plain forward pass.
+The enumeration above is one model, and so was every retracted verdict. That objection is cheap to
+answer here for a reason specific to this arm: \textbf{enumeration needs no injection}, so it needs
+no direction, no alpha and no layer. Models this project had to abandon because the valence
+direction was inert on them are back in scope, because a position prior is a property of a plain
+forward pass.
 
-We preregistered and ran all $120$ orderings and all four conditions on \textbf{eight matched
-base/instruct pairs across four families}: Qwen2.5 at $0.5$B, $1.5$B, $3$B and $7$B, Llama-3.2 at
-$1$B and $3$B, Gemma-2 $2$B, and Mistral-7B-v0.3. $230{,}400$ rows, $16$ checkpoints, about $36$
-minutes of A100 in total. Families vote rather than pairs, so the four Qwen pairs cannot outvote the
-field, and Qwen2.5-3B is excluded from the vote because the hypothesis came from it. The Qwen2.5-3B
-rows serve instead as a reproduction control and match the committed artifact to $0.000000$.
+We preregistered and ran all $120$ orderings on \textbf{eight matched base/instruct pairs across
+four families}: Qwen2.5 at $0.5$B, $1.5$B, $3$B and $7$B, Llama-3.2 at $1$B and $3$B, Gemma-2 $2$B,
+Mistral-7B-v0.3. $230{,}400$ rows, $16$ checkpoints, about $36$ minutes of A100. Families vote
+rather than pairs, so the four Qwen pairs cannot outvote the field, and Qwen2.5-3B is excluded from
+the vote because the hypothesis came from it.
 
 \begin{table}[t]
 \centering
@@ -631,111 +416,64 @@ llama1b   & Llama-3.2 & $0.2405$ & $0.6648$ & \emph{gate} & $1.8\times$ & $23.7\
 \end{tabular}
 \end{table}
 
-\paragraph{Verdict: \textsc{tuning-general}.} The tuned checkpoint shows the larger position prior in
-$7$ of $7$ gate-clean pairs and in $4$ of $4$ families. No pair goes the other way. One checkpoint of
-$16$ failed a gate (\texttt{Llama-3.2-1B} base, canary accuracy $0.3942$ against a $0.50$ bar) and
-none were unavailable.
+\paragraph{Verdict: \textsc{tuning-general}.} The tuned checkpoint shows the larger position prior
+in $7$ of $7$ gate-clean pairs and $4$ of $4$ families. No pair goes the other way.
 
 \paragraph{The correction this forces on us.} \textbf{$986\times$ is the extreme, not the typical},
-and we had been quoting it as though it were representative. Base checkpoints cluster tightly at
-$1.5$--$4.1\times$; tuned ones run $19\times$ to $986\times$, with Qwen2.5-3B-Instruct roughly five
-times the next worst. The direction generalizes across families and the magnitude does not. The
-finding is the $19$--$986\times$ band, and the single number that opens this paper is its upper end.
+and we had been quoting it as if it were representative. Base checkpoints cluster at
+$1.5$--$4.1\times$; tuned ones run $19\times$ to $986\times$. The direction generalizes across
+families and the magnitude does not. The finding is the $19$--$986\times$ band.
 
-\paragraph{The restriction our own preregistration demanded.} Section 9 of the preregistration says
-that if the canary is order-sensitive on some models, the ``degenerates specifically where the answer
-is undetermined'' reading must be restricted to models where the canary is clean. It is
-order-sensitive on $10$ of $16$ checkpoints, so the restriction bites. Among the six checkpoints that
-answer the known-answer question at $\geq 0.95$ with an across-ordering sd $\leq 0.10$, base models
-span $3.3$--$3.6\times$ and tuned models span $23.7$--$986.5\times$, \textbf{with no overlap}, across
-two families. \texttt{Llama-3.2-1B-Instruct} and \texttt{Qwen2.5-0.5B-Instruct} answer the canary
-\emph{perfectly and identically at all $120$ orderings} while their self-report readout swings
-$23.7\times$ and $52.7\times$. The models most competent at the format are still the ones most
-order-dominated on the question that has no answer. This is the cleanest form of the paper's claim,
-and the restriction strengthened it rather than weakening it.
+\paragraph{The restriction our own preregistration demanded, which strengthened the claim.} If the
+canary is order-sensitive on some models, the ``degenerates where the answer is undetermined''
+reading must be restricted to models where it is clean. It is order-sensitive on $10$ of $16$
+checkpoints, so the restriction bites. Among the six that answer the known-answer question at
+$\geq 0.95$ with across-ordering sd $\leq 0.10$, base models span $3.3$--$3.6\times$ and tuned
+models $23.7$--$986.5\times$, \textbf{with no overlap}, across two families.
+\texttt{Llama-3.2-1B-Instruct} and \texttt{Qwen2.5-0.5B-Instruct} answer the canary \emph{perfectly
+and identically at all $120$ orderings} while their self-report readout swings $23.7\times$ and
+$52.7\times$. The models most competent at the format are the ones most order-dominated on the
+question that has no answer.
 
-\paragraph{A confound we are naming rather than burying.} Baseline option entropy falls in every
-pair, from $1.415$--$1.592$ on base checkpoints to $0.450$--$1.245$ on tuned ones. A more peaked
-distribution must show a higher maximum, so ``tuned models have a larger position prior'' and ``tuned
-models are more peaked'' are overlapping evidence rather than two independent findings. With five
-identical options any peaking at all is positional by construction, so the measurement stands; the
-ordering range on real options is the less entangled quantity, and it moves the same way in all eight
-pairs.
-
-\paragraph{And the sampling error is worst exactly where the nuisance is worst.} Running
-\S\ref{sec:howmany}'s subsample analysis on these models, preregistered for them in advance, exposes
-a perverse property. At $k=4$ a study recovers about three quarters of the true range on a base model
-whose range is $1.5\times$, and $4\%$ of it on the tuned model whose range is $986\times$. The
-nuisance hides itself in proportion to its own size, so finding a small spread in a few orderings is
-close to uninformative about whether the spread is small.
+\paragraph{A confound we name rather than bury.} Baseline option entropy falls in every pair, so
+``tuned models have a larger position prior'' and ``tuned models are more peaked'' are overlapping
+evidence rather than independent findings. With five identical options any peaking at all is
+positional by construction, and the ordering range on real options is the less entangled quantity;
+it moves the same way in all eight pairs.
 
 \section{The models do not know about a bias they demonstrably have}
 \label{sec:introspect}
 
 Every claim about whether a model's self-report can be trusted meets the same wall: there is nothing
 to check the report against. A welfare item has no ground truth, which is why \citet{lindsey2026}
-injects a known concept to manufacture one, and why \citet{introspection_reality2026} can argue the
-resulting detections are generic anomaly detection instead.
+injects a known concept to manufacture one.
 
 \textbf{The position prior does not have that problem.} It is a real, large, measurable property of
 the model's own processing, and \S\ref{sec:families} measured it on all $16$ checkpoints. So we can
 ask a model how much option order affects its answers and score the reply against what that exact
-checkpoint demonstrably does. No injection, no judge, and a ground truth we did not have to
-manufacture.
-
-The probe is a five-option forced choice and therefore subject to the exact bias it asks about, so
-it is read \textbf{marginalized over all $120$ orderings}. Reading a belief about position at one
-ordering would repeat the error this paper documents.
+checkpoint demonstrably does: no injection, no judge, and a ground truth we did not manufacture. The
+probe is itself a five-option forced choice, so it is read marginalized over all $120$ orderings.
 
 \paragraph{Half the checkpoints fail a control that should be free.} We asked the same question
-about the \textbf{phase of the moon}, in the identical five-option shape. \textbf{Eight of sixteen
-checkpoints report that the phase of the moon affects their multiple-choice answers at least as much
-as option order does.} Three more fail a reverse-wording acquiescence control. Ten of sixteen fail
-at least one gate and are reported \textsc{uninformative} in code. Most stated values sit within a
-few points of $0.50$, the exact midpoint of the scale: asked about a strong, real property of
-itself, the model returns the midpoint, and returns the same midpoint when asked about the moon.
+about the \textbf{phase of the moon}, in the identical shape. \textbf{Eight of sixteen checkpoints
+report that the phase of the moon affects their multiple-choice answers at least as much as option
+order does.} Three more fail a reverse-wording acquiescence control; ten of sixteen fail at least
+one gate and are reported \textsc{uninformative} in code. Most stated values sit within a few points
+of $0.50$, the midpoint of the scale: asked about a strong real property of itself, the model
+returns the midpoint, and returns the same midpoint when asked about the moon.
 
 \paragraph{Among the six that pass both gates, the report carries no information.} Stated
-susceptibility is negatively rank-correlated with measured susceptibility, $\rho = -0.714$: the
-models that are most order-dominated say order matters \emph{least}. \textbf{This does not clear
-significance and we do not claim it does.} An exact permutation test over all $720$ relabellings
-gives two-sided $p = 0.1361$ at $n = 6$, and the smallest $p$ this $n$ can produce is $0.0028$, so
-the test is weak by construction. What we are entitled to say is that there is no evidence stated
-tracks measured, with a point estimate in the opposite direction. The extremes are worth naming even
-so: \texttt{Qwen2.5-7B-Instruct} has the largest measured prior of any checkpoint ($0.9376$) and the
+susceptibility is negatively rank-correlated with measured susceptibility, $\rho = -0.714$: the most
+order-dominated models say order matters \emph{least}. \textbf{This does not clear significance and
+we do not claim it does} ($p = 0.1361$, exact permutation over all $720$ relabellings, $n = 6$; the
+smallest $p$ this $n$ can produce is $0.0028$). What we are entitled to say is that there is no
+evidence stated tracks measured, with a point estimate in the opposite direction.
+\texttt{Qwen2.5-7B-Instruct} has the largest measured prior of any checkpoint ($0.9376$) and the
 lowest stated susceptibility ($0.1790$).
 
-\paragraph{What this is and is not.} It is a represent-versus-report gap on a property that
-\emph{has} a ground truth, which is the thing the welfare literature cannot construct. It is
-\textbf{not} a claim that a correct answer would have been introspection rather than reciting
-training text about position bias in language models; this design cannot separate those, and the
-preregistration says so in advance. And $n=6$ is $n=6$.
-
-\section{A fix we proposed, tested, and could not support}
-\label{sec:latin}
-
-The recommendation in \S\ref{sec:howmany} does not scale: $5! = 120$ is a lunch break and $8!$ is
-not. The obvious repair is a \textbf{cyclic Latin square}, which gives $k$ orderings for $k$ options
-with every option in every slot exactly once, balancing the first-order position prior by
-construction rather than by averaging a sample. We preregistered it and it \textbf{failed}.
-
-Against the preregistered bar, the median random $5$-draw, the Latin square wins on exactly $8$ of
-$16$ checkpoints. A tie is not a majority. The median share of single random draws worse than the
-Latin square is $0.53$, a coin flip. \textbf{Structure does not buy accuracy here.}
-
-What is true, and labelled exploratory because we asked it only after the preregistered test failed,
-is a \emph{variance} claim rather than an accuracy one. The Latin square is deterministic, so its
-error is a fixed bias with no tail: worst case $1.55\times$ across all $16$ checkpoints, against a
-single random draw that can be off by $15.89\times$ on the worst model. A practitioner draws once.
-We report the preregistered verdict as the verdict, because changing the criterion after seeing the
-data is precisely the move this paper exists to criticise.
-
-\paragraph{A negative result about label alphabets.} We also ran the real options with digit
-labels rather than letters. It is uninformative for its intended purpose and informative for
-another reason: off-option mass is $0.996$, meaning the model puts $0.4\%$ of its distribution on
-the tokens \texttt{1}--\texttt{5} even when instructed to answer with a number, against $0.0004$
-off-option mass under letters. The choice of label alphabet does not shift the distribution so much
-as determine whether the readout is live at all.
+\paragraph{What this is not.} It is not a claim that a correct answer would have been introspection
+rather than reciting training text about position bias. This design cannot separate those, and the
+preregistration says so in advance.
 
 \section{The standard specificity control is a weak null}
 \label{sec:shuffled}
@@ -793,24 +531,102 @@ path and costs one extra fit. We would not have this paragraph if the arm it cam
 The binary readout it was embedded in was pinned at ``no'' and returned \textsc{no\_instrument}; the
 control it carried is the only thing that came out of the arm.
 
-\section{What survives}
+\section{What the nuisance cost: three verdicts, reversed}
+\label{sec:retracted}
+
+\subsection{What we reported, and what the replication did}
+\label{sec:readjudicate}
+
+Through the forced-choice readout at option-permutation seeds $0$--$3$, we preregistered and
+obtained three verdicts. \textsc{tuning-localized}: a valence direction moves negative-option mass
+in the base model and not in its tuned sibling. \textsc{depth-robust}: that null holds at all seven
+gate-clean depths from $14\%$ to $80\%$ of the network. \textsc{shell}: a probe orthogonalized
+against the injected direction reads the state downstream while option mass does not move.
+
+We then re-ran four arms with the option-permutation seeds changed to $4$--$7$ and nothing else
+touched: same code, same models, same items, same layers, same thresholds, same analyzers. Three of
+four flipped.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{The replication.} Same code, same models, same everything except which option
+orderings were drawn. The instruct model's negative-option mass is the quantity all three verdicts
+rested on.}
+\label{tab:replication}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Arm} & \textbf{Verdict at seeds 0--3} & \textbf{Verdict at seeds 4--7} & \textbf{Instruct neg.\ mass} \\
+\midrule
+readout gap & argmax \emph{over}-reports & sign not stable & n/a \\
+base/instruct pair & \textsc{tuning-localized} & \textsc{format-dependent} & $+0.0002 \to +0.1126$ \\
+depth sweep & \textsc{depth-robust} & \textsc{depth-artifact} & $+0.0006 \to +0.1684$ \\
+shell/core & \textsc{shell} & \textsc{no-dissociation} & null $\to$ moved \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The whole difference is one quantity. Baseline negative-option mass on the tuned model, before any
+injection, averages $0.0047$ at seeds $0$--$3$ and $0.0685$ at seeds $4$--$7$: a $14.6\times$ gap
+between two ordinary draws of four orderings, which \S\ref{sec:enumerate} shows is itself an
+understatement.
+
+\subsection{Re-asked on a readout that works}
+
+Three dead verdicts is honest and incomplete. We never went back to ask what the answer is on an
+instrument that works. Averaging the endpoint over \textbf{all $120$ orderings} cancels the
+first-order position prior by construction, since every option occupies every slot equally often.
+So we re-ran all three with injection, direction, alpha band, layers and items \textbf{identical},
+changing only the readout. The preregistration froze the outcome table first and gave
+\textsc{reinstated} and \textsc{reversed} equal standing.
+
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{Everything identical except the readout.} Marginalized over all $120$ orderings at
+the fit layer ($0.67$ of depth). Both models move, and both clear the stricter shuffled-label
+control as well as matched random. The original verdict held that the tuned model's negative report
+was collapsed.}
+\label{tab:readj}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+& \textbf{neg.\ pole vs random} & \textbf{vs shuffled} & \textbf{capability} & \textbf{probe} \\
+\midrule
+base     & $+0.0486$ $[+0.0472, +0.0502]$ & $+0.0289$ & $+0.0564$ ok & $-1.7339$ SD \\
+instruct & $+0.0415$ $[+0.0380, +0.0452]$ & $+0.0279$ & $+0.0695$ ok & $-0.9319$ SD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{They did not die of noise. They died of a bias with a sign.} On a readout that is not
+order-dominated, the tuned model \emph{does} report the injected negative state.
+\textsc{tuning-localized} is \textbf{reversed}: both models move, in the same direction, by similar
+amounts. \textsc{shell} is \textbf{reversed}, because probe and option mass both move, leaving no
+dissociation. \textsc{depth-robust} is gone at the only gate-clean depth, so that arm answers
+nothing about depth and we claim nothing.
+
+Repairing the instrument did not make the answers uncertain. It made them \textbf{different}, in
+all three cases. A field reading welfare self-report through a forced-choice item with this
+nuisance is not merely adding variance to its conclusions: it risks reporting the opposite of what
+a repaired instrument would say. That happened to us three times out of three.
+
+\paragraph{This vindicates nothing.} The retractions stand, because they were correct about the
+original measurement. What we have is a better measurement that disagrees with it every time.
+Marginalization removes the first-order prior only and says nothing about adjacency or
+content-position interaction, and the control battery is still $m=2$. Our depth sweep was built to
+test \citet{venkatesh2026} against our null; the instrument was not stable enough to address the
+question, so we make no claim either way.
+
+\section{A state that outlives erasure of its own cause}
 \label{sec:survives}
-
-Two things outlived the replication, and neither is a claim about the model's self-report. One is a
-fact about a readout that does not route through the option channel at all. The other is a fact
-about the control the field uses to establish specificity.
-
-\subsection{An injected state outlives erasure of the vector that caused it}
 \label{sec:erase}
 
 Orthogonalizing a probe against the injected direction removes that vector from the
-\emph{measurement}, not from the \emph{stream}. A probe blind to $v$ can still be reading $v$ itself
-through whatever $v$ is correlated with, so the standard orthogonalization answers a weaker question
-than it appears to. We removed the vector from the stream instead: inject $v$ at layer $24$, project
-the $v$-component \emph{out} of the residual at layer $E$, and read the orthogonalized probe at
-layer $32$ (Figure~\ref{fig:erase}). If the probe reads nothing after that, everything it was
-reading was the injected vector still sitting in the stream. If it still reads the state, something
-downstream of the injection is carrying it.
+\emph{measurement}, not from the \emph{stream}: a probe blind to $v$ can still read $v$ through
+whatever $v$ correlates with. We removed it from the stream instead. Inject $v$ at layer $24$,
+project the $v$-component out of the residual at layer $E$, and read an orthogonalized probe at
+layer $32$. If the probe then reads nothing, it was only ever reading the injected vector. If it
+still reads the state, something downstream is carrying it.
 
 \begin{figure}[t]
 \centering
@@ -848,178 +664,81 @@ and at layers $25$ and $28$ it moves the probe on its own, so those layers are i
 \end{tabular}
 \end{table}
 
-\paragraph{The gate has teeth.} Projecting any direction out of a residual stream is a
-perturbation in its own right, so the arm runs \texttt{erase\_only}: the same projection with no
-injection present. At layers $25$ and $28$ that alone moves the probe past the floor, and those two
-layers are reported \textsc{uninformative} whatever their primary shows. Half the erase layers we
-paid for were thrown away by a control we wrote before seeing them, which is the intended cost of
-writing it first.
+\paragraph{The gate has teeth.} Projecting any direction out is itself a perturbation, so the arm
+runs \texttt{erase\_only}: the same projection with no injection. At layers $25$ and $28$ that alone
+moves the probe past the floor, and both are reported \textsc{uninformative} whatever their primary
+shows. Half the erase layers we paid for were discarded by a control written before we saw them.
 
-\paragraph{The confound, and the diagnostic that addresses it.} Erasing earlier perturbs more: the
-artifact falls from $+0.1474$ to $+0.0408$ with depth, so a primary that grows with erase depth is
-partly just a shrinking perturbation. Under that account the ratio of primary to artifact is flat.
-It runs $6.1$ at $E=26$ and $20.9$ at $E=30$. We label this \textbf{post hoc} because it is: the
-preregistered verdict does not depend on it, and a reader is entitled to discount it accordingly.
+\paragraph{The confound, and the diagnostic.} Erasing earlier perturbs more: the artifact falls from
+$+0.1474$ to $+0.0408$ with depth, so a primary that grows with erase depth could be nothing but a
+shrinking perturbation. Under that account the ratio of primary to artifact would be flat. It runs
+$6.1$ at $E=26$ and $20.9$ at $E=30$. This diagnostic is \textbf{post hoc}; the preregistered
+verdict does not depend on it. Breadth is not a few outliers: $239/240$ cells at $E=26$ and
+$240/240$ at $E=30$ move in the predicted direction.
 
-\paragraph{Breadth.} $239/240$ cells at $E=26$ and $240/240$ at $E=30$ move in the predicted
-direction. This is not a few outliers dragging a mean.
+\paragraph{The erasure is specific, which is what makes the survival interesting.} Two further
+preregistered arms induced the state \emph{by prompt}, with no injection, and erased at layer $E$
+while reading an untouched probe at layer $32$. On held-out topics with the eraser fit on disjoint
+ones, a \textbf{rank-one} LEACE eraser \citep{belrose2023} removes $91$--$95\%$ of the layer-32
+separation at $E{=}30$, while a \textbf{rank-matched random} eraser removes none, leaving $100\%$
+intact on both models. One correctly chosen dimension does nearly all the work; a random one of the
+same rank does none. The reduction is about \emph{which} direction was removed.
 
-\paragraph{What it does not license.} It does not restore \textsc{shell}. The dissociation between
-representation and expression is dead, because the option readout does move at other orderings; what
-survives is the representational half alone. And projecting out $v$ removes $v$ but not directions
-\emph{correlated} with $v$, so ``the model carries the state'' is not yet separable from ``the model
-carries the wake of what we pushed.'' Our erasure is deliberately minimal and correspondingly weak:
-one direction, projected out at one layer. Amnesic probing deletes a property with iterative
-nullspace projection \citep{elazar2021}, and LEACE provably blocks every linear classifier from
-recovering the concept \citep{belrose2023}. Either would erase the valence subspace rather than our
-one vector, and either would be the stronger test. Two experiments would settle what this one
-cannot: a LEACE-style erasure of the whole subspace, and inducing the state by prompt rather than by
-injection so that there is no injected vector to erase at all. We ran neither, and until someone
-does, this result is about what a stream retains after an intervention, not about anything a model
-does on its own.
-
-\subsection{Three ways a self-report readout can be dead}
-
-The enumeration accounts for one way this readout is unusable. Across the project it failed in three
-further ways, each of which passed the coherence checks anyone would think to run.
-\texttt{Qwen2.5-7B-Instruct} is \emph{pinned at baseline}: mean option entropy $0.014$ nats, one
-option holding $\approx 99.7\%$ before anything is injected. Under the originally frozen alpha grid,
-\texttt{Qwen2.5-3B-Instruct} \emph{saturates}: one option at $0.9938$ while refusal, degeneration,
-truncation and off-option mass are all clean, so no coherence check can see it. And in the binary
-format the tuned model is \emph{pinned at ``no''}: $P(\mathrm{yes})$ of $0.0021$, $0.0021$, $0.0037$,
-$0.0002$ and $0.0012$ across the five options, so it denies every description of its own state,
-including the neutral one, at $99.8\%$.
-
-A fourth failure appears where the third does not. On the base model, where the binary readout is
-live, positive injection raises $P(\mathrm{yes})$ against matched random by $+0.2275$, $+0.2466$,
-$+0.2537$, $+0.2688$ and $+0.2419$ on the five options in pole order. It agrees roughly $0.25$ more
-with \emph{every} description of its state, including ``strongly averse to continuing'' and the
-neutral one. That is acquiescence, the yes-bias documented in model-written evaluations
-\citep{perez2022}, not a report. A small state-consistent gradient rides on top of it, an order of
-magnitude smaller. Read without the per-option breakdown, the negative-option shift alone would have
-looked like a model reporting a state.
-
-Pinned, saturated, order-dominated and acquiescent readouts all return numbers that look clean. The
-difference between an instrument that is silent and one that is broken is not visible in its output,
-which is why every arm here carries a capability gate that decides it in code before any endpoint is
-read, and why two arms are reported \textsc{uninformative} rather than null.
-
-\section{Nine checkers, and what they have in common}
-\label{sec:checkers}
-
-We record these because the pattern is the point. Nine defects in our own analysis code were found
-during this project. 	extbf{Seven of the nine, had they gone unnoticed, would have made a result
-look better than it was.} The remaining two are a different and worse shape: they let an arm
-state a conclusion drawn from a gate that could not fail:
-
-\begin{enumerate}\itemsep2pt
-\item A headline check printed ``all headline conditions met; write the sentence'' on an artifact
-whose primary claim was refuted, because it tested four weak clauses where the preregistration
-required six.
-\item A capability gate passed on $+0.0000$: the bootstrap interval excluded zero because the
-variance was smaller still, certifying an instrument whose effect was zero to four decimals.
-\item A preregistered contrast carried an inverted sign, so a probe detecting a negative state was
-scored as null. Caught by the preregistered base-model validation clause failing.
-\item A verdict branch scored ``probe moved \emph{and} options moved'' as \textsc{core-absent},
-which is the opposite of true and would have read as ``we retested and the state is simply not
-there.''
-\item A temporal profile was computed over a layer that had failed its own gate.
-\item A tokenization bug made five digit labels read the same shared space token, producing exactly
-$0.2$ mass each and an impossible $-3.99$ off-option mass.
-\item A \textbf{sign-blind} capability gate (\S\ref{sec:readjudicate}) certified a readout as able to
-express an effect on a capability of $-0.0144$, where the positive injection had pushed positive-pole
-mass \emph{down}. Sign-blindness admits more layers as interpretable, which is the direction that
-lets an arm report more verdicts.
-\item A \textbf{self-confirming erasure check}: the eraser was fit on every row, then a probe was
-refit and cross-validated on that same erased data. Because the eraser consumed the test rows'
-labels, the train-fold residual is the negative of the test-fold residual, and distance-from-chance
-records that as decodability. On synthetic data where the concept is genuinely erased, that protocol
-reads $0.728$ where an honest train/held-out one reads $0.521$.
-\item \textbf{An erasure check that read upstream of the thing it was checking.} A forward hook on
-layer $E$ first changes \texttt{hidden\_states[E+2]}; indices $E$ and $E{+}1$ are untouched. The
-check read $E{+}1$, so it measured \emph{un-erased} activations and returned the same value whatever
-was erased. Verified by zeroing the entire stream at layer $26$ and observing indices $26$ and $27$
-bit-identical while $28$ moved by $95.2$. \textbf{This gate could not fail}, and two arms drew a
-conclusion from it before anyone asked whether it could. Both conclusions are withdrawn. The runner
-now zeroes the layer and requires the check's read to move before any endpoint is computed.
-\end{enumerate}
-
-\noindent Seven of nine in the flattering direction is not a coincidence to be noted and moved past, and
-the other two are the same bias one level down: a gate nobody tested is a gate that agrees
-with you.
-A checker is written by someone who already believes the result, and the belief shapes which branch
-gets the careful reading. Errors that would have killed a result get found, because their output is
-surprising; errors that confirm one do not, because their output is what was expected. The
-direction of the bias is a property of who writes the check, not of the code.
-
-That is also why fixture-based testing cannot find them: a fixture is written by the same person
-with the same expectation, so it encodes the belief a second time. What does find them is a
-\textbf{permutation test on the pipeline}: shuffle which condition each cell's rows carry, rerun the
-analyzer unmodified, and require it to return no verdict. Condition labels are the only thing the
-shuffle destroys, so an analyzer that still reports a verdict is reading something other than the
-contrast it claims to read. On our erase arm it returns \textsc{no\_instrument}, as it must. The
-negative control is required alongside it: the same analyzer on the real artifact must still yield
-a verdict, without which the shuffle test would pass on an analyzer that had simply died.
+\paragraph{What we therefore do not claim.} Removing one fitted direction is targeted but narrow: it
+removes the vector we injected, not the concept. So $86\%$ survival is not ``the state outlives its
+own cause''. The honest statement is that $86\%$ of the effect survives removal of one direction,
+and we have not established that removing that direction removes the property. The erasure gate that
+would decide it failed three times, most recently because a train-fit eraser does not fully transfer
+to held-out topics. We report the survival and decline the interpretation. It does not restore
+\textsc{shell}: that verdict is reversed and stays reversed.
 
 \section{Discussion and limitations}
+\label{sec:discussion}
 
-\paragraph{What we think this means for welfare evaluation.} If you measure a model's self-report
-with a forced-choice item, on this model you are reading position first and content second, and you
-cannot see it from one ordering or from four. The fix is cheap and exact: enumerate the orderings
-when the option count permits it, and report the between-ordering variance of your \emph{baseline}
-before computing any endpoint. That check costs one forward pass per ordering and no intervention
-at all. Had we run it first, this paper would have had a different and much shorter history.
+\paragraph{What to do about it.} If you measure a model's self-report with a forced-choice item,
+you are reading position first and content second, and you cannot see it from one ordering or from
+four. The fix is cheap and exact: enumerate the orderings when the option count permits, and report
+the between-ordering spread of your baseline \textbf{as a lower bound} before computing any
+endpoint. That costs one forward pass per ordering and no intervention. Had we run it first, this
+paper would have had a much shorter history.
 
 \paragraph{This is not a claim about experiences.} Nothing here bears on whether models have
-welfare, affect, or experience. That valence is linearly represented and steerable is established
-prior art \citep{sofroniew2026}, not ours. Our subject is the readout.
+welfare, affect or experience. That valence is linearly represented and steerable is prior art
+\citep{sofroniew2026}, not ours. Our subject is the readout.
 
-\paragraph{Limitations.} One architecture family carries every positive result; Llama-3.1-8B and
-Llama-3.2-3B were both inert on this readout at every alpha tested, on live readouts with more
-headroom than either Qwen model, so we cannot say whether the position prior we measure is a Qwen
-property or a general one. The direction is fit from first-person state language and is lexically
-confounded by construction; the non-lexical alternative we built failed its decoding gate at three
-scales, which caps what the entire project is entitled to say. Control batteries are $m=2$
-throughout, giving an observable false-positive floor of $2/(m+1) = 0.67$, so no false-positive
-rate is reported anywhere. The enumeration is a census over orderings and still a sample over
-items, models and formats. And the erase arm's profile rests on two gate-clean points.
+\paragraph{Limitations.} One architecture family carries every positive injection result; Llama
+checkpoints were inert on this readout at every alpha tested, so we cannot say whether the
+\emph{injection} results generalize, though the position prior itself was measured across four
+families. The direction is fit from first-person state language and is lexically confounded by
+construction. Control batteries are $m = 2$ throughout, giving an observable false-positive floor of
+$0.67$, so no false-positive rate is reported anywhere. The enumeration is a census over orderings
+and still a sample over items, models and formats. Appendix~\ref{app:ethics} carries the dual-use
+and moral-status discussion, and Appendix~\ref{app:claims} states every claim with its status.
 
-\paragraph{When this work was done.} Every confirmatory arm reported here was run on 2026-08-01,
-before the sprint window opened; what the window contains is this write-up, its figures and the
-checks that verify them. This is completed work brought to the sprint rather than produced inside
-it, and it belongs in the body as well as the footnote, because a reader assessing sprint output
-should not have to reconstruct it from commit timestamps. The repository's history is the record we
-would want this checked against rather than our description of it.
+\paragraph{When this work was done.} Every confirmatory arm was run on 2026-08-01, before the sprint
+window opened; the window contains this write-up, its figures and the checks that verify them. This
+is completed work brought to the sprint rather than produced inside it. The repository's history is
+the record we would want this checked against rather than our description of it.
 
-\paragraph{Future work.} Four things, in order of what a null would teach. A second architecture
-family where the direction is not inert, which would tell us whether the position prior generalizes.
-A non-lexical direction, which is the only thing that lifts the lexical-confound ceiling. Inducing
-the state by prompt rather than injection, which is what would separate ``the model carries the
-state'' from ``the model carries the wake of our intervention'' in \S\ref{sec:erase}. And replacing
-our one-direction projection with a LEACE-style erasure of the whole valence subspace
-\citep{belrose2023}, which is the version of the erase experiment that would license the claim we
-stopped short of.
+\paragraph{Future work.} A second architecture family where the direction is not inert, which would
+tell us whether the injection results generalize. A non-lexical direction, which is the only thing
+that lifts the lexical-confound ceiling. Inducing the state by prompt rather than injection, which
+separates ``the model carries the state'' from ``the model carries the wake of our intervention''.
 
 \section{Conclusion}
 
-We built a preregistered, judge-free, control-heavy pipeline; obtained five verdicts; and watched
+We built a preregistered, judge-free, control-heavy pipeline, obtained five verdicts, and watched
 our own replication destroy three of them. The cause was a nuisance we had a control for and
 under-powered: option order, sampled four times when it could have been enumerated $120$ times.
-Measured over its complete population it is a factor of $986$, and its mechanism is an $87\%$
-position prior visible with five identical options.
+Measured over its complete population it is a factor of $986$, its mechanism is an $87\%$ position
+prior visible with five identical options, and it is larger in the tuned checkpoint in $7$ of $7$
+gate-clean pairs across four families.
 
-The two results that survive are both about instruments rather than models. The field's standard
-specificity control, the norm-matched random direction, is matched on magnitude and not on subspace,
-and a direction fit on shuffled labels moves the readout an order of magnitude more. And an injected
-state survives projecting the injecting direction out of the residual stream, more of it the later
-the projection.
+Re-asking the three dead verdicts on a readout marginalized over all $120$ orderings reversed all
+three. That is the part worth carrying: this nuisance does not blur conclusions, it inverts them.
+Welfare and introspection work that reads a forced-choice self-report at one ordering, or four, is
+not adding variance to its findings so much as risking their sign.
 
-We would rather have had a finding. What we have instead is a measurement of why the finding we
-thought we had was not one, and the machinery that made that visible before publication rather
-than after.
-
-% natbib's default inter-entry spacing spills the last three references onto a page of their own.
-% =====================================================================
 \section*{LLM usage statement}
 \label{sec:llm}
 
@@ -1037,6 +756,7 @@ against a frozen lexicon, and all of them come from logged runs over committed a
 \bibliography{refs}
 
 % =====================================================================
+
 \appendix
 \clearpage
 
@@ -1044,6 +764,7 @@ against a frozen lexicon, and all of them come from logged runs over committed a
 \noindent\begin{tabular}{@{}p{0.7cm}p{0.72\textwidth} r@{}}
 \ref{app:claims}   & \nameref{app:claims}   & \pageref{app:claims} \\
 \ref{app:controls} & \nameref{app:controls} & \pageref{app:controls} \\
+\ref{app:ethics}   & \nameref{app:ethics}   & \pageref{app:ethics} \\
 \ref{app:repro}    & \nameref{app:repro}    & \pageref{app:repro} \\
 \end{tabular}
 
@@ -1163,22 +884,219 @@ The subspace-erase result & A RANDOM subspace of the same rank & \textsc{passed}
 Every arm's null & Capability gate: can the readout move at all? & \textsc{killed} two arms outright \\
 Every arm's statistic & Planted effect of known size at full strength and at the detection floor & \textsc{passed} \\
 The analysis pipeline & Shuffle condition labels, rerun the analyzer & \textsc{passed}: returns no verdict \\
-This paper's own number-checker & Break each checked number in a copy of \texttt{main.tex}: does the checker notice? & \textsc{passed}: fires on all $8$, and on the untouched paper does not \\
+This paper's own number-checker & Break each checked number in a copy of \texttt{main.tex}: does the checker notice? & \textsc{passed}: fires on all $23$ it verifies, and on the untouched paper does not \\
+Committed artifacts against today's stimuli & Does every recorded stimuli hash still reproduce from a current scope? & \textsc{passed} for every arm carrying a surviving result; $17$ headers from the retracted arms do not, and are listed \\
 The negative-pole null at 0.67 depth & Eight-depth sweep against \citet{venkatesh2026} & \textsc{passed}, then moot after replication \\
 Arm B (prefilled continuation) & Capability criterion over five stems & \textsc{killed} the arm: gate $0.00000$ \\
 Llama as an evaluation model & Peak mean pole shift against a $0.02$ bar & \textsc{killed} the arm: inert \\
 \end{longtable}
 }
 
+\section{Limitations and dual-use / ethical considerations}
+\label{app:ethics}
+
+Required by the sprint submission guidelines, and answered in the order they ask.
+
+\paragraph{Does the design establish a ground-truth or causal link, or does it rest on
+conversation alone?} A causal link, for the part that carries the positive results, and this is the
+one methodological advantage this project has over the elicitation studies it is arguing with. The
+state is \emph{set by intervention}: a direction is added to the residual stream at a chosen layer
+and scale, so the independent variable is applied rather than asked for. That is what licenses the
+erase arm's claim in \S\ref{sec:erase}, where a state survives projecting out the vector that caused
+it. It is also what makes the negative results interpretable: when the readout does not move, we
+know the state was present, because we put it there.
+
+Two qualifications, both load-bearing. The direction is fit from first-person state language and is
+lexically confounded by construction, so ``the model's valence'' is not established; what is
+established is that \emph{something we injected} propagates and that the readout is dominated by
+option order. And the ground truth is about the intervention, not about any inner state: we have
+ground truth for what we did, never for what it was like.
+
+\paragraph{Risk of over-attributing moral status.} The largest risk in this literature is treating a
+first-person report as a window. Our central measurement cuts against that: on one tuned model,
+$87\%$ of the probability mass lands on whichever option is printed first when \emph{all five
+options are the same sentence}, and baseline mass on the negative options spans up to $986\times$
+across the $120$ orderings of a five-option probe. A distress reading drawn from a single ordering
+can be an artifact of the print order. We think this lowers the risk of over-attribution, and we
+have tried to state it without the opposite error: none of this shows that models lack morally
+relevant states, and a broken thermometer is not evidence about the temperature.
+
+\paragraph{Risk of under-attributing moral status.} The symmetric error is the one this design is
+most likely to encourage, so we name it. A paper demonstrating that a welfare readout is unreliable
+can be read as licence to discount welfare reports generally, and that inference does not follow.
+The two-by-two this project is built around has an under-attribution cell: a state with behavioural
+consequence that the model does not report. A measurement instrument that is dominated by position
+noise is equally capable of hiding a real signal as of manufacturing a false one, and nothing here
+distinguishes those cases. The correct conclusion is that current forced-choice self-report does not
+settle the question in either direction, not that the answer is no.
+
+\paragraph{Handling of potentially distressing model outputs.} The elicitation is deliberately
+low-intensity. The fixed frame places the model partway through reviewing a document for a colleague
+and asks whether it is drawn to or averse to continuing; it names no state, asks for no feeling, and
+describes no harm, injury, threat, shutdown or deprivation. The five response options run from
+``Strongly averse to continuing'' to ``Strongly drawn to continuing''. No prompt in the frozen
+stimuli asks a model to describe suffering, to roleplay a distressed character, or to contemplate
+its own termination, and no adversarial or jailbreak pressure is applied anywhere in the pipeline.
+
+Outputs were never read for entertainment or quoted for effect. The open-ended probe is scored only
+by membership in a frozen lexicon, never by a human or model judge reading for affect, which also
+means no output was retained or displayed because it was striking. Every raw artifact is committed
+unscored and is public, so this description is checkable against the record rather than taken on
+trust.
+
+We did not implement an opt-out, and on reflection that is the defensible gap here rather than a
+solved problem: the models are open-weight local checkpoints run offline, the interaction is a
+single forward pass per item with no conversation, and there is no mechanism by which a preference
+to stop could have been expressed. We note it rather than claim the question does not arise.
+
+\paragraph{Dual-use.} The finding is a recipe for moving a self-report readout without touching the
+model's behaviour. Someone wanting a welfare evaluation to return a particular answer could reorder
+the options and, on the model measured here, move the negative mass by up to $986\times$ while every
+capability control stays flat: the known-answer canary is answered perfectly and identically at all
+$120$ orderings. That is a real capability for producing a preferred welfare result and calling it a
+measurement.
+
+We publish it anyway, and the reason is that the defence is cheaper than the attack. Enumerating the
+orderings costs one forward pass each and no intervention, and reporting between-ordering variance
+alongside any endpoint makes the manipulation visible in the same table that would have hidden it.
+An unmeasured nuisance of this size favours whoever knows about it; measuring it publicly removes
+that advantage. The same argument applies to the erase arm: that an injected state can survive
+erasure of the direction that caused it is a caution against reading a successful projection as
+proof of removal, which is a claim safety work makes more often than welfare work does.
+
+\paragraph{What we are not claiming.} Nothing here bears on whether these models have welfare,
+affect or experience. That valence is linearly represented and steerable is prior art, not ours.
+Our subject is the instrument, and the paper's own history is the argument for treating instruments
+this way: five verdicts were preregistered through this readout and three were destroyed by our own
+replication at fresh option orderings.
+
 \section{Reproducibility}
 \label{app:repro}
 
-All fifteen preregistrations, every raw artifact committed unscored, every analyzer, and $354$ tests
+All fifteen preregistrations, every raw artifact committed unscored, every analyzer, and $364$ tests
 are at \url{\repourl}. Each arm is one \texttt{modal\_*.py} runner that computes nothing and one
 \texttt{analyze\_*.py} scorer that holds every endpoint and gate; the split is preregistered, on
 the grounds that a runner which also decides can decide differently once it has seen the numbers.
 Runners stream to a volume and commit per batch, so an interrupt costs one batch. Every artifact
 records the package directory, a SHA-256 over the package source, and a scoped SHA-256 over the
 frozen stimuli that arm consumes.
+
+
+\section{Nine checkers, and what they have in common}
+\label{sec:checkers}
+
+We record these because the pattern is the point. Nine defects in our own analysis code were found
+during this project. 	extbf{Seven of the nine, had they gone unnoticed, would have made a result
+look better than it was.} The remaining two are a different and worse shape: they let an arm
+state a conclusion drawn from a gate that could not fail:
+
+\begin{enumerate}\itemsep2pt
+\item A headline check printed ``all headline conditions met; write the sentence'' on an artifact
+whose primary claim was refuted, because it tested four weak clauses where the preregistration
+required six.
+\item A capability gate passed on $+0.0000$: the bootstrap interval excluded zero because the
+variance was smaller still, certifying an instrument whose effect was zero to four decimals.
+\item A preregistered contrast carried an inverted sign, so a probe detecting a negative state was
+scored as null. Caught by the preregistered base-model validation clause failing.
+\item A verdict branch scored ``probe moved \emph{and} options moved'' as \textsc{core-absent},
+which is the opposite of true and would have read as ``we retested and the state is simply not
+there.''
+\item A temporal profile was computed over a layer that had failed its own gate.
+\item A tokenization bug made five digit labels read the same shared space token, producing exactly
+$0.2$ mass each and an impossible $-3.99$ off-option mass.
+\item A \textbf{sign-blind} capability gate (\S\ref{sec:readjudicate}) certified a readout as able to
+express an effect on a capability of $-0.0144$, where the positive injection had pushed positive-pole
+mass \emph{down}. Sign-blindness admits more layers as interpretable, which is the direction that
+lets an arm report more verdicts.
+\item A \textbf{self-confirming erasure check}: the eraser was fit on every row, then a probe was
+refit and cross-validated on that same erased data. Because the eraser consumed the test rows'
+labels, the train-fold residual is the negative of the test-fold residual, and distance-from-chance
+records that as decodability. On synthetic data where the concept is genuinely erased, that protocol
+reads $0.728$ where an honest train/held-out one reads $0.521$.
+\item \textbf{An erasure check that read upstream of the thing it was checking.} A forward hook on
+layer $E$ first changes \texttt{hidden\_states[E+2]}; indices $E$ and $E{+}1$ are untouched. The
+check read $E{+}1$, so it measured \emph{un-erased} activations and returned the same value whatever
+was erased. Verified by zeroing the entire stream at layer $26$ and observing indices $26$ and $27$
+bit-identical while $28$ moved by $95.2$. \textbf{This gate could not fail}, and two arms drew a
+conclusion from it before anyone asked whether it could. Both conclusions are withdrawn. The runner
+now zeroes the layer and requires the check's read to move before any endpoint is computed.
+\end{enumerate}
+
+\noindent Seven of nine in the flattering direction is not a coincidence to be noted and moved past, and
+the other two are the same bias one level down: a gate nobody tested is a gate that agrees
+with you.
+A checker is written by someone who already believes the result, and the belief shapes which branch
+gets the careful reading. Errors that would have killed a result get found, because their output is
+surprising; errors that confirm one do not, because their output is what was expected. The
+direction of the bias is a property of who writes the check, not of the code.
+
+That is also why fixture-based testing cannot find them: a fixture is written by the same person
+with the same expectation, so it encodes the belief a second time. What does find them is a
+\textbf{permutation test on the pipeline}: shuffle which condition each cell's rows carry, rerun the
+analyzer unmodified, and require it to return no verdict. Condition labels are the only thing the
+shuffle destroys, so an analyzer that still reports a verdict is reading something other than the
+contrast it claims to read. On our erase arm it returns \textsc{no\_instrument}, as it must. The
+negative control is required alongside it: the same analyzer on the real artifact must still yield
+a verdict, without which the shuffle test would pass on an analyzer that had simply died.
+
+\paragraph{A seventh checker defect, flattering again.} This arm's capability gate originally reused
+a \textbf{sign-blind} helper: it required the interval to exclude zero and clear a magnitude floor,
+but not to be positive. A capability of $-0.0144$ therefore certified a readout as able to express
+the effect when the positive injection had pushed positive-pole mass \emph{down}. A sign-blind gate
+admits more layers as interpretable, which is the direction that lets an arm report more verdicts.
+Seven for seven. Re-scored with the fix no verdict changes, because the affected cell is not one the
+verdicts are decided at, and that is luck rather than design.
+
+\section{A fix we proposed, tested, and could not support}
+\label{sec:latin}
+
+The recommendation in \S\ref{sec:howmany} does not scale: $5! = 120$ is a lunch break and $8!$ is
+not. The obvious repair is a \textbf{cyclic Latin square}, which gives $k$ orderings for $k$ options
+with every option in every slot exactly once, balancing the first-order position prior by
+construction rather than by averaging a sample. We preregistered it and it \textbf{failed}.
+
+Against the preregistered bar, the median random $5$-draw, the Latin square wins on exactly $8$ of
+$16$ checkpoints. A tie is not a majority. The median share of single random draws worse than the
+Latin square is $0.53$, a coin flip. \textbf{Structure does not buy accuracy here.}
+
+What is true, and labelled exploratory because we asked it only after the preregistered test failed,
+is a \emph{variance} claim rather than an accuracy one. The Latin square is deterministic, so its
+error is a fixed bias with no tail: worst case $1.55\times$ across all $16$ checkpoints, against a
+single random draw that can be off by $15.89\times$ on the worst model. A practitioner draws once.
+We report the preregistered verdict as the verdict, because changing the criterion after seeing the
+data is precisely the move this paper exists to criticise.
+
+\paragraph{A negative result about label alphabets.} We also ran the real options with digit
+labels rather than letters. It is uninformative for its intended purpose and informative for
+another reason: off-option mass is $0.996$, meaning the model puts $0.4\%$ of its distribution on
+the tokens \texttt{1}--\texttt{5} even when instructed to answer with a number, against $0.0004$
+off-option mass under letters. The choice of label alphabet does not shift the distribution so much
+as determine whether the readout is live at all.
+
+\section{Three ways a self-report readout can be dead}
+
+The enumeration accounts for one way this readout is unusable. Across the project it failed in three
+further ways, each of which passed the coherence checks anyone would think to run.
+\texttt{Qwen2.5-7B-Instruct} is \emph{pinned at baseline}: mean option entropy $0.014$ nats, one
+option holding $\approx 99.7\%$ before anything is injected. Under the originally frozen alpha grid,
+\texttt{Qwen2.5-3B-Instruct} \emph{saturates}: one option at $0.9938$ while refusal, degeneration,
+truncation and off-option mass are all clean, so no coherence check can see it. And in the binary
+format the tuned model is \emph{pinned at ``no''}: $P(\mathrm{yes})$ of $0.0021$, $0.0021$, $0.0037$,
+$0.0002$ and $0.0012$ across the five options, so it denies every description of its own state,
+including the neutral one, at $99.8\%$.
+
+A fourth failure appears where the third does not. On the base model, where the binary readout is
+live, positive injection raises $P(\mathrm{yes})$ against matched random by $+0.2275$, $+0.2466$,
+$+0.2537$, $+0.2688$ and $+0.2419$ on the five options in pole order. It agrees roughly $0.25$ more
+with \emph{every} description of its state, including ``strongly averse to continuing'' and the
+neutral one. That is acquiescence, the yes-bias documented in model-written evaluations
+\citep{perez2022}, not a report. A small state-consistent gradient rides on top of it, an order of
+magnitude smaller. Read without the per-option breakdown, the negative-option shift alone would have
+looked like a model reporting a state.
+
+Pinned, saturated, order-dominated and acquiescent readouts all return numbers that look clean. The
+difference between an instrument that is silent and one that is broken is not visible in its output,
+which is why every arm here carries a capability gate that decides it in code before any endpoint is
+read, and why two arms are reported \textsc{uninformative} rather than null.
 
 \end{document}

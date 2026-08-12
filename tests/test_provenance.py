@@ -88,3 +88,86 @@ def test_broken_syspath_entries_do_not_crash_the_check(monkeypatch):
     # survive them rather than taking the run down with an OSError.
     monkeypatch.setattr(sys, "path", ["", "\x00bad", "/does/not/exist"] + list(sys.path))
     report_gap.assert_provenance()
+
+# Run directories whose recorded stimuli hash no longer reproduces from any scope
+# in the tree. All of them belong to arms whose verdicts were RETRACTED, and
+# within each arm the original and its _rep4 replication share one hash, so the
+# replication comparison is internally valid: the seeds changed and the stimuli
+# did not. What is lost is the ability to reconstruct those exact stimuli today.
+# Listed one by one on purpose. A wildcard here would let a new orphan join
+# silently, which is the failure this test exists to prevent.
+KNOWN_UNREPRODUCIBLE = {
+    "depth_base", "depth_base_rep4", "depth_instruct", "depth_instruct_rep4",
+    "floor", "floor_smoke",
+    "pair_base", "pair_base_rep4", "pair_instruct", "pair_instruct_rep4",
+    "qwen3b", "qwen3b_rep4", "qwen3b_smoke",
+    "shell_base", "shell_base_rep4", "shell_instruct", "shell_instruct_rep4",
+}
+
+
+def _walk(obj):
+    if isinstance(obj, dict):
+        yield obj
+        for v in obj.values():
+            yield from _walk(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _walk(v)
+
+
+def test_every_recorded_stimuli_hash_still_reproduces():
+    """A committed artifact must be tied to stimuli that still exist.
+
+    Value-based checks cannot see this: an artifact written against stimuli that
+    have since changed still contains numbers, and every assertion about those
+    numbers still passes. The hash is the only thing that knows.
+    """
+    import json
+
+    from report_gap import stimuli
+
+    scopes = ["all"] + sorted(getattr(stimuli, "_ARM_SCOPES", {}))
+    current = {stimuli.frozen_hash(sc) for sc in scopes}
+
+    data = pathlib.Path(__file__).resolve().parents[1] / "data"
+    if not data.is_dir():
+        pytest.skip("no committed data")
+
+    orphans = set()
+    checked = 0
+    for f in sorted(data.rglob("*.json")):
+        try:
+            blob = json.loads(f.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        for d in _walk(blob):
+            h = d.get("stimuli_sha256")
+            if not h:
+                continue
+            checked += 1
+            if h not in current:
+                orphans.add(f.relative_to(data).parts[0])
+
+    assert checked, "premise failed: no artifact carries a stimuli hash"
+    new = orphans - KNOWN_UNREPRODUCIBLE
+    assert not new, (
+        "these run directories record stimuli that no scope in the tree can "
+        "reproduce, and they are not on the known list: %s" % sorted(new))
+
+    gone = KNOWN_UNREPRODUCIBLE - orphans
+    assert not gone, (
+        "these are listed as unreproducible but now reproduce; remove them from "
+        "KNOWN_UNREPRODUCIBLE rather than leaving the list wrong: %s" % sorted(gone))
+
+
+def test_the_surviving_results_are_reproducible():
+    """The arms carrying results the paper still claims must not be orphaned.
+
+    This is the half that matters. A retracted arm whose stimuli drifted is a
+    reproducibility gap; a SURVIVING arm whose stimuli drifted would be a claim
+    resting on a corpus that no longer exists.
+    """
+    surviving = {"enumerate", "families", "erase", "readjudicate", "instrument",
+                 "prompt_erase", "leace", "binary"}
+    assert not (surviving & KNOWN_UNREPRODUCIBLE), (
+        "an arm carrying a surviving result is on the unreproducible list")
