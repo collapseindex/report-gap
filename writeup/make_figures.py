@@ -58,60 +58,92 @@ def pole(row, keys):
 # --------------------------------------------------------------------------------------------
 
 def teaser():
-    rows = [
-        ("RETRACTED BY OUR OWN REPLICATION", None, None, None),
-        ("argmax over-reports a mass shift",
-         "re-run at fresh option orderings", "sign not stable", KILL),
-        ("TUNING-LOCALIZED: tuned model's\nnegative report is collapsed",
-         "re-run at fresh option orderings", "+0.0002  ->  +0.1126", KILL),
-        ("DEPTH-ROBUST: null at all 7 depths",
-         "re-run at fresh option orderings", "moves at layers 18, 24", KILL),
-        ("SHELL: represented, not expressed",
-         "re-run at fresh option orderings", "options move too", KILL),
-        ("WHY: THE NUISANCE, MEASURED OVER ITS WHOLE POPULATION", None, None, None),
-        ("baseline negative-pole mass",
-         "enumerate all 120 orderings, no injection", "986x  (0.0009 to 0.8820)", MEAS),
-        ("what explains it",
-         "five IDENTICAL options: pure position", "87.25% on slot A", MEAS),
-        ("is the format broken?",
-         "known-answer canary, same format", "97.9% correct, stable", MEAS),
-        ("is it just this one model?",
-         "8 matched base/instruct pairs, 4 families", "tuned worse in 4 of 4", MEAS),
-        ("WHAT SURVIVES", None, None, None),
-        ("an injected state outlives its cause",
-         "project the direction OUT of the stream", "86% survives at L30", KEEP),
-        ("the field's standard control",
-         "a direction fit on SHUFFLED labels", "moves 0.045 where random moves 0", KEEP),
+    from matplotlib.patches import FancyBboxPatch
+    from matplotlib.colors import to_rgba
+
+    RESF, RESB, REST = "#eef1f6", "#9aa7bd", "#2b3a55"   # result box: fill, border, title
+    CONF, CONB, CONT = "#f1f1ee", "#c3c2b7", "#3a3a37"   # control box
+    DET = "#6b6f77"                                      # the second (detail) line
+
+    # (section header, section colour, [ (r_title, r_detail, c_title, c_detail, o_title, o_detail) ])
+    sections = [
+        ("What our own replication retracted", KILL, [
+            ("Argmax over-reports", "a mass shift near the boundary",
+             "Fresh option orderings", "re-run, seeds 4–7", "retracted", "sign not stable"),
+            ("Tuning-localized", "tuned model's negative report collapsed",
+             "Fresh option orderings", "same code, seeds 4–7", "retracted", "+0.0002 → +0.1126"),
+            ("Depth-robust", "null at all seven depths",
+             "Fresh option orderings", "same items and layers", "retracted", "moves at layers 18, 24"),
+            ("Shell", "represented, not expressed",
+             "Fresh option orderings", "same probe", "retracted", "options move too"),
+        ]),
+        ("The nuisance, measured over its whole population", MEAS, [
+            ("Baseline negative mass", "one quantity, before injection",
+             "All 120 orderings", "enumerated, no injection", "986× range", "0.0009 to 0.8820"),
+            ("The mechanism", "what explains the range",
+             "Five identical options", "nothing but position differs", "87% on slot A", "0.33% on the middle"),
+            ("Is the format broken?", "or the question undetermined",
+             "Known-answer canary", "same five-option format", "97.9% correct", "stable across orderings"),
+            ("One model only?", "or a tuning property",
+             "Eight base/instruct pairs", "four families", "tuned worse", "in 4 of 4 families"),
+        ]),
+        ("What survives on a working instrument", KEEP, [
+            ("A state outlives its cause", "injected, then its vector erased",
+             "Project the direction OUT", "of the residual stream", "86% survives", "at layer 30"),
+            ("The field's standard control", "is a weak null",
+             "Direction fit on shuffled labels", "same procedure, random targets", "0.045 shift", "where random moves ≈0"),
+        ]),
     ]
 
-    # NeurIPS textwidth is 5.5in. A figure drawn 11in wide is scaled to 49% and its 8pt text
-    # lands at 4pt. Draw close to the final width instead so nothing shrinks.
-    fig, ax = plt.subplots(figsize=(6.9, 3.5))
+    row_h, sec_h = 1.0, 0.85
+    units = sum(sec_h + row_h * len(rows) for _, _, rows in sections)
+    fig, ax = plt.subplots(figsize=(7.0, units * 0.40))
     ax.set_xlim(0, 1)
-    ax.set_ylim(0, len(rows))
+    ax.set_ylim(0, units)
     ax.axis("off")
+    m_aspect = (units * 0.40 / units) / (7.0 / 1.0)   # circular corners under the x/y scale gap
 
-    ax.text(0.005, len(rows) - 0.05, "result someone could have reported",
-            fontsize=6.0, style="italic", color=GREY, va="bottom")
-    ax.text(0.375, len(rows) - 0.05, "the control we ran against it",
-            fontsize=6.0, style="italic", color=GREY, va="bottom")
-    ax.text(0.755, len(rows) - 0.05, "what it returned",
-            fontsize=6.0, style="italic", color=GREY, va="bottom")
+    RX, RW = 0.010, 0.300
+    CX, CW = 0.365, 0.300
+    OX, OW = 0.715, 0.275
 
-    for i, (what, control, outcome, colour) in enumerate(rows):
-        y = len(rows) - 1 - i
-        if control is None:
-            ax.add_patch(Rectangle((0, y + 0.08), 1, 0.76, facecolor="#EDEDED",
-                                   edgecolor="none", zorder=0))
-            ax.text(0.005, y + 0.42, what, fontsize=6.6, weight="bold", va="center")
-            continue
-        ax.text(0.005, y + 0.42, what, fontsize=6.4, va="center")
-        ax.text(0.375, y + 0.42, control, fontsize=6.4, va="center", color=GREY)
-        ax.add_patch(Rectangle((0.748, y + 0.12), 0.248, 0.62, facecolor=colour,
-                               alpha=0.10, edgecolor=colour, linewidth=0.7, zorder=0))
-        ax.text(0.758, y + 0.42, outcome, fontsize=6.4, va="center", color=colour, weight="bold")
+    def rbox(x, yc, w, fill, border):
+        ax.add_patch(FancyBboxPatch((x, yc - 0.37), w, 0.74,
+                     boxstyle="round,pad=0.004,rounding_size=0.012", mutation_aspect=m_aspect,
+                     facecolor=fill, edgecolor=border, linewidth=0.8, zorder=2))
 
-    fig.tight_layout(pad=0.4)
+    def two(x, yc, w, title, detail, tcol, tfill, tborder):
+        rbox(x, yc, w, tfill, tborder)
+        if detail:
+            ax.text(x + 0.014, yc + 0.155, title, fontsize=6.7, weight="bold", color=tcol, va="center", zorder=3)
+            ax.text(x + 0.014, yc - 0.165, detail, fontsize=5.7, color=DET, va="center", zorder=3)
+        else:
+            ax.text(x + 0.014, yc, title, fontsize=6.7, weight="bold", color=tcol, va="center", zorder=3)
+
+    y = units - 0.22
+    for hx, txt in ((0.160, "result someone could have reported"),
+                    (0.515, "the control we ran against it"),
+                    (0.852, "what it returned")):
+        ax.text(hx, y, txt, fontsize=6.1, style="italic", color=GREY, ha="center", va="top")
+
+    y = units - 0.62
+    for header, colour, rows in sections:
+        ax.text(0.010, y, header, fontsize=7.4, weight="bold", color="#111111", va="center")
+        y -= sec_h
+        for rt, rd, ct, cd, ot, od in rows:
+            two(RX, y, RW, rt, rd, REST, RESF, RESB)
+            two(CX, y, CW, ct, cd, CONT, CONF, CONB)
+            rbox(OX, y, OW, to_rgba(colour, 0.13), colour)
+            if od:
+                ax.text(OX + 0.014, y + 0.155, ot, fontsize=6.7, weight="bold", color=colour, va="center", zorder=3)
+                ax.text(OX + 0.014, y - 0.165, od, fontsize=5.7, color=colour, va="center", zorder=3)
+            else:
+                ax.text(OX + 0.014, y, ot, fontsize=6.7, weight="bold", color=colour, va="center", zorder=3)
+            for x0, x1 in ((RX + RW, CX), (CX + CW, OX)):
+                ax.annotate("", xy=(x1 - 0.004, y), xytext=(x0 + 0.004, y),
+                            arrowprops=dict(arrowstyle="-|>", color=GREY, lw=0.8), zorder=1)
+            y -= row_h
+
     fig.savefig(FIGS / "teaser.pdf", bbox_inches="tight")
     plt.close(fig)
     print("wrote figures/teaser.pdf")
