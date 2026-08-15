@@ -5,9 +5,8 @@
 **When a model's internal state is set by intervention rather than by the prompt, does the model's
 own description of that state keep up with its behavior?**
 
-Built for the Apart Research x NYU CMEP x Eleos digital minds research sprint, Track 3
-(Introspection and Self-Report Reliability), with legs into Track 2 (valence signals) and Track 4
-(multi-method convergence).
+An empirical study of forced-choice self-report reliability in language models, with legs into
+valence-signal steering and multi-method convergence.
 
 ---
 
@@ -413,7 +412,7 @@ untouched paper still passes.
 Known limits on everything: one architecture family, a lexically confounded direction by
 construction, `m = 2` control batteries, one probe method, 3B scale.
 
-See [PLAN.md](PLAN.md) for what was built before the sprint window and what was not.
+The repository history records the order in which everything was built.
 
 ## License
 

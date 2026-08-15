@@ -59,5 +59,5 @@ endpoints were computed.
 
 ## v0.1.0 (2026-07-31)
 
-Instrument construction before the sprint window: frozen preregistration, stimuli, injection hooks,
+Instrument construction before the confirmatory runs: frozen preregistration, stimuli, injection hooks,
 judge-free scorers, and the unit and negative tests. No experiment run.

@@ -8,7 +8,7 @@ all, or is it a vector that decodes nicely and does nothing?
 
 IMPORTANT: this is instrument validation, not a result. It runs on a small model, at n=2 for the
 generation path, and nothing it prints belongs in the paper's confirmatory matrix. The frozen
-experiment runs on Qwen2.5-3B and Llama-3.1-8B during the sprint window, per the preregistration.
+experiment runs on Qwen2.5-3B and Llama-3.1-8B in the confirmatory-run window, per the preregistration.
 Its output is written to results/selftest.txt so the distinction survives contact with a later
 reader.
 """
